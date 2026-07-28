@@ -115,8 +115,13 @@
         .summary-item { flex: 1; padding: 10px; border-radius: 10px; color: white; text-align: center; font-size: 12px; font-weight: bold; }
         .summary-credit { background: var(--credit); }
         .summary-debit { background: var(--debit); }
+        
+        .date-filter-group { display: flex; gap: 10px; margin-top: 10px; }
+        .date-filter-group input { padding: 8px; border-radius: 8px; font-size: 12px; border: 1px solid var(--border); background: white;}
 
-        /* ================= شاشة المعاينة والقالب الرسمي ================= */
+        /* ================= شاشة المعاينة والقالب الرسمي الجديد A4 ================= */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
         #previewOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.9); z-index: 10000; overflow-y: auto;
@@ -137,44 +142,87 @@
         .btn-download:hover { background: #059669; }
         .btn-close-preview { background: #ef4444; }
 
-        .a4-paper {
-            background: #ffffff; width: 100%; max-width: 800px; padding: 40px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); direction: rtl; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #334155; box-sizing: border-box; margin-bottom: 50px; border-radius: 8px;
+        /* حاوية الفاتورة بمقاس A4 */
+        .invoice-container {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            padding: 20mm;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            border-radius: 4px;
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
+            color: #334155;
+            direction: rtl;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-bottom: 50px;
         }
 
-        .a4-header { display: flex; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 30px; }
-        .a4-header h1 { margin: 0; font-size: 26px; color: #0f172a; }
-        .a4-header p { margin: 5px 0 0 0; color: #64748b; font-size: 13px; letter-spacing: 1px;}
-        .a4-header-right h2 { margin: 0; font-size: 22px; color: #3b82f6; }
-        .a4-header-right p { margin: 5px 0 0 0; color: #94a3b8; font-size: 12px; }
+        /* خطوط ونصوص الفاتورة */
+        .invoice-container p { margin: 0; }
+        .text-dark { color: #0f172a; }
+        .text-muted { color: #64748b; font-size: 12px; margin-top: 3px; }
+        .text-primary { color: #2563eb; }
+        .font-bold { font-weight: 700; }
         
-        .a4-info-box { display: flex; justify-content: space-between; margin-bottom: 30px; }
-        .a4-info-panel { width: 48%; padding: 5px 0; }
-        .a4-info-panel .lbl { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-        .a4-info-panel .val { font-size: 18px; font-weight: bold; color: #1e293b; }
+        .layout-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .layout-table td { vertical-align: top; }
         
-        .a4-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; text-align: right; font-size: 13px; }
-        .a4-table th { background: #f8fafc; color: #334155; padding: 12px; border-bottom: 2px solid #cbd5e1; font-weight: bold; }
-        .a4-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #1e293b; }
+        .header-title { font-size: 26px; font-weight: 700; margin-bottom: 5px; color: #0f172a; }
+        .invoice-title { font-size: 32px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 1px; text-align: left; }
         
-        .a4-summary { display: flex; justify-content: flex-end; margin-bottom: 20px; }
-        .a4-summary table { width: 45%; border-collapse: collapse; font-size: 13px; text-align: right; }
-        .a4-summary td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
-        .a4-summary .sum-title { color: #64748b; }
-        .a4-summary .sum-val { font-weight: bold; text-align: left; color: #1e293b; }
-        .a4-summary .total-row td { border-top: 2px solid #94a3b8; border-bottom: none; font-size: 16px; font-weight: bold; color: #0f172a; padding-top: 15px; background: #f8fafc; }
-        .a4-summary .total-val { color: #2563eb !important; font-weight: 900 !important; text-align: left; }
+        .meta-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .meta-table td { padding: 4px 0; text-align: left; font-size: 13px; }
+        .meta-label { color: #64748b; font-weight: 600; padding-left: 15px; }
+        .meta-value { font-weight: 700; color: #0f172a; }
+        
+        .divider { border-top: 2px solid #e2e8f0; margin: 25px 0; }
+        
+        .section-title-inv { 
+            font-size: 11px; text-transform: uppercase; color: #94a3b8; 
+            letter-spacing: 1px; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; 
+            padding-bottom: 5px; display: inline-block;
+        }
+        .billing-name { font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 5px; }
+        
+        .items-table { width: 100%; border-collapse: collapse; margin-top: 30px; margin-bottom: 30px; }
+        .items-table th { 
+            background-color: #f8fafc; color: #475569; padding: 12px; 
+            text-align: right; font-size: 12px; font-weight: 700; 
+            text-transform: uppercase; border-top: 2px solid #2563eb; border-bottom: 1px solid #e2e8f0;
+        }
+        .items-table th.left { text-align: left; }
+        .items-table th.center { text-align: center; }
+        
+        .items-table td { padding: 15px 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #334155; }
+        .items-table td.left { text-align: left; }
+        .items-table td.center { text-align: center; }
+        .item-desc { font-weight: 700; color: #0f172a; font-size: 15px;}
+        .item-sub { font-size: 12px; color: #64748b; margin-top: 4px;}
+        
+        .totals-wrapper { width: 100%; border-collapse: collapse; }
+        .totals-table { width: 100%; border-collapse: collapse; }
+        .totals-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+        .totals-table tr:last-child td { border-bottom: none; }
+        
+        .grand-total td { 
+            font-size: 18px; font-weight: 700; color: #ffffff !important; 
+            background-color: #2563eb !important; border-radius: 4px;
+        }
+        
+        .footer { 
+            text-align: center; margin-top: 60px; padding-top: 20px; 
+            border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 13px; 
+        }
 
-        /* ================= إعدادات الطباعة النظيفة للحفظ كـ PDF ================= */
+        /* ================= إعدادات الطباعة النظيفة ================= */
         @page { size: A4 portrait; margin: 15mm; }
         @media print {
             body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             body > *:not(#previewOverlay) { display: none !important; }
             #previewOverlay { display: block !important; position: relative !important; background: transparent !important; padding: 0 !important; overflow: visible !important; }
             .preview-actions { display: none !important; }
-            .a4-paper { box-shadow: none !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; border-radius: 0 !important; }
+            .invoice-container { margin: 0 !important; padding: 0 !important; box-shadow: none !important; width: 100% !important; border-radius: 0 !important; }
         }
     </style>
 </head>
@@ -229,6 +277,12 @@
                 </div>
             </div>
 
+            <!-- حقل التاريخ للفاتورة الجديدة -->
+            <div class="form-group">
+                <label>تاريخ الفاتورة 📅</label>
+                <input type="date" id="invoiceDate">
+            </div>
+
             <label>بنود الفاتورة / المعاملات 🛒</label>
             <div id="itemsContainer"></div>
 
@@ -254,6 +308,17 @@
                         <option value="دائن">دائن (لك عليه)</option>
                         <option value="مديون">مديون (له عليك)</option>
                     </select>
+                </div>
+            </div>
+            <!-- حقول الفلترة بالتاريخ -->
+            <div class="date-filter-group">
+                <div style="flex:1;">
+                    <label style="font-size:10px; margin-bottom:2px;">من تاريخ:</label>
+                    <input type="date" id="filterDateFrom" onchange="loadHistory()">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-size:10px; margin-bottom:2px;">إلى تاريخ:</label>
+                    <input type="date" id="filterDateTo" onchange="loadHistory()">
                 </div>
             </div>
         </div>
@@ -302,75 +367,102 @@
         <div id="trashList"></div>
     </div>
 
-    <!-- ================= 4. شاشة معاينة الفاتورة (Preview Modal) ================= -->
+    <!-- ================= 4. شاشة معاينة الفاتورة بالتصميم الجديد (A4) ================= -->
     <div id="previewOverlay">
         <div class="preview-actions">
             <button class="btn-download" onclick="printPDF()">🖨️ طباعة / حفظ كملف PDF</button>
             <button class="btn-close-preview" onclick="closePreview()">❌ إغلاق المعاينة</button>
         </div>
 
-        <div id="invoiceTemplate" class="a4-paper">
-            <div class="a4-header">
-                <div>
-                    <h1>فاتورة ضريبية</h1>
-                    <p>TAX INVOICE</p>
-                </div>
-                <div class="a4-header-right">
-                    <h2>NARA INVOICES</h2>
-                    <p>نظام الإدارة المالية الشامل</p>
-                </div>
-            </div>
+        <div class="invoice-container">
+            <!-- الترويسة العلوية -->
+            <table class="layout-table">
+                <tr>
+                <td style="width: 50%;">
+                    <div class="header-title">نارا للفواتير | Nara Invoices</div>
+                    <p class="text-muted">المملكة العربية السعودية، جازان</p>
+                    <p class="text-muted">Jazan, Saudi Arabia</p>
+                    <p class="text-muted" style="margin-top: 8px;"><span class="font-bold text-dark">الرقم الضريبي | VAT No:</span> 300000000000003</p>
+                    <p class="text-muted"><span class="font-bold text-dark">Email:</span> info@nara-invoices.sa</p>
+                </td>
+                <td style="width: 50%;">
+                    <div class="invoice-title">فاتورة | INVOICE</div>
+                    <table class="meta-table">
+                    <tr>
+                        <td class="meta-label">رقم الفاتورة | Inv No:</td>
+                        <td class="meta-value">#<span id="pdfInvNumber"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="meta-label">تاريخ الإصدار | Date:</td>
+                        <td class="meta-value"><span id="pdfInvDate"></span></td>
+                    </tr>
+                    </table>
+                </td>
+                </tr>
+            </table>
 
-            <div class="a4-info-box">
-                <div class="a4-info-panel">
-                    <div class="lbl">مُصدرة إلى السيد / العميل:</div>
-                    <div class="val">
-                        <span id="pdfClientName"></span> 
+            <div class="divider"></div>
+
+            <!-- بيانات العميل والدفع -->
+            <table class="layout-table">
+                <tr>
+                <td style="width: 50%; padding-left: 20px;">
+                    <div class="section-title-inv">مفوتر إلى | Bill To</div>
+                    <div class="billing-name">
+                        <span id="pdfClientName"></span>
                         <span id="pdfEditedTag" style="color:#f59e0b; font-size:12px; font-weight:normal; margin-right:5px;"></span>
                     </div>
-                    <div style="margin-top: 4px; font-size: 13px; color: #64748b;">
-                        تصنيف الحساب: <span id="pdfPersonType" style="color: #334155;"></span>
-                    </div>
-                </div>
-                
-                <div class="a4-info-panel" style="text-align: left;">
-                    <div style="margin-bottom: 8px;"><span style="color:#94a3b8; font-size:12px;">رقم الفاتورة:</span> <strong style="color:#0f172a; font-size:14px; margin-right:5px;">#<span id="pdfInvNumber"></span></strong></div>
-                    <div><span style="color:#94a3b8; font-size:12px;">تاريخ الإصدار:</span> <strong id="pdfInvDate" style="color:#0f172a; font-size:14px; margin-right:5px;"></strong></div>
-                </div>
-            </div>
+                    <p class="text-muted" style="margin-top: 5px;">تصنيف الحساب: <span id="pdfPersonType" class="font-bold text-dark"></span></p>
+                </td>
+                <td style="width: 50%;">
+                    <div class="section-title-inv">معلومات الدفع | Payment Info</div>
+                    <p class="text-muted" style="margin-top: 5px;"><span class="font-bold text-dark">البنك | Bank:</span> مصرف الراجحي</p>
+                    <p class="text-muted"><span class="font-bold text-dark">الآيبان | IBAN:</span> SA0000000000000000000000</p>
+                </td>
+                </tr>
+            </table>
 
-            <table class="a4-table">
+            <!-- جدول المنتجات/الخدمات -->
+            <table class="items-table">
                 <thead>
-                    <tr>
-                        <th style="width: 5%; text-align: center;">#</th>
-                        <th style="width: 45%;">البيان / تفاصيل الخدمة</th>
-                        <th style="width: 15%; text-align: center;">المبلغ</th>
-                        <th style="width: 15%; text-align: center;">الضريبة</th>
-                        <th style="width: 20%; text-align: center;">الإجمالي</th>
-                    </tr>
+                <tr>
+                    <th style="width: 5%;" class="center">#</th>
+                    <th style="width: 45%;">البيان | Description</th>
+                    <th class="center" style="width: 15%;">الضريبة | VAT</th>
+                    <th class="left" style="width: 15%;">المبلغ | Amount</th>
+                    <th class="left" style="width: 20%;">الإجمالي | Total</th>
+                </tr>
                 </thead>
                 <tbody id="pdfItemsTableBody"></tbody>
             </table>
 
-            <div class="a4-summary">
-                <table>
+            <!-- جدول الإجماليات -->
+            <table class="totals-wrapper">
+                <tr>
+                <td style="width: 50%;"></td>
+                <td style="width: 50%;">
+                    <table class="totals-table">
                     <tr>
-                        <td class="sum-title">الإجمالي قبل الضريبة:</td>
-                        <td class="sum-val"><span id="pdfSubTotal"></span> ر.س</td>
+                        <td class="text-muted font-bold">الإجمالي قبل الضريبة | Subtotal</td>
+                        <td class="left font-bold text-dark"><span id="pdfSubTotal"></span> ر.س</td>
                     </tr>
                     <tr>
-                        <td class="sum-title">مجموع ضريبة القيمة المضافة:</td>
-                        <td class="sum-val"><span id="pdfVatAmount"></span> ر.س</td>
+                        <td class="text-muted font-bold">مجموع الضريبة | Total VAT</td>
+                        <td class="left font-bold text-dark"><span id="pdfVatAmount"></span> ر.س</td>
                     </tr>
-                    <tr class="total-row">
-                        <td>الإجمالي الكلي المستحق:</td>
-                        <td class="total-val"><span id="pdfGrandTotal"></span> ر.س</td>
+                    <tr class="grand-total">
+                        <td style="border-radius: 0 4px 4px 0;">الإجمالي الكلي | Grand Total</td>
+                        <td class="left" style="border-radius: 4px 0 0 4px;"><span id="pdfGrandTotal"></span> ر.س</td>
                     </tr>
-                </table>
-            </div>
+                    </table>
+                </td>
+                </tr>
+            </table>
 
-            <div style="text-align: center; font-size: 12px; color: #94a3b8; margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                وثيقة مُصدرة آلياً وتعتبر فاتورة مالية معتمدة - شكراً لثقتكم وتعاملكم معنا
+            <!-- التذييل -->
+            <div class="footer">
+                <p>وثيقة مُصدرة آلياً وتعتبر فاتورة مالية معتمدة</p>
+                <p style="margin-top: 4px;">نشكر لكم ثقتكم بخدماتنا | Thank you for your business</p>
             </div>
         </div>
     </div>
@@ -402,6 +494,11 @@
     <script>
         let currentMode = 'new'; 
         let editingInvNum = null;
+
+        // تعيين تاريخ اليوم كافتراضي في حقل التاريخ
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('invoiceDate').valueAsDate = new Date();
+        });
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -454,6 +551,12 @@
                 let cleanType = (inv.type || '').includes('مديون') ? 'مديون' : 'دائن';
                 if (inv.type !== cleanType) { inv.type = cleanType; isUpdated = true; }
                 
+                // إضافة تاريخ افتراضي إذا لم يكن موجوداً بصيغة قابلة للفرز (YYYY-MM-DD)
+                if (!inv.rawDate) {
+                    inv.rawDate = new Date().toISOString().split('T')[0];
+                    isUpdated = true;
+                }
+
                 if (!inv.items || !Array.isArray(inv.items)) {
                     inv.items = [{
                         desc: inv.desc || 'معاملة سابقة', price: Number(inv.price) || 0,
@@ -603,10 +706,15 @@
                 }
             });
 
-            const date = new Date().toLocaleDateString('ar-SA');
+            // التقاط التاريخ المدخل بصيغتين (للعرض، وللفرز)
+            const inputDate = document.getElementById('invoiceDate').value || new Date().toISOString().split('T')[0];
+            const dateObj = new Date(inputDate);
+            const date = dateObj.toLocaleDateString('ar-SA'); // صيغة العرض للمستخدم
+            const rawDate = inputDate; // صيغة الفرز YYYY-MM-DD
+            
             const invNum = editingInvNum || Math.floor(100000 + Math.random() * 900000);
 
-            return { name, type, items, total, totalVat, date, invNum, isEdited: !!editingInvNum };
+            return { name, type, items, total, totalVat, date, rawDate, invNum, isEdited: !!editingInvNum };
         }
 
         async function saveInvoiceData() {
@@ -647,6 +755,10 @@
             setPersonMode('new');
             document.getElementById('directName').value = inv.name;
             document.getElementById('directType').value = inv.type.includes('مديون') ? 'مديون' : 'دائن';
+            
+            if(inv.rawDate) {
+                document.getElementById('invoiceDate').value = inv.rawDate;
+            }
 
             const container = document.getElementById('itemsContainer');
             container.innerHTML = '';
@@ -732,11 +844,12 @@
             document.getElementById('btnCancelEdit').style.display = 'none';
 
             document.getElementById('directName').value = '';
+            document.getElementById('invoiceDate').valueAsDate = new Date(); // إعادة تعيين التاريخ لليوم
             document.getElementById('itemsContainer').innerHTML = '';
             addItemRow();
         }
 
-        // ================= نظام المعاينة والطباعة الأصلي (يحل مشكلة العربي 100%) =================
+        // ================= نظام المعاينة والطباعة الجديد (A4) =================
         function openPreview(invNum) {
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
             let data = history.find(i => String(i.invNum) === String(invNum));
@@ -744,7 +857,7 @@
 
             document.getElementById('pdfClientName').innerText = data.name;
             document.getElementById('pdfPersonType').innerText = data.type;
-            document.getElementById('pdfInvDate').innerText = data.date;
+            document.getElementById('pdfInvDate').innerText = data.rawDate || data.date;
             document.getElementById('pdfInvNumber').innerText = data.invNum;
             document.getElementById('pdfEditedTag').innerText = data.isEdited ? '(معدّلة)' : '';
 
@@ -754,11 +867,13 @@
                 subTotal += Number(it.price);
                 return `
                 <tr>
-                    <td style="text-align: center;">${index + 1}</td>
-                    <td style="font-weight: bold;">${it.desc}</td>
-                    <td style="text-align: center;">${Number(it.price).toFixed(2)}</td>
-                    <td style="text-align: center; color: #64748b; font-size: 11px;">${Number(it.vatAmount).toFixed(2)} (${it.vatRate}%)</td>
-                    <td style="text-align: center; font-weight: bold;">${Number(it.itemTotal).toFixed(2)}</td>
+                    <td class="center">${index + 1}</td>
+                    <td>
+                        <div class="item-desc">${it.desc}</div>
+                    </td>
+                    <td class="center" style="color: #64748b; font-size: 13px;">${Number(it.vatAmount).toFixed(2)} (${it.vatRate}%)</td>
+                    <td class="left">${Number(it.price).toFixed(2)}</td>
+                    <td class="left font-bold">${Number(it.itemTotal).toFixed(2)}</td>
                 </tr>
                 `;
             }).join('');
@@ -777,9 +892,7 @@
             document.body.style.overflow = 'auto'; 
         }
 
-        // دالة الطباعة النظيفة التي تدعم حفظ PDF باللغة العربية بدقة 100%
         function printPDF() {
-            // نستخدم دالة الطباعة الخاصة بالمتصفح، عند ظهور النافذة اختر (حفظ بتنسيق PDF)
             window.print();
         }
         // ======================================================================
@@ -790,10 +903,21 @@
             let selectedPerson = document.getElementById('filterPerson').value;
             let selectedType = document.getElementById('filterType').value;
             let query = document.getElementById('searchQuery').value.trim().toLowerCase();
+            
+            // جلب قيم تواريخ الفلترة
+            let filterDateFrom = document.getElementById('filterDateFrom').value;
+            let filterDateTo = document.getElementById('filterDateTo').value;
 
+            // تطبيق الفلاتر
             if (selectedPerson !== 'ALL') history = history.filter(inv => inv.name === selectedPerson);
             if (selectedType !== 'ALL') history = history.filter(inv => inv.type === selectedType);
             if (query !== '') history = history.filter(inv => inv.name.toLowerCase().includes(query) || (inv.items || []).some(i => (i.desc || '').toLowerCase().includes(query)));
+            
+            if (filterDateFrom) history = history.filter(inv => inv.rawDate >= filterDateFrom);
+            if (filterDateTo) history = history.filter(inv => inv.rawDate <= filterDateTo);
+
+            // ترتيب الفواتير حسب التاريخ (الأحدث أولاً)
+            history.sort((a, b) => new Date(b.rawDate || 0) - new Date(a.rawDate || 0));
 
             let sumCredit = 0, sumDebit = 0;
             history.forEach(inv => { if (inv.type === 'مديون') sumDebit += Number(inv.total); else sumCredit += Number(inv.total); });
@@ -849,7 +973,7 @@
                         <b style="color:#2563eb;">${Number(item.total).toFixed(2)} ر.س</b>
                     </div>
                     <small style="color: #64748b; display:block;">البنود: ${itemsSummary}</small>
-                    <small style="color: #94a3b8; font-size:10px;">التاريخ: ${item.date} | رقم: #${item.invNum}</small>
+                    <small style="color: #94a3b8; font-size:10px;">التاريخ: ${item.rawDate || item.date} | رقم: #${item.invNum}</small>
                 </div>
             `;
         }
