@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nara Invoices</title>
+    
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #3b82f6; 
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #334155;
+            --credit: #10b981; 
+            --debit: #ef4444;  
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+            direction: rtl;
+        }
+
+        .header { text-align: center; margin-bottom: 15px; }
+        .header h1 { font-size: 24px; color: var(--primary); font-weight: 800; }
+        .header p { font-size: 13px; color: #64748b; margin-bottom: 10px; }
+
+        .btn-sync {
+            background: #0f172a; color: white; border: none; padding: 8px 16px;
+            border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-sync:hover { background: #1e293b; }
+
+        #toast {
+            display: none; position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+            background: #10b981; color: white; padding: 10px 20px; border-radius: 8px;
+            font-size: 13px; font-weight: bold; z-index: 99999; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .tabs { display: flex; gap: 6px; margin-bottom: 15px; margin-top: 15px; }
+        .tab-btn {
+            flex: 1; padding: 10px 4px; background: #e2e8f0; border: none;
+            border-radius: 10px; font-weight: bold; font-size: 12px; color: #475569; cursor: pointer; text-align: center;
+        }
+        .tab-btn.active { background: var(--accent); color: white; }
+
+        .card {
+            background: var(--card); padding: 16px; border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 15px; border: 1px solid var(--border);
+        }
+        .card h3 { font-size: 15px; margin-bottom: 12px; color: var(--primary); }
+
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+
+        input, select {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+            border-radius: 10px; font-size: 14px; background: #f8fafc; outline: none; color: var(--text);
+        }
+
+        .mode-toggle { display: flex; background: #f1f5f9; padding: 4px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .mode-btn { flex: 1; padding: 8px; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; background: transparent; color: #64748b; }
+        .mode-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        .row { display: flex; gap: 10px; }
+        .row .form-group { flex: 1; }
+
+        .item-row { background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; position: relative; }
+        .btn-remove-item {
+            position: absolute; left: 8px; top: 8px; background: #ef4444; color: white; border: none;
+            width: 20px; height: 20px; border-radius: 50%; cursor: pointer; font-size: 11px; font-weight: bold;
+        }
+
+        .btn { width: 100%; padding: 12px; background-color: var(--accent); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 6px; }
+        .btn-success { background-color: #10b981; }
+        .btn-add-item { background-color: #64748b; font-size: 13px; padding: 8px; margin-bottom: 10px; }
+
+        .badge { padding: 3px 6px; border-radius: 6px; font-size: 11px; font-weight: bold; color: white; display: inline-block; }
+        .badge-credit { background-color: var(--credit); }
+        .badge-debit { background-color: var(--debit); }
+        .badge-edited { background-color: #f59e0b; }
+
+        .history-card { background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding-left: 25px; }
+
+        .menu-container { position: absolute; left: 10px; top: 10px; }
+        .dots-btn { background: transparent; border: none; font-size: 20px; font-weight: bold; color: #64748b; cursor: pointer; padding: 2px 8px; border-radius: 6px; }
+        .dots-btn:hover { background: #f1f5f9; }
+
+        .dropdown-menu {
+            display: none; position: absolute; left: 0; top: 28px; background: white;
+            border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100; min-width: 140px; overflow: hidden;
+        }
+        .dropdown-menu button {
+            width: 100%; padding: 8px 12px; border: none; background: transparent; text-align: right;
+            font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--text);
+        }
+        .dropdown-menu button:hover { background: #f8fafc; }
+        .dropdown-menu button.danger { color: #ef4444; }
+
+        .filter-card { background: #f1f5f9; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .section-title { font-size: 13px; font-weight: bold; padding: 6px 10px; border-radius: 6px; margin: 10px 0; color: white; }
+        .title-credit { background: var(--credit); }
+        .title-debit { background: var(--debit); }
+
+        .summary-box { display: flex; gap: 10px; margin-bottom: 12px; }
+        .summary-item { flex: 1; padding: 10px; border-radius: 10px; color: white; text-align: center; font-size: 12px; font-weight: bold; }
+        .summary-credit { background: var(--credit); }
+        .summary-debit { background: var(--debit); }
+
+        /* ================= شاشة المعاينة والقالب الرسمي ================= */
+        #previewOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9); z-index: 10000; overflow-y: auto;
+            flex-direction: column; align-items: center; padding: 20px;
+        }
+
+        .preview-actions {
+            display: flex; gap: 10px; background: white; padding: 15px 25px;
+            border-radius: 12px; position: sticky; top: 10px; z-index: 10001;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); margin-bottom: 20px;
+        }
+
+        .preview-actions button {
+            padding: 10px 20px; font-size: 14px; font-weight: bold; border-radius: 8px;
+            border: none; cursor: pointer; color: white; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-download { background: #10b981; }
+        .btn-download:hover { background: #059669; }
+        .btn-close-preview { background: #ef4444; }
+
+        .a4-paper {
+            background: #ffffff; width: 100%; max-width: 800px; padding: 40px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); direction: rtl; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #334155; box-sizing: border-box; margin-bottom: 50px; border-radius: 8px;
+        }
+
+        .a4-header { display: flex; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 30px; }
+        .a4-header h1 { margin: 0; font-size: 26px; color: #0f172a; }
+        .a4-header p { margin: 5px 0 0 0; color: #64748b; font-size: 13px; letter-spacing: 1px;}
+        .a4-header-right h2 { margin: 0; font-size: 22px; color: #3b82f6; }
+        .a4-header-right p { margin: 5px 0 0 0; color: #94a3b8; font-size: 12px; }
+        
+        .a4-info-box { display: flex; justify-content: space-between; margin-bottom: 30px; }
+        .a4-info-panel { width: 48%; padding: 5px 0; }
+        .a4-info-panel .lbl { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+        .a4-info-panel .val { font-size: 18px; font-weight: bold; color: #1e293b; }
+        
+        .a4-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; text-align: right; font-size: 13px; }
+        .a4-table th { background: #f8fafc; color: #334155; padding: 12px; border-bottom: 2px solid #cbd5e1; font-weight: bold; }
+        .a4-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #1e293b; }
+        
+        .a4-summary { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .a4-summary table { width: 45%; border-collapse: collapse; font-size: 13px; text-align: right; }
+        .a4-summary td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
+        .a4-summary .sum-title { color: #64748b; }
+        .a4-summary .sum-val { font-weight: bold; text-align: left; color: #1e293b; }
+        .a4-summary .total-row td { border-top: 2px solid #94a3b8; border-bottom: none; font-size: 16px; font-weight: bold; color: #0f172a; padding-top: 15px; background: #f8fafc; }
+        .a4-summary .total-val { color: #2563eb !important; font-weight: 900 !important; text-align: left; }
+
+        /* ================= إعدادات الطباعة النظيفة للحفظ كـ PDF ================= */
+        @page { size: A4 portrait; margin: 15mm; }
+        @media print {
+            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body > *:not(#previewOverlay) { display: none !important; }
+            #previewOverlay { display: block !important; position: relative !important; background: transparent !important; padding: 0 !important; overflow: visible !important; }
+            .preview-actions { display: none !important; }
+            .a4-paper { box-shadow: none !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; border-radius: 0 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast">تم حفظ الفاتورة بنجاح! ☁️🎉</div>
+
+    <div class="header">
+        <h1>📑 Nara Invoices</h1>
+        <p>إدارة الفواتير والحسابات السريعة</p>
+        <button class="btn-sync" onclick="syncFromCloud()">☁️ استرجاع ومزامنة من السحابة</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('invoices')">📑 الفواتير</button>
+        <button class="tab-btn" onclick="switchTab('people')">👥 الأشخاص</button>
+        <button class="tab-btn" onclick="switchTab('trash')">🗑️ المهملات (<span id="trashCount">0</span>)</button>
+    </div>
+
+    <!-- ================= 1. قسم الفواتير ================= -->
+    <div id="tabInvoices">
+        <div class="card">
+            <h3 id="formTitle">📄 تسجيل فاتورة جديدة ✨</h3>
+
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="btnNewMode" onclick="setPersonMode('new')">✨ شخص جديد</button>
+                <button class="mode-btn" id="btnSavedMode" onclick="setPersonMode('saved')">📋 شخص مسبق الحفظ</button>
+            </div>
+
+            <div id="newPersonFields">
+                <div class="row">
+                    <div class="form-group">
+                        <label>اسم الشخص</label>
+                        <input type="text" id="directName" placeholder="مثال: خالد">
+                    </div>
+                    <div class="form-group">
+                        <label>التصنيف</label>
+                        <select id="directType">
+                            <option value="دائن">دائن (لك عليه)</option>
+                            <option value="مديون">مديون (له عليك)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="savedPersonFields" style="display: none;">
+                <div class="form-group">
+                    <label>اختر الشخص المسجل</label>
+                    <select id="selectSavedPerson">
+                        <option value="">-- اختر اسم الشخص --</option>
+                    </select>
+                </div>
+            </div>
+
+            <label>بنود الفاتورة / المعاملات 🛒</label>
+            <div id="itemsContainer"></div>
+
+            <button class="btn btn-add-item" onclick="addItemRow()">➕ إضافة بند آخر</button>
+            <button class="btn btn-success" id="btnSave" onclick="saveInvoiceData()">💾 حفظ الفاتورة بالسجل</button>
+            <button class="btn" id="btnCancelEdit" style="background:#64748b; display:none; margin-top:6px;" onclick="resetForm()">إلغاء التعديل</button>
+        </div>
+
+        <h3>🔍 فرز وحسابات الفواتير 🌟</h3>
+        <div class="filter-card">
+            <div class="form-group" style="margin-bottom: 8px;">
+                <input type="text" id="searchQuery" placeholder="🔎 بحث بالاسم أو الوصف..." oninput="loadHistory()">
+            </div>
+            <div class="row">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <select id="filterPerson" onchange="loadHistory()">
+                        <option value="ALL">جميع الأشخاص</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <select id="filterType" onchange="loadHistory()">
+                        <option value="ALL">جميع التصنيفات</option>
+                        <option value="دائن">دائن (لك عليه)</option>
+                        <option value="مديون">مديون (له عليك)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-item summary-credit">
+                إجمالي لك (دائن): <br><span id="totalCredit">0.00</span> ر.س
+            </div>
+            <div class="summary-item summary-debit">
+                إجمالي عليك (مديون): <br><span id="totalDebit">0.00</span> ر.س
+            </div>
+        </div>
+
+        <div id="historyList"></div>
+    </div>
+
+    <!-- ================= 2. قسم الأشخاص ================= -->
+    <div id="tabPeople" style="display: none;">
+        <div class="card">
+            <h3>👤 حفظ شخص جديد للقائمة ✨</h3>
+            <div class="row">
+                <div class="form-group">
+                    <label>الاسم</label>
+                    <input type="text" id="newPersonName" placeholder="اسم الشخص">
+                </div>
+                <div class="form-group">
+                    <label>التصنيف الافتراضي</label>
+                    <select id="newPersonType">
+                        <option value="دائن">دائن (لك عليه)</option>
+                        <option value="مديون">مديون (له عليك)</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="addPersonToLibrary()">+ إضافة للقائمة الدائمة</button>
+        </div>
+        <h3>📋 القائمة الدائمة للأشخاص 👍</h3>
+        <div id="peopleList"></div>
+    </div>
+
+    <!-- ================= 3. قسم سلة المهملات ================= -->
+    <div id="tabTrash" style="display: none;">
+        <div class="card" style="background:#fff1f2; border-color:#fecdd3;">
+            <h3 style="color:#e11d48;">🗑️ سلة المهملات</h3>
+            <p style="font-size:12px; color:#9f1239;">الفواتير في هذه القائمة تُحذف نهائياً وبشكل تلقائي بعد مرور 7 أيام.</p>
+        </div>
+        <div id="trashList"></div>
+    </div>
+
+    <!-- ================= 4. شاشة معاينة الفاتورة (Preview Modal) ================= -->
+    <div id="previewOverlay">
+        <div class="preview-actions">
+            <button class="btn-download" onclick="printPDF()">🖨️ طباعة / حفظ كملف PDF</button>
+            <button class="btn-close-preview" onclick="closePreview()">❌ إغلاق المعاينة</button>
+        </div>
+
+        <div id="invoiceTemplate" class="a4-paper">
+            <div class="a4-header">
+                <div>
+                    <h1>فاتورة ضريبية</h1>
+                    <p>TAX INVOICE</p>
+                </div>
+                <div class="a4-header-right">
+                    <h2>NARA INVOICES</h2>
+                    <p>نظام الإدارة المالية الشامل</p>
+                </div>
+            </div>
+
+            <div class="a4-info-box">
+                <div class="a4-info-panel">
+                    <div class="lbl">مُصدرة إلى السيد / العميل:</div>
+                    <div class="val">
+                        <span id="pdfClientName"></span> 
+                        <span id="pdfEditedTag" style="color:#f59e0b; font-size:12px; font-weight:normal; margin-right:5px;"></span>
+                    </div>
+                    <div style="margin-top: 4px; font-size: 13px; color: #64748b;">
+                        تصنيف الحساب: <span id="pdfPersonType" style="color: #334155;"></span>
+                    </div>
+                </div>
+                
+                <div class="a4-info-panel" style="text-align: left;">
+                    <div style="margin-bottom: 8px;"><span style="color:#94a3b8; font-size:12px;">رقم الفاتورة:</span> <strong style="color:#0f172a; font-size:14px; margin-right:5px;">#<span id="pdfInvNumber"></span></strong></div>
+                    <div><span style="color:#94a3b8; font-size:12px;">تاريخ الإصدار:</span> <strong id="pdfInvDate" style="color:#0f172a; font-size:14px; margin-right:5px;"></strong></div>
+                </div>
+            </div>
+
+            <table class="a4-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%; text-align: center;">#</th>
+                        <th style="width: 45%;">البيان / تفاصيل الخدمة</th>
+                        <th style="width: 15%; text-align: center;">المبلغ</th>
+                        <th style="width: 15%; text-align: center;">الضريبة</th>
+                        <th style="width: 20%; text-align: center;">الإجمالي</th>
+                    </tr>
+                </thead>
+                <tbody id="pdfItemsTableBody"></tbody>
+            </table>
+
+            <div class="a4-summary">
+                <table>
+                    <tr>
+                        <td class="sum-title">الإجمالي قبل الضريبة:</td>
+                        <td class="sum-val"><span id="pdfSubTotal"></span> ر.س</td>
+                    </tr>
+                    <tr>
+                        <td class="sum-title">مجموع ضريبة القيمة المضافة:</td>
+                        <td class="sum-val"><span id="pdfVatAmount"></span> ر.س</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>الإجمالي الكلي المستحق:</td>
+                        <td class="total-val"><span id="pdfGrandTotal"></span> ر.س</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="text-align: center; font-size: 12px; color: #94a3b8; margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                وثيقة مُصدرة آلياً وتعتبر فاتورة مالية معتمدة - شكراً لثقتكم وتعاملكم معنا
+            </div>
+        </div>
+    </div>
+
+    <!-- ربط Firebase السحابي -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDGsMNwQy8tbK9DBYNn60zPA7UtoOvykmo",
+            authDomain: "nara-invoices-5d481.firebaseapp.com",
+            projectId: "nara-invoices-5d481",
+            storageBucket: "nara-invoices-5d481.firebasestorage.app",
+            messagingSenderId: "1090499233942",
+            appId: "1:1090499233942:web:dd63607c9eff6eb9055ab7",
+            measurementId: "G-JEX11S1Z7F"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+    </script>
+
+    <script>
+        let currentMode = 'new'; 
+        let editingInvNum = null;
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2500);
+        }
+
+        // --- المزامنة والاسترجاع من السحابة ---
+        async function syncFromCloud() {
+            showToast('جاري استرجاع فواتيرك من السحابة... ⏳');
+            try {
+                if (window.db && window.getDocs) {
+                    const querySnapshot = await window.getDocs(window.collection(window.db, "invoices"));
+                    let cloudInvoices = [];
+                    querySnapshot.forEach((doc) => {
+                        cloudInvoices.push(doc.data());
+                    });
+
+                    if (cloudInvoices.length > 0) {
+                        let localInvoices = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+                        let merged = [...localInvoices];
+
+                        cloudInvoices.forEach(ci => {
+                            if (!merged.find(li => String(li.invNum) === String(ci.invNum))) {
+                                merged.push(ci);
+                            }
+                        });
+
+                        merged.sort((a, b) => b.invNum - a.invNum);
+                        localStorage.setItem('nara_invoices', JSON.stringify(merged));
+                        
+                        loadHistory();
+                        showToast('تم استرجاع البيانات السحابية بنجاح! ☁️✅');
+                    } else {
+                        showToast('لا توجد فواتير سابقة في السحابة 💡');
+                    }
+                }
+            } catch (e) {
+                showToast('حدث خطأ في الاتصال بالسحابة ❌');
+                console.error(e);
+            }
+        }
+
+        function fixExistingData() {
+            let data = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let isUpdated = false;
+
+            data = data.map(inv => {
+                let cleanType = (inv.type || '').includes('مديون') ? 'مديون' : 'دائن';
+                if (inv.type !== cleanType) { inv.type = cleanType; isUpdated = true; }
+                
+                if (!inv.items || !Array.isArray(inv.items)) {
+                    inv.items = [{
+                        desc: inv.desc || 'معاملة سابقة', price: Number(inv.price) || 0,
+                        vatRate: Number(inv.vatRate) || 0, vatAmount: Number(inv.vatAmount) || 0,
+                        itemTotal: Number(inv.total) || 0
+                    }];
+                    inv.totalVat = Number(inv.vatAmount) || 0;
+                    isUpdated = true;
+                }
+                return inv;
+            });
+            if (isUpdated) localStorage.setItem('nara_invoices', JSON.stringify(data));
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('dots-btn')) {
+                document.querySelectorAll('.dropdown-menu').forEach(m => m.style.display = 'none');
+            }
+        });
+
+        function toggleMenu(invNum, event) {
+            event.stopPropagation();
+            const menu = document.getElementById(`menu-${invNum}`);
+            const isVisible = menu.style.display === 'block';
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.style.display = 'none');
+            if (menu) menu.style.display = isVisible ? 'none' : 'block';
+        }
+
+        function switchTab(tab) {
+            document.getElementById('tabInvoices').style.display = tab === 'invoices' ? 'block' : 'none';
+            document.getElementById('tabPeople').style.display = tab === 'people' ? 'block' : 'none';
+            document.getElementById('tabTrash').style.display = tab === 'trash' ? 'block' : 'none';
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons[0].classList.toggle('active', tab === 'invoices');
+            buttons[1].classList.toggle('active', tab === 'people');
+            buttons[2].classList.toggle('active', tab === 'trash');
+            if (tab === 'trash') loadTrash();
+        }
+
+        function setPersonMode(mode) {
+            currentMode = mode;
+            document.getElementById('btnNewMode').classList.toggle('active', mode === 'new');
+            document.getElementById('btnSavedMode').classList.toggle('active', mode === 'saved');
+            document.getElementById('newPersonFields').style.display = mode === 'new' ? 'block' : 'none';
+            document.getElementById('savedPersonFields').style.display = mode === 'saved' ? 'block' : 'none';
+        }
+
+        function addItemRow(desc = '', price = '', vat = 15) {
+            const container = document.getElementById('itemsContainer');
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <button class="btn-remove-item" onclick="this.parentElement.remove()">✕</button>
+                <div class="form-group" style="margin-bottom:6px;">
+                    <input type="text" class="item-desc" value="${desc}" placeholder="وصف الخدمة / البند">
+                </div>
+                <div class="row">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <input type="number" class="item-price" value="${price}" placeholder="المبلغ (ر.س)">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <input type="number" class="item-vat" value="${vat}" placeholder="الضريبة %">
+                    </div>
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        function addPersonToLibrary() {
+            const name = document.getElementById('newPersonName').value.trim();
+            const rawType = document.getElementById('newPersonType').value;
+            const type = rawType.includes('مديون') ? 'مديون' : 'دائن';
+
+            if (!name) return showToast('أدخل الاسم أولاً ⚠️');
+
+            let people = JSON.parse(localStorage.getItem('nara_people') || '[]');
+            if (people.find(p => p.name === name)) return showToast('هذا الشخص موجود بالفعل ⚠️');
+
+            people.push({ name, type });
+            localStorage.setItem('nara_people', JSON.stringify(people));
+
+            document.getElementById('newPersonName').value = '';
+            renderPeople();
+            showToast('تم حفظ الشخص للقائمة الدائمة! 🎉');
+        }
+
+        function deletePerson(name) {
+            if (!confirm(`هل تريد حذف ${name} من القائمة؟`)) return;
+            let people = JSON.parse(localStorage.getItem('nara_people') || '[]');
+            people = people.filter(p => p.name !== name);
+            localStorage.setItem('nara_people', JSON.stringify(people));
+            renderPeople();
+        }
+
+        function renderPeople() {
+            let people = JSON.parse(localStorage.getItem('nara_people') || '[]');
+            let peopleContainer = document.getElementById('peopleList');
+            peopleContainer.innerHTML = people.map(p => `
+                <div class="person-item" style="background:white; padding:10px; border-radius:10px; margin-bottom:6px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <b>${p.name}</b>
+                        <span class="badge ${p.type === 'دائن' ? 'badge-credit' : 'badge-debit'}">${p.type}</span>
+                    </div>
+                    <button style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;" onclick="deletePerson('${p.name}')">حذف</button>
+                </div>
+            `).join('') || '<p style="font-size:12px; color:#aaa; text-align:center;">لا يوجد أشخاص محفوظين 💡</p>';
+
+            let selectSavedPerson = document.getElementById('selectSavedPerson');
+            let filterPerson = document.getElementById('filterPerson');
+
+            selectSavedPerson.innerHTML = '<option value="">-- اختر اسم الشخص --</option>';
+            filterPerson.innerHTML = '<option value="ALL">جميع الأشخاص</option>';
+
+            people.forEach(p => {
+                selectSavedPerson.innerHTML += `<option value="${p.name}" data-type="${p.type}">${p.name} (${p.type})</option>`;
+                filterPerson.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+            });
+        }
+
+        function getInputs() {
+            let name = "", rawType = "";
+
+            if (currentMode === 'new') {
+                name = document.getElementById('directName').value.trim() || 'عميل';
+                rawType = document.getElementById('directType').value;
+            } else {
+                const select = document.getElementById('selectSavedPerson');
+                name = select.value;
+                const opt = select.options[select.selectedIndex];
+                rawType = opt ? opt.getAttribute('data-type') || 'دائن' : 'دائن';
+            }
+
+            let type = rawType.includes('مديون') ? 'مديون' : 'دائن';
+            let items = [], total = 0, totalVat = 0;
+
+            document.querySelectorAll('.item-row').forEach(row => {
+                let desc = row.querySelector('.item-desc').value || 'بند';
+                let price = parseFloat(row.querySelector('.item-price').value) || 0;
+                let vatRate = parseFloat(row.querySelector('.item-vat').value) || 0;
+                let vatAmount = price * (vatRate / 100);
+                let itemTotal = price + vatAmount;
+
+                if (price > 0) {
+                    items.push({ desc, price, vatRate, vatAmount, itemTotal });
+                    total += itemTotal; totalVat += vatAmount;
+                }
+            });
+
+            const date = new Date().toLocaleDateString('ar-SA');
+            const invNum = editingInvNum || Math.floor(100000 + Math.random() * 900000);
+
+            return { name, type, items, total, totalVat, date, invNum, isEdited: !!editingInvNum };
+        }
+
+        async function saveInvoiceData() {
+            const data = getInputs();
+            if (currentMode === 'saved' && !data.name) return showToast('اختر شخص من القائمة أولاً ⚠️');
+            if (data.items.length === 0) return showToast('أدخل بنداً واحداً ومبلغاً على الأقل ⚠️');
+
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+
+            if (editingInvNum) {
+                data.isEdited = true;
+                history = history.map(inv => String(inv.invNum) === String(editingInvNum) ? data : inv);
+                showToast('تم تحديث الفاتورة بنجاح! ✏️🎉');
+            } else {
+                history.unshift(data);
+                showToast('تم تسجيل الفاتورة بنجاح! 💾🎉');
+            }
+
+            localStorage.setItem('nara_invoices', JSON.stringify(history));
+            resetForm();
+            loadHistory();
+
+            try {
+                if (window.db) await window.addDoc(window.collection(window.db, "invoices"), data);
+            } catch (e) { console.log('حفظ محلي فقط'); }
+        }
+
+        function editInvoice(invNum) {
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let inv = history.find(i => String(i.invNum) === String(invNum));
+            if (!inv) return;
+
+            editingInvNum = inv.invNum;
+            document.getElementById('formTitle').innerText = '✏️ تعديل الفاتورة #' + inv.invNum;
+            document.getElementById('btnSave').innerText = '💾 حفظ التعديلات';
+            document.getElementById('btnCancelEdit').style.display = 'block';
+
+            setPersonMode('new');
+            document.getElementById('directName').value = inv.name;
+            document.getElementById('directType').value = inv.type.includes('مديون') ? 'مديون' : 'دائن';
+
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = '';
+            (inv.items || []).forEach(it => addItemRow(it.desc, it.price, it.vatRate));
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function moveToTrash(invNum) {
+            if (!confirm('⚠️ هل تريد نقل هذه الفاتورة إلى سلة المهملات؟')) return;
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let trash = JSON.parse(localStorage.getItem('nara_trash') || '[]');
+
+            let invToMove = history.find(i => String(i.invNum) === String(invNum));
+            if (!invToMove) return;
+
+            invToMove.deletedAt = new Date().getTime();
+            trash.unshift(invToMove);
+            history = history.filter(i => String(i.invNum) !== String(invNum));
+
+            localStorage.setItem('nara_invoices', JSON.stringify(history));
+            localStorage.setItem('nara_trash', JSON.stringify(trash));
+            loadHistory(); loadTrash(); showToast('تم نقل الفاتورة لسلة المهملات 🗑️');
+        }
+
+        function restoreFromTrash(invNum) {
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let trash = JSON.parse(localStorage.getItem('nara_trash') || '[]');
+            let invToRestore = trash.find(i => String(i.invNum) === String(invNum));
+            if (!invToRestore) return;
+
+            delete invToRestore.deletedAt;
+            history.unshift(invToRestore);
+            trash = trash.filter(i => String(i.invNum) !== String(invNum));
+
+            localStorage.setItem('nara_invoices', JSON.stringify(history));
+            localStorage.setItem('nara_trash', JSON.stringify(trash));
+            loadTrash(); loadHistory(); showToast('تم استرجاع الفاتورة بنجاح! 🔄🎉');
+        }
+
+        function cleanOldTrash() {
+            let trash = JSON.parse(localStorage.getItem('nara_trash') || '[]');
+            const now = new Date().getTime();
+            trash = trash.filter(item => item.deletedAt && (now - item.deletedAt) < (7 * 24 * 60 * 60 * 1000));
+            localStorage.setItem('nara_trash', JSON.stringify(trash));
+            if(document.getElementById('trashCount')) document.getElementById('trashCount').innerText = trash.length;
+        }
+
+        function loadTrash() {
+            cleanOldTrash();
+            let trash = JSON.parse(localStorage.getItem('nara_trash') || '[]');
+            let container = document.getElementById('trashList');
+
+            if (trash.length === 0) {
+                container.innerHTML = '<p style="font-size:12px; color:#aaa; text-align:center;">سلة المهملات فارغة 💡</p>';
+                return;
+            }
+
+            const now = new Date().getTime();
+            container.innerHTML = trash.map(item => {
+                let daysLeft = Math.ceil((7 * 24 * 60 * 60 * 1000 - (now - item.deletedAt)) / (1000 * 60 * 60 * 24));
+                let isDebit = item.type === 'مديون';
+                let itemsSummary = (item.items || []).map(i => `${i.desc}`).join(', ');
+
+                return `
+                    <div class="history-card" style="border-right: 4px solid #ef4444;">
+                        <div class="history-header" style="padding-left:0;">
+                            <div><b>${item.name}</b> <span class="badge ${isDebit ? 'badge-debit' : 'badge-credit'}">${isDebit ? 'مديون' : 'دائن'}</span></div>
+                            <b style="color:#ef4444;">${Number(item.total).toFixed(2)} ر.س</b>
+                        </div>
+                        <small style="color: #64748b; display:block;">البنود: ${itemsSummary}</small>
+                        <small style="color: #e11d48; font-weight:bold; font-size:11px; display:block; margin-top:4px;">⏳ متبقي على الحذف النهائي: ${daysLeft} يوم</small>
+                        <button style="margin-top:8px; width:100%; padding:8px; background:#10b981; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="restoreFromTrash('${item.invNum}')">🔄 استرجاع الفاتورة للسجل</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function resetForm() {
+            editingInvNum = null;
+            document.getElementById('formTitle').innerText = '📄 تسجيل فاتورة جديدة ✨';
+            document.getElementById('btnSave').innerText = '💾 حفظ الفاتورة بالسجل';
+            document.getElementById('btnCancelEdit').style.display = 'none';
+
+            document.getElementById('directName').value = '';
+            document.getElementById('itemsContainer').innerHTML = '';
+            addItemRow();
+        }
+
+        // ================= نظام المعاينة والطباعة الأصلي (يحل مشكلة العربي 100%) =================
+        function openPreview(invNum) {
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let data = history.find(i => String(i.invNum) === String(invNum));
+            if (!data) return;
+
+            document.getElementById('pdfClientName').innerText = data.name;
+            document.getElementById('pdfPersonType').innerText = data.type;
+            document.getElementById('pdfInvDate').innerText = data.date;
+            document.getElementById('pdfInvNumber').innerText = data.invNum;
+            document.getElementById('pdfEditedTag').innerText = data.isEdited ? '(معدّلة)' : '';
+
+            let subTotal = 0;
+            let tbody = document.getElementById('pdfItemsTableBody');
+            tbody.innerHTML = (data.items || []).map((it, index) => {
+                subTotal += Number(it.price);
+                return `
+                <tr>
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td style="font-weight: bold;">${it.desc}</td>
+                    <td style="text-align: center;">${Number(it.price).toFixed(2)}</td>
+                    <td style="text-align: center; color: #64748b; font-size: 11px;">${Number(it.vatAmount).toFixed(2)} (${it.vatRate}%)</td>
+                    <td style="text-align: center; font-weight: bold;">${Number(it.itemTotal).toFixed(2)}</td>
+                </tr>
+                `;
+            }).join('');
+
+            document.getElementById('pdfSubTotal').innerText = subTotal.toFixed(2);
+            document.getElementById('pdfVatAmount').innerText = Number(data.totalVat).toFixed(2);
+            document.getElementById('pdfGrandTotal').innerText = Number(data.total).toFixed(2);
+
+            document.getElementById('previewOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; 
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.style.display = 'none');
+        }
+
+        function closePreview() {
+            document.getElementById('previewOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto'; 
+        }
+
+        // دالة الطباعة النظيفة التي تدعم حفظ PDF باللغة العربية بدقة 100%
+        function printPDF() {
+            // نستخدم دالة الطباعة الخاصة بالمتصفح، عند ظهور النافذة اختر (حفظ بتنسيق PDF)
+            window.print();
+        }
+        // ======================================================================
+
+        function loadHistory() {
+            fixExistingData(); 
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let selectedPerson = document.getElementById('filterPerson').value;
+            let selectedType = document.getElementById('filterType').value;
+            let query = document.getElementById('searchQuery').value.trim().toLowerCase();
+
+            if (selectedPerson !== 'ALL') history = history.filter(inv => inv.name === selectedPerson);
+            if (selectedType !== 'ALL') history = history.filter(inv => inv.type === selectedType);
+            if (query !== '') history = history.filter(inv => inv.name.toLowerCase().includes(query) || (inv.items || []).some(i => (i.desc || '').toLowerCase().includes(query)));
+
+            let sumCredit = 0, sumDebit = 0;
+            history.forEach(inv => { if (inv.type === 'مديون') sumDebit += Number(inv.total); else sumCredit += Number(inv.total); });
+
+            document.getElementById('totalCredit').innerText = sumCredit.toFixed(2);
+            document.getElementById('totalDebit').innerText = sumDebit.toFixed(2);
+
+            let container = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                container.innerHTML = '<p style="font-size:12px; color:#aaa; text-align:center;">لا توجد فواتير مطابقة 💡</p>'; return;
+            }
+
+            let creditInvoices = history.filter(i => i.type === 'دائن');
+            let debitInvoices = history.filter(i => i.type === 'مديون');
+            let html = '';
+
+            if (creditInvoices.length > 0) {
+                html += `<div class="section-title title-credit">🟩 فواتير دائنة (لك عليه): ${creditInvoices.length}</div>`;
+                html += creditInvoices.map(renderSingleCard).join('');
+            }
+            if (debitInvoices.length > 0) {
+                html += `<div class="section-title title-debit">🟥 فواتير مديونة (له عليك): ${debitInvoices.length}</div>`;
+                html += debitInvoices.map(renderSingleCard).join('');
+            }
+
+            container.innerHTML = html;
+            cleanOldTrash();
+        }
+
+        function renderSingleCard(item) {
+            let itemsSummary = (item.items || []).map(i => `${i.desc} (${Number(i.itemTotal).toFixed(2)} ر.س)`).join(' + ');
+            let editedBadge = item.isEdited ? '<span class="badge badge-edited">معدّلة ✏️</span>' : '';
+            let isDebit = item.type === 'مديون';
+
+            return `
+                <div class="history-card">
+                    <div class="menu-container">
+                        <button class="dots-btn" onclick="toggleMenu('${item.invNum}', event)">⋮</button>
+                        <div class="dropdown-menu" id="menu-${item.invNum}">
+                            <button onclick="openPreview('${item.invNum}')">📄 معاينة وإصدار PDF</button>
+                            <button onclick="editInvoice('${item.invNum}')">✏️ تعديل الفاتورة</button>
+                            <button class="danger" onclick="moveToTrash('${item.invNum}')">🗑️ نقل للمهملات</button>
+                        </div>
+                    </div>
+
+                    <div class="history-header">
+                        <div>
+                            <b>${item.name}</b>
+                            <span class="badge ${isDebit ? 'badge-debit' : 'badge-credit'}">${isDebit ? 'مديون' : 'دائن'}</span>
+                            ${editedBadge}
+                        </div>
+                        <b style="color:#2563eb;">${Number(item.total).toFixed(2)} ر.س</b>
+                    </div>
+                    <small style="color: #64748b; display:block;">البنود: ${itemsSummary}</small>
+                    <small style="color: #94a3b8; font-size:10px;">التاريخ: ${item.date} | رقم: #${item.invNum}</small>
+                </div>
+            `;
+        }
+
+        addItemRow(); renderPeople(); loadHistory();
+    </script>
+</body>
+</html>
