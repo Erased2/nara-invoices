@@ -34,10 +34,16 @@
         .header p { font-size: 13px; color: #64748b; margin-bottom: 10px; }
 
         .btn-sync {
-            background: #0f172a; color: white; border: none; padding: 8px 16px;
+            background: #10b981; color: white; border: none; padding: 8px 16px;
             border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 6px;
-            transition: all 0.3s ease; width: 100%; justify-content: center;
+            transition: all 0.3s ease; width: 100%; justify-content: center; margin-bottom: 6px;
+        }
+
+        .btn-danger-reset {
+            background: #ef4444; color: white; border: none; padding: 6px 12px;
+            border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;
+            width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 6px;
         }
 
         #toast {
@@ -121,7 +127,6 @@
         .date-filter-group { display: flex; gap: 10px; margin-top: 10px; }
         .date-filter-group input { padding: 8px; border-radius: 8px; font-size: 12px; border: 1px solid var(--border); background: white;}
 
-        /* الشريط العائم الذكي للعمليات الجماعية */
         #mergeFloatBar {
             display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: #0f172a; color: white; padding: 12px 15px; border-radius: 16px;
@@ -130,7 +135,6 @@
             flex-wrap: wrap; gap: 10px;
         }
 
-        /* نوافذ السداد المنبثقة */
         #paymentModal, #bulkPaymentModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15,23,42,0.8); z-index: 99999; padding: 20px;
@@ -138,7 +142,6 @@
         }
         .payment-modal-card { background: white; padding: 20px; border-radius: 16px; width: 100%; max-width: 350px; }
 
-        /* ================= شاشة المعاينة والقالب الكلاسيكي الأنيق للطباعة (A4) ================= */
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
         #previewOverlay {
@@ -205,13 +208,16 @@
 </head>
 <body>
 
-    <div id="toast">تم حفظ التغييرات بنجاح! ☁️🎉</div>
+    <div id="toast">تم تحديث النظام بنجاح! ☁️🎉</div>
 
     <div class="header">
         <h1>NARA INVOICES</h1>
         <p>النظام المالي الموحد</p>
-        <button id="autoSyncBtn" class="btn-sync" onclick="syncFromCloud()">
+        <button id="autoSyncBtn" class="btn-sync">
             ⏳ جاري الاتصال بالسحابة...
+        </button>
+        <button class="btn-danger-reset" onclick="resetCloudAndLocalDatabase()">
+            ⚠️ تصفير وحذف كل فواتير السحابة نهائياً
         </button>
     </div>
 
@@ -453,7 +459,7 @@
         </div>
     </div>
 
-    <!-- ربط Firebase السحابي (المزامنة الحية) -->
+    <!-- ربط Firebase السحابي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -494,7 +500,44 @@
             setTimeout(() => { toast.style.display = 'none'; }, 2500);
         }
 
-        // ================= المزامنة السحابية المباشرة =================
+        // ================= التصفير الكامل للسحابة والمحلية =================
+        async function resetCloudAndLocalDatabase() {
+            if(!confirm('⚠️ تحذير شديد: هل أنت متأكد من حذف وحرق جميع بيانات الفواتير والأشخاص من السحابة والجهاز نهائياً؟ لا يمكن التراجع عن هذا الإجراء!')) return;
+            
+            showToast('جاري تصفير السحابة وحذف كافة البيانات... ⏳');
+            try {
+                if (window.db && window.getDocs && window.deleteDoc) {
+                    // 1. حذف جميع فواتير السحابة
+                    const invSnap = await window.getDocs(window.collection(window.db, "invoices"));
+                    for (let d of invSnap.docs) {
+                        await window.deleteDoc(window.doc(window.db, "invoices", d.id));
+                    }
+                    // 2. حذف جميع الأشخاص بالسحابة
+                    const pSnap = await window.getDocs(window.collection(window.db, "people"));
+                    for (let d of pSnap.docs) {
+                        await window.deleteDoc(window.doc(window.db, "people", d.id));
+                    }
+                    // 3. حذف مهملات السحابة
+                    const tSnap = await window.getDocs(window.collection(window.db, "trash"));
+                    for (let d of tSnap.docs) {
+                        await window.deleteDoc(window.doc(window.db, "trash", d.id));
+                    }
+                }
+            } catch(e) {
+                console.error(e);
+            }
+
+            // تفريغ الذاكرة المحلية بالكامل
+            localStorage.removeItem('nara_invoices');
+            localStorage.removeItem('nara_people');
+            localStorage.removeItem('nara_trash');
+
+            showToast('تم تصفير الموقع بالكامل وأصبح فارغاً بنجاح! 🧹✨');
+            loadHistory();
+            renderPeople();
+            loadTrash();
+        }
+
         async function saveCloudPerson(p) {
             try { if(window.db) await window.setDoc(window.doc(window.db, "people", p.name), p); } catch(e){}
         }
@@ -511,6 +554,7 @@
             try { if (window.db) await window.setDoc(window.doc(window.db, "invoices", String(data.invNum)), data); } catch(e){}
         }
 
+        // ================= المزامنة الحية (Real-Time Sync) =================
         function initAutoSync() {
             if (!window.db || !window.onSnapshot) {
                 setTimeout(initAutoSync, 1000); 
@@ -549,26 +593,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => { initAutoSync(); });
-
-        async function syncFromCloud() {
-            showToast('جاري المزامنة الشاملة مع السحابة... ⏳');
-            try {
-                if (window.db) {
-                    let localInvoices = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
-                    for (let inv of localInvoices) await saveCloudSingle(inv);
-
-                    let localPeople = JSON.parse(localStorage.getItem('nara_people') || '[]');
-                    for (let p of localPeople) await saveCloudPerson(p);
-
-                    let localTrash = JSON.parse(localStorage.getItem('nara_trash') || '[]');
-                    for (let t of localTrash) await saveCloudTrash(t);
-                    
-                    showToast('تمت مزامنة ورفع جميع البيانات بنجاح! ☁️✅');
-                }
-            } catch (e) {
-                showToast('حدث خطأ في الاتصال بالسحابة ❌');
-            }
-        }
 
         function fixExistingData() {
             let data = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
