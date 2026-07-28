@@ -26,7 +26,7 @@
             max-width: 500px;
             margin: 0 auto;
             direction: rtl;
-            padding-bottom: 80px; /* مساحة للشريط العائم */
+            padding-bottom: 80px; 
         }
 
         .header { text-align: center; margin-bottom: 15px; }
@@ -128,7 +128,9 @@
             align-items: center; justify-content: space-between; border: 1px solid #334155;
         }
 
-        /* ================= شاشة المعاينة والقالب الأصلي المعتمد (مع تحسين للطباعة A4) ================= */
+        /* ================= شاشة المعاينة والقالب الكلاسيكي الأنيق للطباعة (A4) ================= */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
         #previewOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.9); z-index: 10000; overflow-y: auto;
@@ -152,32 +154,34 @@
         .a4-paper {
             background: #ffffff; width: 100%; max-width: 800px; padding: 40px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); direction: rtl; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #334155; box-sizing: border-box; margin-bottom: 50px; border-radius: 8px;
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, sans-serif;
+            color: #334155; box-sizing: border-box; margin-bottom: 50px;
         }
 
-        .a4-header { display: flex; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 30px; }
-        .a4-header h1 { margin: 0; font-size: 26px; color: #0f172a; }
-        .a4-header p { margin: 5px 0 0 0; color: #64748b; font-size: 13px; letter-spacing: 1px;}
-        .a4-header-right h2 { margin: 0; font-size: 22px; color: #3b82f6; }
-        .a4-header-right p { margin: 5px 0 0 0; color: #94a3b8; font-size: 12px; }
+        .a4-header { display: flex; justify-content: space-between; border-bottom: 2px solid #1e293b; padding-bottom: 15px; margin-bottom: 25px; }
+        .a4-header h1 { font-size: 28px; margin: 0; color: #1e293b; }
+        .a4-header p { margin: 5px 0 0 0; color: #475569; font-size: 14px; }
+        .a4-header-left { text-align: left; }
+        .a4-header-left h2 { font-size: 24px; margin: 0; color: #1e293b; letter-spacing: 1px; }
+        .a4-header-left p { margin: 5px 0 0 0; color: #475569; font-size: 14px; }
         
-        .a4-info-box { display: flex; justify-content: space-between; margin-bottom: 30px; }
-        .a4-info-panel { width: 48%; padding: 5px 0; }
-        .a4-info-panel .lbl { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+        .a4-info-box { display: flex; justify-content: space-between; margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; }
+        .a4-info-panel { width: 48%; }
+        .a4-info-panel .lbl { font-size: 12px; color: #64748b; margin-bottom: 4px; }
         .a4-info-panel .val { font-size: 18px; font-weight: bold; color: #1e293b; }
+        .a4-info-panel .sub-val { font-size: 13px; color: #475569; margin-top: 4px; }
         
-        .a4-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; text-align: right; font-size: 13px; }
-        .a4-table th { background: #f8fafc; color: #334155; padding: 12px; border-bottom: 2px solid #cbd5e1; font-weight: bold; }
+        .a4-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; text-align: right; font-size: 14px; }
+        .a4-table th { background: #f8fafc; color: #1e293b; padding: 12px; border-bottom: 2px solid #cbd5e1; font-weight: bold; }
         .a4-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #1e293b; }
         
         .a4-summary { display: flex; justify-content: flex-end; margin-bottom: 20px; }
-        .a4-summary table { width: 45%; border-collapse: collapse; font-size: 13px; text-align: right; }
+        .a4-summary table { width: 45%; border-collapse: collapse; font-size: 14px; text-align: right; }
         .a4-summary td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
         .a4-summary .sum-title { color: #64748b; }
         .a4-summary .sum-val { font-weight: bold; text-align: left; color: #1e293b; }
-        .a4-summary .total-row td { border-top: 2px solid #94a3b8; border-bottom: none; font-size: 16px; font-weight: bold; color: #0f172a; padding-top: 15px; background: #f8fafc; }
-        .a4-summary .total-val { color: #2563eb !important; font-weight: 900 !important; text-align: left; }
+        .a4-summary .total-row td { border-top: 2px solid #1e293b; border-bottom: none; font-size: 16px; font-weight: bold; color: #1e293b; padding-top: 15px; }
+        .a4-summary .total-val { color: #1e293b !important; font-weight: 900 !important; text-align: left; }
 
         /* ================= إعدادات الطباعة النظيفة للحفظ كـ PDF بمقاس A4 ================= */
         @page { size: A4 portrait; margin: 15mm; }
@@ -252,11 +256,7 @@
                 </div>
             </div>
 
-            <!-- حقل التاريخ للفاتورة -->
-            <div class="form-group">
-                <label>تاريخ الفاتورة 📅</label>
-                <input type="date" id="invoiceDate">
-            </div>
+            <!-- تمت إزالة خانة التاريخ لجمالية الموقع وتسجيله تلقائياً بالخلفية -->
 
             <label>بنود الفاتورة / المعاملات 🛒</label>
             <div id="itemsContainer"></div>
@@ -307,7 +307,6 @@
             </div>
         </div>
 
-        <!-- أضفنا توجيه بسيط لخاصية الدمج -->
         <p style="font-size: 11px; color: #64748b; text-align: center; margin-bottom: 10px;">💡 لدمج فواتير شخص واحد، قم بتحديد المربع (☑️) بجانب فواتيره</p>
 
         <div id="historyList"></div>
@@ -345,7 +344,7 @@
         <div id="trashList"></div>
     </div>
 
-    <!-- ================= 4. شاشة معاينة الفاتورة (التصميم الأصلي الأنيق) ================= -->
+    <!-- ================= 4. شاشة معاينة الفاتورة الكلاسيكية (A4) ================= -->
     <div id="previewOverlay">
         <div class="preview-actions">
             <button class="btn-download" onclick="printPDF()">🖨️ طباعة / حفظ كملف PDF</button>
@@ -353,14 +352,17 @@
         </div>
 
         <div id="invoiceTemplate" class="a4-paper">
+            
             <div class="a4-header">
                 <div>
-                    <h1>فاتورة ضريبية</h1>
-                    <p>TAX INVOICE</p>
+                    <h1>نارا للفواتير</h1>
+                    <p>المملكة العربية السعودية، جازان</p>
+                    <p>الرقم الضريبي: 300000000000003</p>
                 </div>
-                <div class="a4-header-right">
-                    <h2>NARA INVOICES</h2>
-                    <p>نظام الإدارة المالية الشامل</p>
+                <div class="a4-header-left">
+                    <h2>فاتورة | INVOICE</h2>
+                    <p>رقم الفاتورة: <strong style="color: #1e293b;">#<span id="pdfInvNumber"></span></strong></p>
+                    <p>تاريخ الإصدار: <strong style="color: #1e293b;"><span id="pdfInvDate"></span></strong></p>
                 </div>
             </div>
 
@@ -371,14 +373,15 @@
                         <span id="pdfClientName"></span> 
                         <span id="pdfEditedTag" style="color:#f59e0b; font-size:12px; font-weight:normal; margin-right:5px;"></span>
                     </div>
-                    <div style="margin-top: 4px; font-size: 13px; color: #64748b;">
-                        تصنيف الحساب: <span id="pdfPersonType" style="color: #334155;"></span>
+                    <div class="sub-val">
+                        التصنيف: <span id="pdfPersonType" style="font-weight: bold; color: #1e293b;"></span>
                     </div>
                 </div>
                 
                 <div class="a4-info-panel" style="text-align: left;">
-                    <div style="margin-bottom: 8px;"><span style="color:#94a3b8; font-size:12px;">رقم الفاتورة:</span> <strong style="color:#0f172a; font-size:14px; margin-right:5px;">#<span id="pdfInvNumber"></span></strong></div>
-                    <div><span style="color:#94a3b8; font-size:12px;">تاريخ الإصدار:</span> <strong id="pdfInvDate" style="color:#0f172a; font-size:14px; margin-right:5px;"></strong></div>
+                    <div class="lbl">معلومات الدفع:</div>
+                    <div class="val" style="font-size: 16px;">مصرف الراجحي</div>
+                    <div class="sub-val">الآيبان: SA0000000000000000000000</div>
                 </div>
             </div>
 
@@ -398,22 +401,22 @@
             <div class="a4-summary">
                 <table>
                     <tr>
-                        <td class="sum-title">الإجمالي قبل الضريبة:</td>
+                        <td class="sum-title">المجموع الفرعي:</td>
                         <td class="sum-val"><span id="pdfSubTotal"></span> ر.س</td>
                     </tr>
                     <tr>
-                        <td class="sum-title">مجموع ضريبة القيمة المضافة:</td>
+                        <td class="sum-title">مجموع الضريبة المضافة:</td>
                         <td class="sum-val"><span id="pdfVatAmount"></span> ر.س</td>
                     </tr>
                     <tr class="total-row">
-                        <td>الإجمالي الكلي المستحق:</td>
+                        <td>الإجمالي المستحق:</td>
                         <td class="total-val"><span id="pdfGrandTotal"></span> ر.س</td>
                     </tr>
                 </table>
             </div>
 
-            <div style="text-align: center; font-size: 12px; color: #94a3b8; margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                وثيقة مُصدرة آلياً وتعتبر فاتورة مالية معتمدة - شكراً لثقتكم وتعاملكم معنا
+            <div style="text-align: center; font-size: 13px; color: #64748b; margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                شكراً لثقتكم وتعاملكم معنا
             </div>
         </div>
     </div>
@@ -445,10 +448,6 @@
     <script>
         let currentMode = 'new'; 
         let editingInvNum = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('invoiceDate').valueAsDate = new Date();
-        });
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -654,10 +653,21 @@
                 }
             });
 
-            const inputDate = document.getElementById('invoiceDate').value || new Date().toISOString().split('T')[0];
-            const dateObj = new Date(inputDate);
-            const date = dateObj.toLocaleDateString('ar-SA'); 
-            const rawDate = inputDate; 
+            // التاريخ يُسجل آلياً في الخلفية
+            let inputDate = new Date().toISOString().split('T')[0];
+            let dateObj = new Date(inputDate);
+            let date = dateObj.toLocaleDateString('ar-SA'); 
+            let rawDate = inputDate; 
+
+            // في حال التعديل على فاتورة قديمة، نحافظ على تاريخها الأصلي
+            if (editingInvNum) {
+                let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+                let oldInv = history.find(i => String(i.invNum) === String(editingInvNum));
+                if (oldInv) {
+                    date = oldInv.date;
+                    rawDate = oldInv.rawDate || inputDate;
+                }
+            }
             
             const invNum = editingInvNum || Math.floor(100000 + Math.random() * 900000);
 
@@ -702,10 +712,6 @@
             setPersonMode('new');
             document.getElementById('directName').value = inv.name;
             document.getElementById('directType').value = inv.type.includes('مديون') ? 'مديون' : 'دائن';
-            
-            if(inv.rawDate) {
-                document.getElementById('invoiceDate').value = inv.rawDate;
-            }
 
             const container = document.getElementById('itemsContainer');
             container.innerHTML = '';
@@ -791,12 +797,11 @@
             document.getElementById('btnCancelEdit').style.display = 'none';
 
             document.getElementById('directName').value = '';
-            document.getElementById('invoiceDate').valueAsDate = new Date(); 
             document.getElementById('itemsContainer').innerHTML = '';
             addItemRow();
         }
 
-        // ================= نظام دمج الفواتير (كشف حساب ذكي من القائمة) =================
+        // ================= نظام دمج الفواتير (كشف حساب ذكي من القائمة مع حماية التصنيفات) =================
         function handleMergeSelection() {
             const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
             const floatBar = document.getElementById('mergeFloatBar');
@@ -816,14 +821,23 @@
 
             let selectedNums = [];
             let namesSet = new Set();
+            let typesSet = new Set(); // للتحقق من عدم دمج تصنيفات مختلفة
             
             checkedBoxes.forEach(cb => {
                 selectedNums.push(cb.value);
                 namesSet.add(cb.getAttribute('data-name'));
+                typesSet.add(cb.getAttribute('data-type'));
             });
 
+            // التحقق من أن جميع الفواتير لنفس الشخص
             if(namesSet.size > 1) {
-                showToast('⚠️ يرجى تحديد فواتير لنفس الشخص فقط حتى يتم الدمج بشكل صحيح');
+                showToast('⚠️ يرجى تحديد فواتير لنفس الشخص فقط!');
+                return;
+            }
+
+            // التحقق من أن جميع الفواتير من نفس التصنيف (دائن مع دائن فقط)
+            if(typesSet.size > 1) {
+                showToast('⚠️ لا يمكن دمج فواتير (دائن) و (مديون) معاً في نفس الكشف!');
                 return;
             }
 
@@ -862,7 +876,7 @@
                         </td>
                         <td style="text-align: center;">${Number(it.price).toFixed(2)}</td>
                         <td style="text-align: center; color: #64748b; font-size: 11px;">${Number(it.vatAmount).toFixed(2)} (${it.vatRate}%)</td>
-                        <td style="text-align: center; font-weight: bold; color: #0f172a;">${Number(it.itemTotal).toFixed(2)}</td>
+                        <td style="text-align: center; font-weight: bold; color: #1e293b;">${Number(it.itemTotal).toFixed(2)}</td>
                     </tr>
                     `;
                 });
@@ -882,7 +896,7 @@
             checkedBoxes.forEach(cb => cb.checked = false);
         }
 
-        // ================= نظام المعاينة والطباعة الأصلي (A4) =================
+        // ================= نظام المعاينة والطباعة الفردي الأصلي (A4) =================
         function openPreview(invNum) {
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
             let data = history.find(i => String(i.invNum) === String(invNum));
@@ -904,7 +918,7 @@
                     <td style="font-weight: bold;">${it.desc}</td>
                     <td style="text-align: center;">${Number(it.price).toFixed(2)}</td>
                     <td style="text-align: center; color: #64748b; font-size: 11px;">${Number(it.vatAmount).toFixed(2)} (${it.vatRate}%)</td>
-                    <td style="text-align: center; font-weight: bold; color: #0f172a;">${Number(it.itemTotal).toFixed(2)}</td>
+                    <td style="text-align: center; font-weight: bold; color: #1e293b;">${Number(it.itemTotal).toFixed(2)}</td>
                 </tr>
                 `;
             }).join('');
@@ -921,7 +935,6 @@
         function closePreview() {
             document.getElementById('previewOverlay').style.display = 'none';
             document.body.style.overflow = 'auto';
-            // التحقق إذا كان هناك فواتير محددة نرجع نظهر الشريط الذكي
             handleMergeSelection();
         }
 
@@ -959,7 +972,7 @@
 
             if (history.length === 0) {
                 container.innerHTML = '<p style="font-size:12px; color:#aaa; text-align:center;">لا توجد فواتير مطابقة 💡</p>'; 
-                handleMergeSelection(); // لإخفاء الشريط العائم
+                handleMergeSelection(); 
                 return;
             }
 
@@ -978,8 +991,6 @@
 
             container.innerHTML = html;
             cleanOldTrash();
-            
-            // في حال تم إعادة تحميل القائمة، نعيد التحقق من الفواتير المحددة
             handleMergeSelection();
         }
 
@@ -990,7 +1001,6 @@
 
             return `
                 <div class="history-card">
-                    <!-- زر القائمة الجانبي -->
                     <div class="menu-container">
                         <button class="dots-btn" onclick="toggleMenu('${item.invNum}', event)">⋮</button>
                         <div class="dropdown-menu" id="menu-${item.invNum}">
@@ -1000,9 +1010,8 @@
                         </div>
                     </div>
                     
-                    <!-- مربع تحديد الدمج الجديد -->
                     <div style="position: absolute; right: 15px; top: 15px;">
-                        <input type="checkbox" class="merge-cb" value="${item.invNum}" data-name="${item.name}" onchange="handleMergeSelection()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;">
+                        <input type="checkbox" class="merge-cb" value="${item.invNum}" data-name="${item.name}" data-type="${item.type}" onchange="handleMergeSelection()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;">
                     </div>
 
                     <div class="history-header">
