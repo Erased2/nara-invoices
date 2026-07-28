@@ -120,7 +120,6 @@
         .date-filter-group { display: flex; gap: 10px; margin-top: 10px; }
         .date-filter-group input { padding: 8px; border-radius: 8px; font-size: 12px; border: 1px solid var(--border); background: white;}
 
-        /* الشريط العائم الذكي للعمليات الجماعية */
         #mergeFloatBar {
             display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: #0f172a; color: white; padding: 12px 15px; border-radius: 16px;
@@ -129,7 +128,6 @@
             flex-wrap: wrap; gap: 10px;
         }
 
-        /* نافذة طرق السداد الفردية والجماعية */
         #paymentModal, #bulkPaymentModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15,23,42,0.8); z-index: 99999; padding: 20px;
@@ -137,7 +135,6 @@
         }
         .payment-modal-card { background: white; padding: 20px; border-radius: 16px; width: 100%; max-width: 350px; }
 
-        /* ================= شاشة المعاينة والقالب الكلاسيكي الأنيق للطباعة (A4) ================= */
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
         #previewOverlay {
@@ -204,12 +201,12 @@
 </head>
 <body>
 
-    <div id="toast">تم حفظ الفاتورة بنجاح! ☁️🎉</div>
+    <div id="toast">تم حفظ التغييرات بنجاح! ☁️🎉</div>
 
     <div class="header">
         <h1>NARA INVOICES</h1>
         <p>إدارة الفواتير والحسابات السريعة</p>
-        <button id="autoSyncBtn" class="btn-sync" onclick="showToast('يتم تحديث الفواتير بشكل فوري وتلقائي ⚡')">
+        <button id="autoSyncBtn" class="btn-sync" onclick="syncFromCloud()">
             ⏳ جاري الاتصال بالسحابة...
         </button>
     </div>
@@ -453,7 +450,7 @@
         </div>
     </div>
 
-    <!-- ربط Firebase السحابي (مع OnSnapshot للمزامنة الحية) -->
+    <!-- ربط Firebase السحابي الشامل -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -494,7 +491,23 @@
             setTimeout(() => { toast.style.display = 'none'; }, 2500);
         }
 
-        // ================= نظام المزامنة الفورية (Real-Time Auto Sync) =================
+        // ================= دوال المزامنة السحابية المتقدمة =================
+        async function saveCloudPerson(p) {
+            try { if(window.db) await window.setDoc(window.doc(window.db, "people", p.name), p); } catch(e){}
+        }
+        async function deleteCloudPerson(name) {
+            try { if(window.db) await window.deleteDoc(window.doc(window.db, "people", name)); } catch(e){}
+        }
+        async function saveCloudTrash(t) {
+            try { if(window.db) await window.setDoc(window.doc(window.db, "trash", String(t.invNum)), t); } catch(e){}
+        }
+        async function deleteCloudTrash(invNum) {
+            try { if(window.db) await window.deleteDoc(window.doc(window.db, "trash", String(invNum))); } catch(e){}
+        }
+        async function saveCloudSingle(data) {
+            try { if (window.db) await window.setDoc(window.doc(window.db, "invoices", String(data.invNum)), data); } catch(e){}
+        }
+
         function initAutoSync() {
             if (!window.db || !window.onSnapshot) {
                 setTimeout(initAutoSync, 1000); 
@@ -502,36 +515,60 @@
             }
             
             const syncBtn = document.getElementById('autoSyncBtn');
-            syncBtn.innerHTML = '🟢 متصل بالسحابة (مزامنة فورية)';
+            syncBtn.innerHTML = '🟢 متصل بالسحابة (مزامنة شاملة)';
             syncBtn.style.background = '#10b981';
 
-            // مراقبة قاعدة البيانات باستمرار
+            // مراقبة الفواتير
             window.onSnapshot(window.collection(window.db, "invoices"), (snapshot) => {
                 let cloudInvoices = [];
-                snapshot.forEach((doc) => {
-                    cloudInvoices.push(doc.data());
-                });
-
+                snapshot.forEach((doc) => cloudInvoices.push(doc.data()));
                 cloudInvoices.sort((a, b) => b.invNum - a.invNum);
                 localStorage.setItem('nara_invoices', JSON.stringify(cloudInvoices));
-                
-                loadHistory(); // التحديث التلقائي للواجهة بدون ضياع
-            }, (error) => {
-                syncBtn.innerHTML = '🔴 تم فقد الاتصال...';
-                syncBtn.style.background = '#ef4444';
+                loadHistory(); 
+            }, (error) => { syncBtn.innerHTML = '🔴 تم فقد الاتصال...'; syncBtn.style.background = '#ef4444'; });
+
+            // مراقبة الأشخاص
+            window.onSnapshot(window.collection(window.db, "people"), (snapshot) => {
+                let cloudPeople = [];
+                snapshot.forEach((doc) => cloudPeople.push(doc.data()));
+                localStorage.setItem('nara_people', JSON.stringify(cloudPeople));
+                renderPeople(); 
+            });
+
+            // مراقبة سلة المهملات
+            window.onSnapshot(window.collection(window.db, "trash"), (snapshot) => {
+                let cloudTrash = [];
+                snapshot.forEach((doc) => cloudTrash.push(doc.data()));
+                cloudTrash.sort((a, b) => b.deletedAt - a.deletedAt);
+                localStorage.setItem('nara_trash', JSON.stringify(cloudTrash));
+                loadTrash(); 
             });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            initAutoSync(); // تشغيل المراقبة أول ما يفتح الموقع
+            initAutoSync(); 
         });
 
-        async function saveCloudSingle(data) {
+        // مزامنة يدوية إجبارية (لرفع التغييرات المحلية التي قد تكون لم ترفع)
+        async function syncFromCloud() {
+            showToast('جاري المزامنة الشاملة مع السحابة... ⏳');
             try {
-                if (window.db && window.setDoc && window.doc) {
-                    await window.setDoc(window.doc(window.db, "invoices", String(data.invNum)), data);
+                if (window.db) {
+                    let localInvoices = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+                    for (let inv of localInvoices) await saveCloudSingle(inv);
+
+                    let localPeople = JSON.parse(localStorage.getItem('nara_people') || '[]');
+                    for (let p of localPeople) await saveCloudPerson(p);
+
+                    let localTrash = JSON.parse(localStorage.getItem('nara_trash') || '[]');
+                    for (let t of localTrash) await saveCloudTrash(t);
+                    
+                    showToast('تمت مزامنة ورفع جميع البيانات بنجاح! ☁️✅');
                 }
-            } catch(e) { console.log('حفظ محلي فقط'); }
+            } catch (e) {
+                showToast('حدث خطأ في الاتصال بالسحابة ❌');
+                console.error(e);
+            }
         }
 
         function fixExistingData() {
@@ -626,8 +663,11 @@
             let people = JSON.parse(localStorage.getItem('nara_people') || '[]');
             if (people.find(p => p.name === name)) return showToast('هذا الشخص موجود بالفعل ⚠️');
 
-            people.push({ name, type });
+            let newPerson = { name, type };
+            people.push(newPerson);
             localStorage.setItem('nara_people', JSON.stringify(people));
+            
+            saveCloudPerson(newPerson); // حفظ فوري للأشخاص بالسحابة
 
             document.getElementById('newPersonName').value = '';
             renderPeople();
@@ -639,6 +679,9 @@
             let people = JSON.parse(localStorage.getItem('nara_people') || '[]');
             people = people.filter(p => p.name !== name);
             localStorage.setItem('nara_people', JSON.stringify(people));
+            
+            deleteCloudPerson(name); // حذف فوري من السحابة
+
             renderPeople();
         }
 
@@ -740,7 +783,7 @@
             resetForm();
             loadHistory();
 
-            saveCloudSingle(data); // الرفع للسحابة فوراً لتحديث باقي الأجهزة
+            saveCloudSingle(data); // رفع فوري للفواتير
         }
 
         // ================= نظام السداد الفردي =================
@@ -813,7 +856,8 @@
             localStorage.setItem('nara_invoices', JSON.stringify(history));
             localStorage.setItem('nara_trash', JSON.stringify(trash));
             
-            // حذف الفاتورة من السحابة ليتزامن الحذف
+            // مزامنة الحذف
+            saveCloudTrash(invToMove);
             try {
                 if(window.db && window.deleteDoc && window.doc) {
                     window.deleteDoc(window.doc(window.db, "invoices", String(invNum)));
@@ -836,7 +880,9 @@
             localStorage.setItem('nara_invoices', JSON.stringify(history));
             localStorage.setItem('nara_trash', JSON.stringify(trash));
             
+            // مزامنة الاسترجاع
             saveCloudSingle(invToRestore);
+            deleteCloudTrash(invNum);
 
             loadTrash(); loadHistory(); showToast('تم استرجاع الفاتورة بنجاح! 🔄🎉');
         }
@@ -844,9 +890,16 @@
         function cleanOldTrash() {
             let trash = JSON.parse(localStorage.getItem('nara_trash') || '[]');
             const now = new Date().getTime();
-            trash = trash.filter(item => item.deletedAt && (now - item.deletedAt) < (7 * 24 * 60 * 60 * 1000));
-            localStorage.setItem('nara_trash', JSON.stringify(trash));
-            if(document.getElementById('trashCount')) document.getElementById('trashCount').innerText = trash.length;
+            let keep = [];
+            trash.forEach(item => {
+                if (item.deletedAt && (now - item.deletedAt) >= (7 * 24 * 60 * 60 * 1000)) {
+                    deleteCloudTrash(item.invNum); // حذف نهائي من السحابة أيضاً
+                } else {
+                    keep.push(item);
+                }
+            });
+            localStorage.setItem('nara_trash', JSON.stringify(keep));
+            if(document.getElementById('trashCount')) document.getElementById('trashCount').innerText = keep.length;
         }
 
         function loadTrash() {
@@ -920,6 +973,7 @@
             toMove.forEach(inv => {
                 inv.deletedAt = now;
                 trash.unshift(inv);
+                saveCloudTrash(inv); // مزامنة الحذف الجماعي
                 try {
                     if(window.db && window.deleteDoc && window.doc) {
                         window.deleteDoc(window.doc(window.db, "invoices", String(inv.invNum)));
@@ -953,7 +1007,7 @@
                 if (targetBulkInvoices.includes(String(inv.invNum))) {
                     inv.isPaid = true;
                     inv.payMethod = method;
-                    saveCloudSingle(inv);
+                    saveCloudSingle(inv); // رفع السداد الجماعي
                 }
                 return inv;
             });
@@ -1147,7 +1201,6 @@
         function loadHistory() {
             fixExistingData(); 
             
-            // حفظ التحديد الحالي عشان ما يضيع وقت التحديث التلقائي
             let currentlyChecked = Array.from(document.querySelectorAll('.merge-cb:checked')).map(cb => cb.value);
 
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
@@ -1158,7 +1211,6 @@
             let filterDateFrom = document.getElementById('filterDateFrom').value;
             let filterDateTo = document.getElementById('filterDateTo').value;
 
-            // الفرز برقم الفاتورة أو الاسم أو الوصف
             if (query !== '') {
                 history = history.filter(inv => 
                     inv.name.toLowerCase().includes(query) || 
@@ -1210,7 +1262,6 @@
             container.innerHTML = html;
             cleanOldTrash();
             
-            // إرجاع الفواتير اللي كانت محددة
             setTimeout(() => {
                 currentlyChecked.forEach(val => {
                     let cb = document.querySelector(`.merge-cb[value="${val}"]`);
