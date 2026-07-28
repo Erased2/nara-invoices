@@ -127,6 +127,14 @@
             align-items: center; justify-content: space-between; border: 1px solid #334155;
         }
 
+        /* نافذة طرق السداد */
+        #paymentModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15,23,42,0.8); z-index: 99999; padding: 20px;
+            align-items: center; justify-content: center; direction: rtl;
+        }
+        .payment-modal-card { background: white; padding: 20px; border-radius: 16px; width: 100%; max-width: 350px; }
+
         /* ================= شاشة المعاينة والقالب الكلاسيكي الأنيق للطباعة (A4) ================= */
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
@@ -158,7 +166,7 @@
         }
 
         .a4-header { display: flex; justify-content: space-between; border-bottom: 2px solid #1e293b; padding-bottom: 15px; margin-bottom: 25px; }
-        .a4-header h1 { font-size: 28px; margin: 0; color: #1e293b; }
+        .a4-header h1 { font-size: 32px; font-weight: 800; margin: 0; color: #1e293b; letter-spacing: 1px; }
         .a4-header p { margin: 5px 0 0 0; color: #475569; font-size: 14px; }
         .a4-header-left { text-align: left; }
         .a4-header-left h2 { font-size: 24px; margin: 0; color: #1e293b; letter-spacing: 1px; }
@@ -200,6 +208,22 @@
         <h1>📑 Nara Invoices</h1>
         <p>إدارة الفواتير والحسابات السريعة</p>
         <button class="btn-sync" onclick="syncFromCloud()">☁️ استرجاع ومزامنة من السحابة</button>
+    </div>
+
+    <!-- نافذة اختيار طريقة السداد -->
+    <div id="paymentModal">
+        <div class="payment-modal-card">
+            <h3 style="color: #0f172a; margin-bottom: 15px;">كيف تم سداد الفاتورة؟ 💳</h3>
+            <select id="payMethodSelect" style="margin-bottom: 15px;">
+                <option value="كاش">كاش 💵</option>
+                <option value="تحويل بنكي">تحويل بنكي 🏦</option>
+                <option value="شبكة / مدى">شبكة / مدى 💳</option>
+            </select>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="confirmPayment()">تأكيد السداد</button>
+                <button class="btn" style="background:#ef4444;" onclick="cancelPayment()">إلغاء</button>
+            </div>
+        </div>
     </div>
 
     <div id="mergeFloatBar">
@@ -252,8 +276,6 @@
                     </select>
                 </div>
             </div>
-
-            <!-- تم إخفاء حقل التاريخ، ويسجل النظام تاريخ اليوم آلياً -->
 
             <label>بنود الفاتورة / المعاملات 🛒</label>
             <div id="itemsContainer"></div>
@@ -352,8 +374,8 @@
             
             <div class="a4-header">
                 <div>
-                    <h1>نارا للفواتير</h1>
-                    <p>المملكة العربية السعودية، جازان</p>
+                    <h1>NARA INVOICES</h1>
+                    <p>نارا للفواتير - المملكة العربية السعودية، جازان</p>
                     <p>الرقم الضريبي: 300000000000003</p>
                 </div>
                 <div class="a4-header-left">
@@ -376,9 +398,8 @@
                 </div>
                 
                 <div class="a4-info-panel" style="text-align: left;">
-                    <div class="lbl">معلومات الدفع:</div>
-                    <div class="val" style="font-size: 16px;">مصرف الراجحي</div>
-                    <div class="sub-val">الآيبان: SA0000000000000000000000</div>
+                    <!-- تم إزالة معلومات البنك وإضافة حالة الدفع -->
+                    <div id="pdfPaymentStatus" style="font-size: 16px; margin-top: 15px;"></div>
                 </div>
             </div>
 
@@ -405,7 +426,7 @@
         </div>
     </div>
 
-    <!-- ربط Firebase הסحابي -->
+    <!-- ربط Firebase السحابي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -432,6 +453,7 @@
     <script>
         let currentMode = 'new'; 
         let editingInvNum = null;
+        let targetInvForPayment = null; // رقم الفاتورة الجاري تحديد سدادها
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -637,7 +659,6 @@
                 }
             });
 
-            // التاريخ يسجل آلياً وتلقائياً بالخلفية
             let inputDate = new Date().toISOString().split('T')[0];
             let dateObj = new Date(inputDate);
             let date = dateObj.toLocaleDateString('ar-SA'); 
@@ -654,7 +675,7 @@
             
             const invNum = editingInvNum || Math.floor(100000 + Math.random() * 900000);
 
-            return { name, type, items, total, totalVat, date, rawDate, invNum, isEdited: !!editingInvNum };
+            return { name, type, items, total, totalVat, date, rawDate, invNum, isEdited: !!editingInvNum, isPaid: false, payMethod: '' };
         }
 
         async function saveInvoiceData() {
@@ -665,6 +686,11 @@
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
 
             if (editingInvNum) {
+                let oldInv = history.find(i => String(i.invNum) === String(editingInvNum));
+                if (oldInv) {
+                    data.isPaid = oldInv.isPaid || false;
+                    data.payMethod = oldInv.payMethod || '';
+                }
                 data.isEdited = true;
                 history = history.map(inv => String(inv.invNum) === String(editingInvNum) ? data : inv);
                 showToast('تم تحديث الفاتورة بنجاح! ✏️🎉');
@@ -680,6 +706,39 @@
             try {
                 if (window.db) await window.addDoc(window.collection(window.db, "invoices"), data);
             } catch (e) { console.log('حفظ محلي فقط'); }
+        }
+
+        // ================= نظام السداد (علامة الصح) =================
+        function handlePaymentToggle(invNum, isChecked) {
+            if (isChecked) {
+                targetInvForPayment = invNum;
+                document.getElementById('paymentModal').style.display = 'flex';
+            } else {
+                updateInvoicePayment(invNum, false, '');
+            }
+        }
+
+        function confirmPayment() {
+            let method = document.getElementById('payMethodSelect').value;
+            updateInvoicePayment(targetInvForPayment, true, method);
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        function cancelPayment() {
+            document.getElementById('paymentModal').style.display = 'none';
+            loadHistory(); // إعادة التحميل لإلغاء التحديد اللي ماتم حفظه
+        }
+
+        function updateInvoicePayment(invNum, isPaid, method) {
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let inv = history.find(i => String(i.invNum) === String(invNum));
+            if(inv) {
+                inv.isPaid = isPaid;
+                inv.payMethod = method;
+                localStorage.setItem('nara_invoices', JSON.stringify(history));
+                showToast(isPaid ? 'تم تسجيل سداد الفاتورة بنجاح ✅' : 'تم إلغاء سداد الفاتورة 🔄');
+                loadHistory();
+            }
         }
 
         function editInvoice(invNum) {
@@ -810,7 +869,6 @@
                 namesSet.add(cb.getAttribute('data-name'));
             });
 
-            // التحقق من أن جميع الفواتير لنفس الشخص
             if(namesSet.size > 1) {
                 showToast('⚠️ يرجى تحديد فواتير لنفس الشخص فقط لعمل المقاصة!');
                 return;
@@ -819,7 +877,6 @@
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
             let selectedInvoices = history.filter(i => selectedNums.includes(String(i.invNum)));
             
-            // ترتيب من الأقدم للأحدث ليظهر كشف الحساب متسلسل
             selectedInvoices.sort((a,b) => new Date(a.rawDate || 0) - new Date(b.rawDate || 0));
 
             let name = selectedInvoices[0].name;
@@ -829,14 +886,16 @@
             document.getElementById('pdfInvDate').innerText = new Date().toLocaleDateString('ar-SA');
             document.getElementById('pdfInvNumber').innerText = 'كشف-' + Math.floor(1000 + Math.random() * 9000);
             document.getElementById('pdfEditedTag').innerText = '';
+            document.getElementById('pdfPaymentStatus').innerHTML = '<span style="color:#64748b; font-size:12px;">ملاحظة: تفاصيل السداد موضحة لكل بند في الجدول.</span>';
 
-            let totalDebit = 0; // اللي لك (عليه)
-            let totalCredit = 0; // اللي له (عليك)
+            let totalDebit = 0; 
+            let totalCredit = 0; 
             let combinedItemsHtml = '';
             let itemIndex = 1;
             
             selectedInvoices.forEach(inv => {
-                let isDebit = inv.type === 'مديون'; // لك عليه
+                let isDebit = inv.type === 'مديون'; 
+                let paymentText = inv.isPaid ? `<span style="color:#10b981; font-weight:bold;">[مسددة - ${inv.payMethod}]</span>` : `<span style="color:#ef4444; font-weight:bold;">[غير مسددة]</span>`;
                 
                 (inv.items || []).forEach(it => {
                     if (isDebit) totalDebit += Number(it.itemTotal);
@@ -850,7 +909,7 @@
                         <td style="font-weight: bold;">
                             ${it.desc} ${typeBadge}
                             <div style="font-size:11px; color:#64748b; font-weight:normal; margin-top:3px;">
-                                من فاتورة #${inv.invNum} بتاريخ (${inv.rawDate || inv.date})
+                                من فاتورة #${inv.invNum} بتاريخ (${inv.rawDate || inv.date}) - ${paymentText}
                             </div>
                         </td>
                         <td style="text-align: center;">${Number(it.price).toFixed(2)}</td>
@@ -863,7 +922,6 @@
 
             document.getElementById('pdfItemsTableBody').innerHTML = combinedItemsHtml;
 
-            // حساب المقاصة الختامية
             let netBalance = Math.abs(totalDebit - totalCredit);
             let netText = "";
             let netColor = "#1e293b";
@@ -897,12 +955,10 @@
             
             document.getElementById('pdfSummaryContainer').innerHTML = summaryHtml;
 
-            // إخفاء الشريط وعرض الفاتورة
             document.getElementById('mergeFloatBar').style.display = 'none';
             document.getElementById('previewOverlay').style.display = 'flex';
             document.body.style.overflow = 'hidden'; 
             
-            // إزالة علامات الصح بعد العرض
             checkedBoxes.forEach(cb => cb.checked = false);
         }
 
@@ -917,6 +973,14 @@
             document.getElementById('pdfInvDate').innerText = data.rawDate || data.date;
             document.getElementById('pdfInvNumber').innerText = data.invNum;
             document.getElementById('pdfEditedTag').innerText = data.isEdited ? '(معدّلة)' : '';
+
+            // إظهار حالة السداد في الفاتورة المفردة
+            let statusDiv = document.getElementById('pdfPaymentStatus');
+            if (data.isPaid) {
+                statusDiv.innerHTML = `<span style="color:#10b981; font-weight:bold;">✅ حالة الدفع: مسددة (${data.payMethod})</span>`;
+            } else {
+                statusDiv.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ حالة الدفع: غير مسددة</span>`;
+            }
 
             let subTotal = 0;
             let tbody = document.getElementById('pdfItemsTableBody');
@@ -933,7 +997,6 @@
                 `;
             }).join('');
 
-            // توليد جدول الإجماليات العادي للفاتورة الفردية
             let summaryHtml = `
                 <table>
                     <tr>
@@ -988,7 +1051,10 @@
             history.sort((a, b) => new Date(b.rawDate || 0) - new Date(a.rawDate || 0));
 
             let sumCredit = 0, sumDebit = 0;
-            history.forEach(inv => { if (inv.type === 'مديون') sumDebit += Number(inv.total); else sumCredit += Number(inv.total); });
+            history.forEach(inv => { 
+                // لا نحسب الفواتير المسددة ضمن الديون القائمة (اختياري، حالياً خليتها تنحسب عشان الكشف، بس لو تبي نلغيها نعلمني)
+                if (inv.type === 'مديون') sumDebit += Number(inv.total); else sumCredit += Number(inv.total); 
+            });
 
             document.getElementById('totalCredit').innerText = sumCredit.toFixed(2);
             document.getElementById('totalDebit').innerText = sumDebit.toFixed(2);
@@ -1024,8 +1090,15 @@
             let editedBadge = item.isEdited ? '<span class="badge badge-edited">معدّلة ✏️</span>' : '';
             let isDebit = item.type === 'مديون';
 
+            let paymentCheckboxHtml = `
+                <label style="font-size:11px; display:flex; align-items:center; gap:6px; cursor:pointer; color:${item.isPaid ? '#10b981' : '#64748b'}; font-weight:bold;">
+                    <input type="checkbox" ${item.isPaid ? 'checked' : ''} onchange="handlePaymentToggle('${item.invNum}', this.checked)" style="width:16px; height:16px; accent-color:#10b981;">
+                    ${item.isPaid ? `مسددة (${item.payMethod}) ✅` : 'تحديد كمسددة 💳'}
+                </label>
+            `;
+
             return `
-                <div class="history-card">
+                <div class="history-card" style="border-right: 4px solid ${item.isPaid ? '#10b981' : 'transparent'};">
                     <div class="menu-container">
                         <button class="dots-btn" onclick="toggleMenu('${item.invNum}', event)">⋮</button>
                         <div class="dropdown-menu" id="menu-${item.invNum}">
@@ -1035,6 +1108,7 @@
                         </div>
                     </div>
                     
+                    <!-- مربع تحديد الدمج -->
                     <div style="position: absolute; right: 15px; top: 15px;">
                         <input type="checkbox" class="merge-cb" value="${item.invNum}" data-name="${item.name}" onchange="handleMergeSelection()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;">
                     </div>
@@ -1045,10 +1119,14 @@
                             <span class="badge ${isDebit ? 'badge-debit' : 'badge-credit'}">${isDebit ? 'مديون' : 'دائن'}</span>
                             ${editedBadge}
                         </div>
-                        <b style="color:#2563eb;">${Number(item.total).toFixed(2)} ر.س</b>
+                        <b style="color:${item.isPaid ? '#10b981' : '#2563eb'}; text-decoration: ${item.isPaid ? 'line-through' : 'none'};">${Number(item.total).toFixed(2)} ر.س</b>
                     </div>
-                    <small style="color: #64748b; display:block;">البنود: ${itemsSummary}</small>
-                    <small style="color: #94a3b8; font-size:10px;">التاريخ: ${item.rawDate || item.date} | رقم: #${item.invNum}</small>
+                    <small style="color: #64748b; display:block; margin-bottom: 8px;">البنود: ${itemsSummary}</small>
+                    
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #e2e8f0; padding-top:8px;">
+                        ${paymentCheckboxHtml}
+                        <small style="color: #94a3b8; font-size:10px;">التاريخ: ${item.rawDate || item.date} | رقم: #${item.invNum}</small>
+                    </div>
                 </div>
             `;
         }
