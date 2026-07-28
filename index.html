@@ -120,7 +120,6 @@
         .date-filter-group { display: flex; gap: 10px; margin-top: 10px; }
         .date-filter-group input { padding: 8px; border-radius: 8px; font-size: 12px; border: 1px solid var(--border); background: white;}
 
-        /* الشريط العائم الذكي للعمليات الجماعية */
         #mergeFloatBar {
             display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: #0f172a; color: white; padding: 12px 15px; border-radius: 16px;
@@ -129,7 +128,6 @@
             flex-wrap: wrap; gap: 10px;
         }
 
-        /* نافذة طرق السداد الفردية والجماعية */
         #paymentModal, #bulkPaymentModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15,23,42,0.8); z-index: 99999; padding: 20px;
@@ -137,7 +135,6 @@
         }
         .payment-modal-card { background: white; padding: 20px; border-radius: 16px; width: 100%; max-width: 350px; }
 
-        /* ================= شاشة المعاينة والقالب الكلاسيكي الأنيق للطباعة (A4) ================= */
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
         #previewOverlay {
@@ -451,10 +448,10 @@
         </div>
     </div>
 
-    <!-- ربط Firebase السحابي -->
+    <!-- ربط Firebase السحابي المحدث بأوامر التعديل والحذف الكاملة -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDGsMNwQy8tbK9DBYNn60zPA7UtoOvykmo",
@@ -473,6 +470,9 @@
         window.collection = collection;
         window.addDoc = addDoc;
         window.getDocs = getDocs;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.deleteDoc = deleteDoc;
     </script>
 
     <script>
@@ -488,39 +488,43 @@
             setTimeout(() => { toast.style.display = 'none'; }, 2500);
         }
 
+        // --- المزامنة المزدوجة المتكاملة (رفع المحلي + جلب السحابي) ---
         async function syncFromCloud() {
-            showToast('جاري استرجاع فواتيرك من السحابة... ⏳');
+            showToast('جاري المزامنة مع السحابة... ⏳');
             try {
                 if (window.db && window.getDocs) {
+                    let localInvoices = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+                    
+                    // 1. رفع الفواتير المحلية غير الموجودة بالسحابة أو المحدثة
+                    for (let inv of localInvoices) {
+                        await window.setDoc(window.doc(window.db, "invoices", String(inv.invNum)), inv);
+                    }
+
+                    // 2. جلب أحدث الفواتير من السحابة
                     const querySnapshot = await window.getDocs(window.collection(window.db, "invoices"));
                     let cloudInvoices = [];
                     querySnapshot.forEach((doc) => {
                         cloudInvoices.push(doc.data());
                     });
 
-                    if (cloudInvoices.length > 0) {
-                        let localInvoices = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
-                        let merged = [...localInvoices];
-
-                        cloudInvoices.forEach(ci => {
-                            if (!merged.find(li => String(li.invNum) === String(ci.invNum))) {
-                                merged.push(ci);
-                            }
-                        });
-
-                        merged.sort((a, b) => b.invNum - a.invNum);
-                        localStorage.setItem('nara_invoices', JSON.stringify(merged));
-                        
-                        loadHistory();
-                        showToast('تم استرجاع البيانات السحابية بنجاح! ☁️✅');
-                    } else {
-                        showToast('لا توجد فواتير سابقة في السحابة 💡');
-                    }
+                    cloudInvoices.sort((a, b) => b.invNum - a.invNum);
+                    localStorage.setItem('nara_invoices', JSON.stringify(cloudInvoices));
+                    
+                    loadHistory();
+                    showToast('تمت المزامنة بنجاح مع السحابة! ☁️✅');
                 }
             } catch (e) {
                 showToast('حدث خطأ في الاتصال بالسحابة ❌');
                 console.error(e);
             }
+        }
+
+        async function saveCloudSingle(data) {
+            try {
+                if (window.db && window.setDoc && window.doc) {
+                    await window.setDoc(window.doc(window.db, "invoices", String(data.invNum)), data);
+                }
+            } catch(e) { console.log('حفظ محلي فقط'); }
         }
 
         function fixExistingData() {
@@ -729,9 +733,7 @@
             resetForm();
             loadHistory();
 
-            try {
-                if (window.db) await window.addDoc(window.collection(window.db, "invoices"), data);
-            } catch (e) { console.log('حفظ محلي فقط'); }
+            saveCloudSingle(data); // رفع فوري للسحابة
         }
 
         // ================= نظام السداد الفردي (علامة الصح) =================
@@ -762,6 +764,7 @@
                 inv.isPaid = isPaid;
                 inv.payMethod = method;
                 localStorage.setItem('nara_invoices', JSON.stringify(history));
+                saveCloudSingle(inv); // حفظ فوري بالسحابة
                 showToast(isPaid ? 'تم تسجيل سداد الفاتورة بنجاح ✅' : 'تم إلغاء سداد الفاتورة 🔄');
                 loadHistory();
             }
@@ -802,6 +805,14 @@
 
             localStorage.setItem('nara_invoices', JSON.stringify(history));
             localStorage.setItem('nara_trash', JSON.stringify(trash));
+            
+            // حذف الفاتورة من Firebase أيضاً
+            try {
+                if(window.db && window.deleteDoc && window.doc) {
+                    window.deleteDoc(window.doc(window.db, "invoices", String(invNum)));
+                }
+            } catch(e){}
+
             loadHistory(); loadTrash(); showToast('تم نقل الفاتورة لسلة المهملات 🗑️');
         }
 
@@ -817,6 +828,8 @@
 
             localStorage.setItem('nara_invoices', JSON.stringify(history));
             localStorage.setItem('nara_trash', JSON.stringify(trash));
+            saveCloudSingle(invToRestore);
+
             loadTrash(); loadHistory(); showToast('تم استرجاع الفاتورة بنجاح! 🔄🎉');
         }
 
@@ -883,7 +896,6 @@
             }
         }
 
-        // 1. الحذف الجماعي
         function bulkDelete() {
             const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
             if(checkedBoxes.length === 0) return;
@@ -900,6 +912,11 @@
             toMove.forEach(inv => {
                 inv.deletedAt = now;
                 trash.unshift(inv);
+                try {
+                    if(window.db && window.deleteDoc && window.doc) {
+                        window.deleteDoc(window.doc(window.db, "invoices", String(inv.invNum)));
+                    }
+                } catch(e){}
             });
             
             history = history.filter(i => !selectedNums.includes(String(i.invNum)));
@@ -912,7 +929,6 @@
             loadTrash();
         }
 
-        // 2. السداد الجماعي
         function bulkMarkPaid() {
             const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
             if(checkedBoxes.length === 0) return;
@@ -929,6 +945,7 @@
                 if (targetBulkInvoices.includes(String(inv.invNum))) {
                     inv.isPaid = true;
                     inv.payMethod = method;
+                    saveCloudSingle(inv);
                 }
                 return inv;
             });
@@ -943,7 +960,6 @@
             document.getElementById('bulkPaymentModal').style.display = 'none';
         }
 
-        // 3. إصدار كشف الحساب (المقاصة الجماعية)
         function previewMergedInvoices() {
             const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
             if(checkedBoxes.length === 0) return;
@@ -985,7 +1001,6 @@
                 let paymentText = inv.isPaid ? `<span style="color:#10b981; font-weight:bold;">[مسددة - ${inv.payMethod}]</span>` : `<span style="color:#ef4444; font-weight:bold;">[غير مسددة]</span>`;
                 
                 (inv.items || []).forEach(it => {
-                    // إذا مسددة ما نحسبها في الصافي النهائي، أو نقدر نحسبها، الأفضل محاسبياً نعرضها بس ما نجمعها على المستحقات الباقية
                     if(!inv.isPaid) {
                         if (isDebit) totalDebit += Number(it.itemTotal);
                         else totalCredit += Number(it.itemTotal);
@@ -1130,7 +1145,6 @@
             let filterDateFrom = document.getElementById('filterDateFrom').value;
             let filterDateTo = document.getElementById('filterDateTo').value;
 
-            // تحديث البحث ليشمل رقم الفاتورة
             if (query !== '') {
                 history = history.filter(inv => 
                     inv.name.toLowerCase().includes(query) || 
