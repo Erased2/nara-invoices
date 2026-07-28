@@ -26,7 +26,7 @@
             max-width: 500px;
             margin: 0 auto;
             direction: rtl;
-            padding-bottom: 80px; 
+            padding-bottom: 90px; 
         }
 
         .header { text-align: center; margin-bottom: 15px; }
@@ -120,15 +120,17 @@
         .date-filter-group { display: flex; gap: 10px; margin-top: 10px; }
         .date-filter-group input { padding: 8px; border-radius: 8px; font-size: 12px; border: 1px solid var(--border); background: white;}
 
+        /* الشريط العائم الذكي للعمليات الجماعية */
         #mergeFloatBar {
             display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: #0f172a; color: white; padding: 12px 20px; border-radius: 16px;
-            z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 90%; max-width: 400px;
+            background: #0f172a; color: white; padding: 12px 15px; border-radius: 16px;
+            z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 95%; max-width: 450px;
             align-items: center; justify-content: space-between; border: 1px solid #334155;
+            flex-wrap: wrap; gap: 10px;
         }
 
-        /* نافذة طرق السداد */
-        #paymentModal {
+        /* نافذة طرق السداد الفردية والجماعية */
+        #paymentModal, #bulkPaymentModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15,23,42,0.8); z-index: 99999; padding: 20px;
             align-items: center; justify-content: center; direction: rtl;
@@ -205,12 +207,12 @@
     <div id="toast">تم حفظ الفاتورة بنجاح! ☁️🎉</div>
 
     <div class="header">
-        <h1>📑 Nara Invoices</h1>
+        <h1>NARA INVOICES</h1>
         <p>إدارة الفواتير والحسابات السريعة</p>
         <button class="btn-sync" onclick="syncFromCloud()">☁️ استرجاع ومزامنة من السحابة</button>
     </div>
 
-    <!-- نافذة اختيار طريقة السداد -->
+    <!-- نافذة اختيار طريقة السداد الفردي -->
     <div id="paymentModal">
         <div class="payment-modal-card">
             <h3 style="color: #0f172a; margin-bottom: 15px;">كيف تم سداد الفاتورة؟ 💳</h3>
@@ -226,14 +228,40 @@
         </div>
     </div>
 
-    <div id="mergeFloatBar">
-        <div>
-            <span id="mergeCountText" style="font-size: 18px; font-weight: 800; color: #38bdf8;">0</span>
-            <span style="font-size: 13px; font-weight: bold; margin-right: 5px;">فواتير محددة للمقاصة</span>
+    <!-- نافذة اختيار طريقة السداد الجماعي -->
+    <div id="bulkPaymentModal">
+        <div class="payment-modal-card">
+            <h3 style="color: #0f172a; margin-bottom: 15px;">سداد جماعي 💳</h3>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">كيف تم سداد الفواتير المحددة؟</p>
+            <select id="bulkPayMethodSelect" style="margin-bottom: 15px;">
+                <option value="كاش">كاش 💵</option>
+                <option value="تحويل بنكي">تحويل بنكي 🏦</option>
+                <option value="شبكة / مدى">شبكة / مدى 💳</option>
+            </select>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="confirmBulkPayment()">تأكيد السداد للكل</button>
+                <button class="btn" style="background:#ef4444;" onclick="cancelBulkPayment()">إلغاء</button>
+            </div>
         </div>
-        <button onclick="previewMergedInvoices()" style="background: #10b981; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
-            إصدار كشف حساب 📄
-        </button>
+    </div>
+
+    <!-- شريط الإجراءات الجماعية -->
+    <div id="mergeFloatBar">
+        <div style="display: flex; align-items: center;">
+            <span id="mergeCountText" style="font-size: 18px; font-weight: 800; color: #38bdf8;">0</span>
+            <span style="font-size: 12px; font-weight: bold; margin-right: 5px;">محددة</span>
+        </div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; flex: 1; justify-content: flex-end;">
+            <button onclick="previewMergedInvoices()" style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; flex: 1; min-width: 90px;">
+                كشف حساب 📄
+            </button>
+            <button onclick="bulkMarkPaid()" style="background: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; flex: 1; min-width: 90px;">
+                سداد جماعي ✅
+            </button>
+            <button onclick="bulkDelete()" style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; flex: 1; min-width: 90px;">
+                حذف جماعي 🗑️
+            </button>
+        </div>
     </div>
 
     <div class="tabs">
@@ -288,7 +316,7 @@
         <h3>🔍 فرز وحسابات الفواتير 🌟</h3>
         <div class="filter-card">
             <div class="form-group" style="margin-bottom: 8px;">
-                <input type="text" id="searchQuery" placeholder="🔎 بحث بالاسم أو الوصف..." oninput="loadHistory()">
+                <input type="text" id="searchQuery" placeholder="🔎 بحث بالاسم، الوصف، أو رقم الفاتورة..." oninput="loadHistory()">
             </div>
             <div class="row">
                 <div class="form-group" style="margin-bottom: 0;">
@@ -326,7 +354,7 @@
             </div>
         </div>
 
-        <p style="font-size: 11px; color: #64748b; text-align: center; margin-bottom: 10px;">💡 لعمل كشف حساب (مقاصة) لشخص، حدد المربع (☑️) بجانب فواتيره</p>
+        <p style="font-size: 11px; color: #64748b; text-align: center; margin-bottom: 10px;">💡 حدد المربع (☑️) بجانب الفواتير لعمل مقاصة، سداد، أو حذف جماعي</p>
 
         <div id="historyList"></div>
     </div>
@@ -375,8 +403,7 @@
             <div class="a4-header">
                 <div>
                     <h1>NARA INVOICES</h1>
-                    <p>نارا للفواتير - المملكة العربية السعودية، جازان</p>
-                    <p>الرقم الضريبي: 300000000000003</p>
+                    <p>المملكة العربية السعودية، جازان</p>
                 </div>
                 <div class="a4-header-left">
                     <h2>فاتورة | INVOICE</h2>
@@ -398,7 +425,6 @@
                 </div>
                 
                 <div class="a4-info-panel" style="text-align: left;">
-                    <!-- تم إزالة معلومات البنك وإضافة حالة الدفع -->
                     <div id="pdfPaymentStatus" style="font-size: 16px; margin-top: 15px;"></div>
                 </div>
             </div>
@@ -417,7 +443,6 @@
             </table>
 
             <div class="a4-summary" id="pdfSummaryContainer">
-                <!-- الإجماليات يتم حقنها برمجياً لتدعم الفاتورة العادية وكشف الحساب -->
             </div>
 
             <div style="text-align: center; font-size: 13px; color: #64748b; margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
@@ -453,7 +478,8 @@
     <script>
         let currentMode = 'new'; 
         let editingInvNum = null;
-        let targetInvForPayment = null; // رقم الفاتورة الجاري تحديد سدادها
+        let targetInvForPayment = null; 
+        let targetBulkInvoices = [];
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -708,7 +734,7 @@
             } catch (e) { console.log('حفظ محلي فقط'); }
         }
 
-        // ================= نظام السداد (علامة الصح) =================
+        // ================= نظام السداد الفردي (علامة الصح) =================
         function handlePaymentToggle(invNum, isChecked) {
             if (isChecked) {
                 targetInvForPayment = invNum;
@@ -726,7 +752,7 @@
 
         function cancelPayment() {
             document.getElementById('paymentModal').style.display = 'none';
-            loadHistory(); // إعادة التحميل لإلغاء التحديد اللي ماتم حفظه
+            loadHistory(); 
         }
 
         function updateInvoicePayment(invNum, isPaid, method) {
@@ -843,7 +869,7 @@
             addItemRow();
         }
 
-        // ================= نظام دمج الفواتير المحاسبي الذكي (كشف المقاصة) =================
+        // ================= الإجراءات الجماعية (Bulk Actions) =================
         function handleMergeSelection() {
             const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
             const floatBar = document.getElementById('mergeFloatBar');
@@ -857,6 +883,67 @@
             }
         }
 
+        // 1. الحذف الجماعي
+        function bulkDelete() {
+            const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
+            if(checkedBoxes.length === 0) return;
+            
+            if(!confirm('⚠️ هل أنت متأكد من نقل جميع الفواتير المحددة إلى سلة المهملات؟')) return;
+            
+            let selectedNums = Array.from(checkedBoxes).map(cb => cb.value);
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let trash = JSON.parse(localStorage.getItem('nara_trash') || '[]');
+            
+            let toMove = history.filter(i => selectedNums.includes(String(i.invNum)));
+            let now = new Date().getTime();
+            
+            toMove.forEach(inv => {
+                inv.deletedAt = now;
+                trash.unshift(inv);
+            });
+            
+            history = history.filter(i => !selectedNums.includes(String(i.invNum)));
+            
+            localStorage.setItem('nara_invoices', JSON.stringify(history));
+            localStorage.setItem('nara_trash', JSON.stringify(trash));
+            
+            showToast('تم نقل الفواتير المحددة للمهملات 🗑️');
+            loadHistory();
+            loadTrash();
+        }
+
+        // 2. السداد الجماعي
+        function bulkMarkPaid() {
+            const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
+            if(checkedBoxes.length === 0) return;
+            
+            targetBulkInvoices = Array.from(checkedBoxes).map(cb => cb.value);
+            document.getElementById('bulkPaymentModal').style.display = 'flex';
+        }
+
+        function confirmBulkPayment() {
+            let method = document.getElementById('bulkPayMethodSelect').value;
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            
+            history = history.map(inv => {
+                if (targetBulkInvoices.includes(String(inv.invNum))) {
+                    inv.isPaid = true;
+                    inv.payMethod = method;
+                }
+                return inv;
+            });
+            
+            localStorage.setItem('nara_invoices', JSON.stringify(history));
+            document.getElementById('bulkPaymentModal').style.display = 'none';
+            showToast('تم سداد الفواتير المحددة بنجاح! ✅');
+            loadHistory();
+        }
+
+        function cancelBulkPayment() {
+            document.getElementById('bulkPaymentModal').style.display = 'none';
+        }
+
+        // 3. إصدار كشف الحساب (المقاصة الجماعية)
         function previewMergedInvoices() {
             const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
             if(checkedBoxes.length === 0) return;
@@ -870,7 +957,7 @@
             });
 
             if(namesSet.size > 1) {
-                showToast('⚠️ يرجى تحديد فواتير لنفس الشخص فقط لعمل المقاصة!');
+                showToast('⚠️ يرجى تحديد فواتير لنفس الشخص فقط لعمل كشف الحساب!');
                 return;
             }
 
@@ -898,8 +985,11 @@
                 let paymentText = inv.isPaid ? `<span style="color:#10b981; font-weight:bold;">[مسددة - ${inv.payMethod}]</span>` : `<span style="color:#ef4444; font-weight:bold;">[غير مسددة]</span>`;
                 
                 (inv.items || []).forEach(it => {
-                    if (isDebit) totalDebit += Number(it.itemTotal);
-                    else totalCredit += Number(it.itemTotal);
+                    // إذا مسددة ما نحسبها في الصافي النهائي، أو نقدر نحسبها، الأفضل محاسبياً نعرضها بس ما نجمعها على المستحقات الباقية
+                    if(!inv.isPaid) {
+                        if (isDebit) totalDebit += Number(it.itemTotal);
+                        else totalCredit += Number(it.itemTotal);
+                    }
                     
                     let typeBadge = isDebit ? '<span style="color:#ef4444; font-size:10px; margin-right:5px;">(عليه)</span>' : '<span style="color:#10b981; font-size:10px; margin-right:5px;">(له)</span>';
 
@@ -939,11 +1029,11 @@
             let summaryHtml = `
                 <table>
                     <tr>
-                        <td class="sum-title">إجمالي الفواتير (عليه):</td>
+                        <td class="sum-title">إجمالي الفواتير غير المسددة (عليه):</td>
                         <td class="sum-val"><span style="color:#ef4444;">${totalDebit.toFixed(2)}</span> ر.س</td>
                     </tr>
                     <tr>
-                        <td class="sum-title">إجمالي الفواتير (له):</td>
+                        <td class="sum-title">إجمالي الفواتير غير المسددة (له):</td>
                         <td class="sum-val"><span style="color:#10b981;">${totalCredit.toFixed(2)}</span> ر.س</td>
                     </tr>
                     <tr class="total-row">
@@ -974,7 +1064,6 @@
             document.getElementById('pdfInvNumber').innerText = data.invNum;
             document.getElementById('pdfEditedTag').innerText = data.isEdited ? '(معدّلة)' : '';
 
-            // إظهار حالة السداد في الفاتورة المفردة
             let statusDiv = document.getElementById('pdfPaymentStatus');
             if (data.isPaid) {
                 statusDiv.innerHTML = `<span style="color:#10b981; font-weight:bold;">✅ حالة الدفع: مسددة (${data.payMethod})</span>`;
@@ -1041,9 +1130,17 @@
             let filterDateFrom = document.getElementById('filterDateFrom').value;
             let filterDateTo = document.getElementById('filterDateTo').value;
 
+            // تحديث البحث ليشمل رقم الفاتورة
+            if (query !== '') {
+                history = history.filter(inv => 
+                    inv.name.toLowerCase().includes(query) || 
+                    String(inv.invNum).includes(query) ||
+                    (inv.items || []).some(i => (i.desc || '').toLowerCase().includes(query))
+                );
+            }
+
             if (selectedPerson !== 'ALL') history = history.filter(inv => inv.name === selectedPerson);
             if (selectedType !== 'ALL') history = history.filter(inv => inv.type === selectedType);
-            if (query !== '') history = history.filter(inv => inv.name.toLowerCase().includes(query) || (inv.items || []).some(i => (i.desc || '').toLowerCase().includes(query)));
             
             if (filterDateFrom) history = history.filter(inv => inv.rawDate >= filterDateFrom);
             if (filterDateTo) history = history.filter(inv => inv.rawDate <= filterDateTo);
@@ -1052,8 +1149,10 @@
 
             let sumCredit = 0, sumDebit = 0;
             history.forEach(inv => { 
-                // لا نحسب الفواتير المسددة ضمن الديون القائمة (اختياري، حالياً خليتها تنحسب عشان الكشف، بس لو تبي نلغيها نعلمني)
-                if (inv.type === 'مديون') sumDebit += Number(inv.total); else sumCredit += Number(inv.total); 
+                if (!inv.isPaid) {
+                    if (inv.type === 'مديون') sumDebit += Number(inv.total); 
+                    else sumCredit += Number(inv.total); 
+                }
             });
 
             document.getElementById('totalCredit').innerText = sumCredit.toFixed(2);
@@ -1108,9 +1207,8 @@
                         </div>
                     </div>
                     
-                    <!-- مربع تحديد الدمج -->
                     <div style="position: absolute; right: 15px; top: 15px;">
-                        <input type="checkbox" class="merge-cb" value="${item.invNum}" data-name="${item.name}" onchange="handleMergeSelection()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;">
+                        <input type="checkbox" class="merge-cb" value="${item.invNum}" data-name="${item.name}" data-type="${item.type}" onchange="handleMergeSelection()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;">
                     </div>
 
                     <div class="history-header">
