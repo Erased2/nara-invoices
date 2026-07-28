@@ -119,7 +119,15 @@
         .date-filter-group { display: flex; gap: 10px; margin-top: 10px; }
         .date-filter-group input { padding: 8px; border-radius: 8px; font-size: 12px; border: 1px solid var(--border); background: white;}
 
-        /* ================= شاشة المعاينة والقالب الرسمي الجديد A4 ================= */
+        /* CSS خاص لخيارات دمج الفواتير */
+        .checkbox-row {
+            display: flex; align-items: center; gap: 10px; background: white;
+            padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+        }
+        .checkbox-row input { width: 18px; height: 18px; cursor: pointer; }
+        .checkbox-row:hover { background: #f1f5f9; }
+
+        /* ================= شاشة المعاينة والقالب الرسمي A4 ================= */
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
         #previewOverlay {
@@ -158,7 +166,6 @@
             margin-bottom: 50px;
         }
 
-        /* خطوط ونصوص الفاتورة */
         .invoice-container p { margin: 0; }
         .text-dark { color: #0f172a; }
         .text-muted { color: #64748b; font-size: 12px; margin-top: 3px; }
@@ -310,7 +317,7 @@
                     </select>
                 </div>
             </div>
-            <!-- حقول الفلترة بالتاريخ -->
+            
             <div class="date-filter-group">
                 <div style="flex:1;">
                     <label style="font-size:10px; margin-bottom:2px;">من تاريخ:</label>
@@ -321,6 +328,9 @@
                     <input type="date" id="filterDateTo" onchange="loadHistory()">
                 </div>
             </div>
+            
+            <!-- زر تجميع الفواتير الجديد -->
+            <button class="btn" style="background-color: #0f766e; width: 100%; margin-top: 15px; font-size: 13px; font-weight: bold; padding: 10px;" onclick="openMergeModal()">📦 تحديد ودمج عدة فواتير لشخص (كشف حساب)</button>
         </div>
 
         <div class="summary-box">
@@ -367,7 +377,29 @@
         <div id="trashList"></div>
     </div>
 
-    <!-- ================= 4. شاشة معاينة الفاتورة بالتصميم الجديد (A4) ================= -->
+    <!-- ================= 4. نافذة دمج الفواتير (Merge Modal) ================= -->
+    <div id="mergeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.8); z-index:9999; padding:20px; align-items:center; justify-content:center; direction: rtl;">
+        <div class="card" style="width:100%; max-width:500px; max-height:90vh; overflow-y:auto; position:relative; background: #f8fafc;">
+            <button onclick="closeMergeModal()" style="position:absolute; left:15px; top:15px; background:#ef4444; color:white; border:none; border-radius:50%; width:30px; height:30px; font-weight:bold; cursor:pointer;">✕</button>
+            <h3 style="color: #0f766e; margin-bottom: 20px;">📦 دمج الفواتير (كشف حساب)</h3>
+            
+            <div class="form-group">
+                <label>1. اختر الشخص المطلوب</label>
+                <select id="mergePersonSelect" onchange="loadMergeInvoices()" style="background: white;">
+                    <option value="">-- يرجى اختيار الشخص --</option>
+                </select>
+            </div>
+            
+            <label style="margin-top: 15px; display: block; margin-bottom: 8px;">2. حدد الفواتير المراد دمجها بالأسفل 👇</label>
+            <div id="mergeInvoicesList" style="display:flex; flex-direction:column; gap:8px; max-height: 250px; overflow-y: auto; padding-left: 5px;">
+                <!-- ستظهر الفواتير هنا -->
+            </div>
+            
+            <button class="btn btn-success" style="margin-top:20px; background: #0f766e;" onclick="generateMergedInvoice()">📄 إصدار ومعاينة الفاتورة المجمعة</button>
+        </div>
+    </div>
+
+    <!-- ================= 5. شاشة معاينة الفاتورة بالتصميم الجديد (A4) ================= -->
     <div id="previewOverlay">
         <div class="preview-actions">
             <button class="btn-download" onclick="printPDF()">🖨️ طباعة / حفظ كملف PDF</button>
@@ -495,7 +527,7 @@
         let currentMode = 'new'; 
         let editingInvNum = null;
 
-        // تعيين تاريخ اليوم كافتراضي في حقل التاريخ
+        // تعيين تاريخ اليوم كافتراضي
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('invoiceDate').valueAsDate = new Date();
         });
@@ -507,7 +539,6 @@
             setTimeout(() => { toast.style.display = 'none'; }, 2500);
         }
 
-        // --- المزامنة والاسترجاع من السحابة ---
         async function syncFromCloud() {
             showToast('جاري استرجاع فواتيرك من السحابة... ⏳');
             try {
@@ -551,7 +582,6 @@
                 let cleanType = (inv.type || '').includes('مديون') ? 'مديون' : 'دائن';
                 if (inv.type !== cleanType) { inv.type = cleanType; isUpdated = true; }
                 
-                // إضافة تاريخ افتراضي إذا لم يكن موجوداً بصيغة قابلة للفرز (YYYY-MM-DD)
                 if (!inv.rawDate) {
                     inv.rawDate = new Date().toISOString().split('T')[0];
                     isUpdated = true;
@@ -706,11 +736,10 @@
                 }
             });
 
-            // التقاط التاريخ المدخل بصيغتين (للعرض، وللفرز)
             const inputDate = document.getElementById('invoiceDate').value || new Date().toISOString().split('T')[0];
             const dateObj = new Date(inputDate);
-            const date = dateObj.toLocaleDateString('ar-SA'); // صيغة العرض للمستخدم
-            const rawDate = inputDate; // صيغة الفرز YYYY-MM-DD
+            const date = dateObj.toLocaleDateString('ar-SA'); 
+            const rawDate = inputDate; 
             
             const invNum = editingInvNum || Math.floor(100000 + Math.random() * 900000);
 
@@ -844,12 +873,12 @@
             document.getElementById('btnCancelEdit').style.display = 'none';
 
             document.getElementById('directName').value = '';
-            document.getElementById('invoiceDate').valueAsDate = new Date(); // إعادة تعيين التاريخ لليوم
+            document.getElementById('invoiceDate').valueAsDate = new Date(); 
             document.getElementById('itemsContainer').innerHTML = '';
             addItemRow();
         }
 
-        // ================= نظام المعاينة والطباعة الجديد (A4) =================
+        // ================= نظام المعاينة والطباعة (A4) =================
         function openPreview(invNum) {
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
             let data = history.find(i => String(i.invNum) === String(invNum));
@@ -868,9 +897,7 @@
                 return `
                 <tr>
                     <td class="center">${index + 1}</td>
-                    <td>
-                        <div class="item-desc">${it.desc}</div>
-                    </td>
+                    <td><div class="item-desc">${it.desc}</div></td>
                     <td class="center" style="color: #64748b; font-size: 13px;">${Number(it.vatAmount).toFixed(2)} (${it.vatRate}%)</td>
                     <td class="left">${Number(it.price).toFixed(2)}</td>
                     <td class="left font-bold">${Number(it.itemTotal).toFixed(2)}</td>
@@ -895,8 +922,130 @@
         function printPDF() {
             window.print();
         }
-        // ======================================================================
 
+        // ================= نظام دمج الفواتير (كشف الحساب) =================
+        function openMergeModal() {
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let uniqueNames = [...new Set(history.map(i => i.name))];
+            
+            let select = document.getElementById('mergePersonSelect');
+            select.innerHTML = '<option value="">-- يرجى اختيار الشخص --</option>';
+            uniqueNames.forEach(name => {
+                select.innerHTML += `<option value="${name}">${name}</option>`;
+            });
+            
+            document.getElementById('mergeInvoicesList').innerHTML = '<p style="text-align:center; font-size:12px; color:#64748b; margin-top:20px;">اختر الشخص من الأعلى لتظهر فواتيره هنا 💡</p>';
+            document.getElementById('mergeModal').style.display = 'flex';
+        }
+
+        function closeMergeModal() {
+            document.getElementById('mergeModal').style.display = 'none';
+        }
+
+        function loadMergeInvoices() {
+            let name = document.getElementById('mergePersonSelect').value;
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let personInvoices = history.filter(i => i.name === name);
+            
+            // ترتيب من الأحدث للأقدم
+            personInvoices.sort((a,b) => new Date(b.rawDate || 0) - new Date(a.rawDate || 0));
+
+            let container = document.getElementById('mergeInvoicesList');
+            if(!name) { 
+                container.innerHTML = '<p style="text-align:center; font-size:12px; color:#64748b; margin-top:20px;">اختر الشخص من الأعلى لتظهر فواتيره هنا 💡</p>'; 
+                return; 
+            }
+
+            if(personInvoices.length === 0) {
+                container.innerHTML = '<p style="text-align:center; font-size:12px; color:#ef4444; margin-top:20px;">لا توجد فواتير سابقة لهذا الشخص ⚠️</p>';
+                return;
+            }
+
+            container.innerHTML = personInvoices.map(inv => {
+                let isDebit = inv.type === 'مديون';
+                return `
+                <label class="checkbox-row">
+                    <input type="checkbox" class="merge-checkbox" value="${inv.invNum}" checked>
+                    <div style="flex:1;">
+                        <div style="font-weight:bold; font-size:13px; color:#0f172a;">
+                            فاتورة #${inv.invNum} 
+                            <span class="badge ${isDebit ? 'badge-debit' : 'badge-credit'}">${inv.type}</span>
+                        </div>
+                        <div style="font-size:11px; color:#64748b; margin-top:4px;">التاريخ: ${inv.rawDate || inv.date} | الإجمالي: <span style="font-weight:bold; color:#2563eb;">${Number(inv.total).toFixed(2)}</span> ر.س</div>
+                    </div>
+                </label>
+                `;
+            }).join('');
+        }
+
+        function generateMergedInvoice() {
+            let selectedNums = Array.from(document.querySelectorAll('.merge-checkbox:checked')).map(cb => cb.value);
+            if(selectedNums.length === 0) {
+                showToast('الرجاء تحديد فاتورة واحدة على الأقل للدمج ⚠️');
+                return;
+            }
+            
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let selectedInvoices = history.filter(i => selectedNums.includes(String(i.invNum)));
+            
+            if(selectedInvoices.length === 0) return;
+
+            // أخذ بيانات الشخص من أول فاتورة محددة
+            let name = selectedInvoices[0].name;
+            let type = selectedInvoices[0].type;
+            
+            document.getElementById('pdfClientName').innerText = name;
+            document.getElementById('pdfPersonType').innerText = type + " (مجمعة)";
+            document.getElementById('pdfInvDate').innerText = new Date().toLocaleDateString('ar-SA'); // تاريخ اليوم لكشف الحساب
+            document.getElementById('pdfInvNumber').innerText = 'مجمعة-' + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('pdfEditedTag').innerText = '(كشف حساب)';
+
+            let subTotal = 0;
+            let totalVat = 0;
+            let grandTotal = 0;
+            let combinedItemsHtml = '';
+            
+            let itemIndex = 1;
+            
+            // تجميع كل البنود من كل الفواتير المحددة
+            selectedInvoices.forEach(inv => {
+                (inv.items || []).forEach(it => {
+                    subTotal += Number(it.price);
+                    totalVat += Number(it.vatAmount);
+                    grandTotal += Number(it.itemTotal);
+                    
+                    combinedItemsHtml += `
+                    <tr>
+                        <td class="center">${itemIndex++}</td>
+                        <td>
+                            <div class="item-desc">${it.desc}</div>
+                            <div class="item-sub" style="font-size:10px; color:#94a3b8; font-weight:bold;">
+                                <span>من فاتورة #${inv.invNum}</span> 
+                                <span style="margin: 0 4px;">|</span>
+                                <span>بتاريخ ${inv.rawDate || inv.date}</span>
+                            </div>
+                        </td>
+                        <td class="center" style="color: #64748b; font-size: 13px;">${Number(it.vatAmount).toFixed(2)} (${it.vatRate}%)</td>
+                        <td class="left">${Number(it.price).toFixed(2)}</td>
+                        <td class="left font-bold">${Number(it.itemTotal).toFixed(2)}</td>
+                    </tr>
+                    `;
+                });
+            });
+
+            document.getElementById('pdfItemsTableBody').innerHTML = combinedItemsHtml;
+            document.getElementById('pdfSubTotal').innerText = subTotal.toFixed(2);
+            document.getElementById('pdfVatAmount').innerText = totalVat.toFixed(2);
+            document.getElementById('pdfGrandTotal').innerText = grandTotal.toFixed(2);
+
+            closeMergeModal(); // إغلاق نافذة التحديد
+            
+            // إظهار المعاينة
+            document.getElementById('previewOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        // ================= فرز الفواتير وتحميلها =================
         function loadHistory() {
             fixExistingData(); 
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
@@ -904,11 +1053,9 @@
             let selectedType = document.getElementById('filterType').value;
             let query = document.getElementById('searchQuery').value.trim().toLowerCase();
             
-            // جلب قيم تواريخ الفلترة
             let filterDateFrom = document.getElementById('filterDateFrom').value;
             let filterDateTo = document.getElementById('filterDateTo').value;
 
-            // تطبيق الفلاتر
             if (selectedPerson !== 'ALL') history = history.filter(inv => inv.name === selectedPerson);
             if (selectedType !== 'ALL') history = history.filter(inv => inv.type === selectedType);
             if (query !== '') history = history.filter(inv => inv.name.toLowerCase().includes(query) || (inv.items || []).some(i => (i.desc || '').toLowerCase().includes(query)));
@@ -916,7 +1063,6 @@
             if (filterDateFrom) history = history.filter(inv => inv.rawDate >= filterDateFrom);
             if (filterDateTo) history = history.filter(inv => inv.rawDate <= filterDateTo);
 
-            // ترتيب الفواتير حسب التاريخ (الأحدث أولاً)
             history.sort((a, b) => new Date(b.rawDate || 0) - new Date(a.rawDate || 0));
 
             let sumCredit = 0, sumDebit = 0;
