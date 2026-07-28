@@ -500,24 +500,35 @@
             setTimeout(() => { toast.style.display = 'none'; }, 2500);
         }
 
-        // ================= التصفير الكامل للسحابة والمحلية =================
+        // ================= التصفير الكامل المحمي بكلمة المرور وتأكيدات متعددة =================
         async function resetCloudAndLocalDatabase() {
-            if(!confirm('⚠️ تحذير شديد: هل أنت متأكد من حذف وحرق جميع بيانات الفواتير والأشخاص من السحابة والجهاز نهائياً؟ لا يمكن التراجع عن هذا الإجراء!')) return;
+            // التحقق من كلمة المرور
+            let passInput = prompt('الرجاء إدخال كلمة المرور الخاصة لتنفيذ عملية التصفير الكامل:');
+            if (passInput !== 'Iadmhal2006') {
+                showToast('كلمة المرور غير صحيحة ❌');
+                return;
+            }
+
+            // تأكيد أول
+            if(!confirm('⚠️ تحذير شديد: هل أنت متأكد من حذف وحرق جميع بيانات الفواتير والأشخاص من السحابة والجهاز نهائياً؟')) return;
             
+            // تأكيد ثاني
+            if(!confirm('🛑 تنبيه إضافي: هذه العملية نهائية ولا يمكن التراجع عنها أبداً. هل تريد المتابعة حقاً؟')) return;
+
+            // تأكيد ثالث (أكثر من مرة كما طلبت)
+            if(!confirm('🚨 التأكيد الأخير: سيتم تفريغ السحابة بالكامل لتصبح نظيفة وفارغة. هل أنت موافق؟')) return;
+
             showToast('جاري تصفير السحابة وحذف كافة البيانات... ⏳');
             try {
                 if (window.db && window.getDocs && window.deleteDoc) {
-                    // 1. حذف جميع فواتير السحابة
                     const invSnap = await window.getDocs(window.collection(window.db, "invoices"));
                     for (let d of invSnap.docs) {
                         await window.deleteDoc(window.doc(window.db, "invoices", d.id));
                     }
-                    // 2. حذف جميع الأشخاص بالسحابة
                     const pSnap = await window.getDocs(window.collection(window.db, "people"));
                     for (let d of pSnap.docs) {
                         await window.deleteDoc(window.doc(window.db, "people", d.id));
                     }
-                    // 3. حذف مهملات السحابة
                     const tSnap = await window.getDocs(window.collection(window.db, "trash"));
                     for (let d of tSnap.docs) {
                         await window.deleteDoc(window.doc(window.db, "trash", d.id));
@@ -527,7 +538,6 @@
                 console.error(e);
             }
 
-            // تفريغ الذاكرة المحلية بالكامل
             localStorage.removeItem('nara_invoices');
             localStorage.removeItem('nara_people');
             localStorage.removeItem('nara_trash');
