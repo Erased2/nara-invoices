@@ -30,14 +30,14 @@
         }
 
         .header { text-align: center; margin-bottom: 15px; }
-        .header h1 { font-size: 24px; color: var(--primary); font-weight: 800; }
+        .header h1 { font-size: 24px; color: var(--primary); font-weight: 800; letter-spacing: 1px; }
         .header p { font-size: 13px; color: #64748b; margin-bottom: 10px; }
 
         .btn-sync {
             background: #0f172a; color: white; border: none; padding: 8px 16px;
             border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 6px;
-            transition: all 0.3s ease;
+            transition: all 0.3s ease; width: 100%; justify-content: center;
         }
 
         #toast {
@@ -50,6 +50,7 @@
         .tab-btn {
             flex: 1; padding: 10px 4px; background: #e2e8f0; border: none;
             border-radius: 10px; font-weight: bold; font-size: 12px; color: #475569; cursor: pointer; text-align: center;
+            transition: all 0.2s;
         }
         .tab-btn.active { background: var(--accent); color: white; }
 
@@ -120,6 +121,7 @@
         .date-filter-group { display: flex; gap: 10px; margin-top: 10px; }
         .date-filter-group input { padding: 8px; border-radius: 8px; font-size: 12px; border: 1px solid var(--border); background: white;}
 
+        /* الشريط العائم الذكي للعمليات الجماعية */
         #mergeFloatBar {
             display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: #0f172a; color: white; padding: 12px 15px; border-radius: 16px;
@@ -128,6 +130,7 @@
             flex-wrap: wrap; gap: 10px;
         }
 
+        /* نوافذ السداد المنبثقة */
         #paymentModal, #bulkPaymentModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15,23,42,0.8); z-index: 99999; padding: 20px;
@@ -135,6 +138,7 @@
         }
         .payment-modal-card { background: white; padding: 20px; border-radius: 16px; width: 100%; max-width: 350px; }
 
+        /* ================= شاشة المعاينة والقالب الكلاسيكي الأنيق للطباعة (A4) ================= */
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 
         #previewOverlay {
@@ -205,13 +209,13 @@
 
     <div class="header">
         <h1>NARA INVOICES</h1>
-        <p>إدارة الفواتير والحسابات السريعة</p>
+        <p>النظام المالي الموحد</p>
         <button id="autoSyncBtn" class="btn-sync" onclick="syncFromCloud()">
             ⏳ جاري الاتصال بالسحابة...
         </button>
     </div>
 
-    <!-- نافذة اختيار طريقة السداد الفردي -->
+    <!-- نافذة السداد الفردي -->
     <div id="paymentModal">
         <div class="payment-modal-card">
             <h3 style="color: #0f172a; margin-bottom: 15px;">كيف تم سداد الفاتورة؟ 💳</h3>
@@ -227,7 +231,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار طريقة السداد الجماعي -->
+    <!-- نافذة السداد الجماعي -->
     <div id="bulkPaymentModal">
         <div class="payment-modal-card">
             <h3 style="color: #0f172a; margin-bottom: 15px;">سداد جماعي 💳</h3>
@@ -238,13 +242,13 @@
                 <option value="شبكة / مدى">شبكة / مدى 💳</option>
             </select>
             <div style="display: flex; gap: 10px;">
-                <button class="btn btn-success" onclick="confirmBulkPayment()">تأكيد السداد للكل</button>
+                <button class="btn btn-success" onclick="confirmBulkPayment()">تأكيد للكل</button>
                 <button class="btn" style="background:#ef4444;" onclick="cancelBulkPayment()">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- شريط الإجراءات الجماعية -->
+    <!-- شريط العمليات الجماعية -->
     <div id="mergeFloatBar">
         <div style="display: flex; align-items: center;">
             <span id="mergeCountText" style="font-size: 18px; font-weight: 800; color: #38bdf8;">0</span>
@@ -353,7 +357,7 @@
             </div>
         </div>
 
-        <p style="font-size: 11px; color: #64748b; text-align: center; margin-bottom: 10px;">💡 حدد المربع (☑️) بجانب الفواتير لعمل مقاصة، سداد، أو حذف جماعي</p>
+        <p style="font-size: 11px; color: #64748b; text-align: center; margin-bottom: 10px;">💡 حدد المربع (☑️) لعمل مقاصة، سداد، أو حذف جماعي</p>
 
         <div id="historyList"></div>
     </div>
@@ -398,7 +402,6 @@
         </div>
 
         <div id="invoiceTemplate" class="a4-paper">
-            
             <div class="a4-header">
                 <div>
                     <h1>NARA INVOICES</h1>
@@ -450,7 +453,7 @@
         </div>
     </div>
 
-    <!-- ربط Firebase السحابي الشامل -->
+    <!-- ربط Firebase السحابي (المزامنة الحية) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -491,7 +494,7 @@
             setTimeout(() => { toast.style.display = 'none'; }, 2500);
         }
 
-        // ================= دوال المزامنة السحابية المتقدمة =================
+        // ================= المزامنة السحابية المباشرة =================
         async function saveCloudPerson(p) {
             try { if(window.db) await window.setDoc(window.doc(window.db, "people", p.name), p); } catch(e){}
         }
@@ -515,19 +518,19 @@
             }
             
             const syncBtn = document.getElementById('autoSyncBtn');
-            syncBtn.innerHTML = '🟢 متصل بالسحابة (مزامنة شاملة)';
+            syncBtn.innerHTML = '🟢 متصل بالسحابة (مزامنة فورية)';
             syncBtn.style.background = '#10b981';
 
-            // مراقبة الفواتير
+            // استماع للفواتير
             window.onSnapshot(window.collection(window.db, "invoices"), (snapshot) => {
                 let cloudInvoices = [];
                 snapshot.forEach((doc) => cloudInvoices.push(doc.data()));
                 cloudInvoices.sort((a, b) => b.invNum - a.invNum);
                 localStorage.setItem('nara_invoices', JSON.stringify(cloudInvoices));
                 loadHistory(); 
-            }, (error) => { syncBtn.innerHTML = '🔴 تم فقد الاتصال...'; syncBtn.style.background = '#ef4444'; });
+            }, () => { syncBtn.innerHTML = '🔴 تم فقد الاتصال'; syncBtn.style.background = '#ef4444'; });
 
-            // مراقبة الأشخاص
+            // استماع للأشخاص
             window.onSnapshot(window.collection(window.db, "people"), (snapshot) => {
                 let cloudPeople = [];
                 snapshot.forEach((doc) => cloudPeople.push(doc.data()));
@@ -535,7 +538,7 @@
                 renderPeople(); 
             });
 
-            // مراقبة سلة المهملات
+            // استماع للمهملات
             window.onSnapshot(window.collection(window.db, "trash"), (snapshot) => {
                 let cloudTrash = [];
                 snapshot.forEach((doc) => cloudTrash.push(doc.data()));
@@ -545,11 +548,8 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initAutoSync(); 
-        });
+        document.addEventListener('DOMContentLoaded', () => { initAutoSync(); });
 
-        // مزامنة يدوية إجبارية (لرفع التغييرات المحلية التي قد تكون لم ترفع)
         async function syncFromCloud() {
             showToast('جاري المزامنة الشاملة مع السحابة... ⏳');
             try {
@@ -567,7 +567,6 @@
                 }
             } catch (e) {
                 showToast('حدث خطأ في الاتصال بالسحابة ❌');
-                console.error(e);
             }
         }
 
@@ -667,11 +666,11 @@
             people.push(newPerson);
             localStorage.setItem('nara_people', JSON.stringify(people));
             
-            saveCloudPerson(newPerson); // حفظ فوري للأشخاص بالسحابة
+            saveCloudPerson(newPerson); 
 
             document.getElementById('newPersonName').value = '';
             renderPeople();
-            showToast('تم حفظ الشخص للقائمة الدائمة! 🎉');
+            showToast('تم حفظ الشخص! 🎉');
         }
 
         function deletePerson(name) {
@@ -680,7 +679,7 @@
             people = people.filter(p => p.name !== name);
             localStorage.setItem('nara_people', JSON.stringify(people));
             
-            deleteCloudPerson(name); // حذف فوري من السحابة
+            deleteCloudPerson(name); 
 
             renderPeople();
         }
@@ -758,7 +757,7 @@
             return { name, type, items, total, totalVat, date, rawDate, invNum, isEdited: !!editingInvNum, isPaid: false, payMethod: '' };
         }
 
-        async function saveInvoiceData() {
+        function saveInvoiceData() {
             const data = getInputs();
             if (currentMode === 'saved' && !data.name) return showToast('اختر شخص من القائمة أولاً ⚠️');
             if (data.items.length === 0) return showToast('أدخل بنداً واحداً ومبلغاً على الأقل ⚠️');
@@ -783,10 +782,10 @@
             resetForm();
             loadHistory();
 
-            saveCloudSingle(data); // رفع فوري للفواتير
+            saveCloudSingle(data); 
         }
 
-        // ================= نظام السداد الفردي =================
+        // ================= الإجراءات الفردية =================
         function handlePaymentToggle(invNum, isChecked) {
             if (isChecked) {
                 targetInvForPayment = invNum;
@@ -815,7 +814,7 @@
                 inv.payMethod = method;
                 localStorage.setItem('nara_invoices', JSON.stringify(history));
                 saveCloudSingle(inv); 
-                showToast(isPaid ? 'تم تسجيل سداد الفاتورة بنجاح ✅' : 'تم إلغاء سداد الفاتورة 🔄');
+                showToast(isPaid ? 'تم سداد الفاتورة ✅' : 'تم إلغاء السداد 🔄');
                 loadHistory();
             }
         }
@@ -856,7 +855,6 @@
             localStorage.setItem('nara_invoices', JSON.stringify(history));
             localStorage.setItem('nara_trash', JSON.stringify(trash));
             
-            // مزامنة الحذف
             saveCloudTrash(invToMove);
             try {
                 if(window.db && window.deleteDoc && window.doc) {
@@ -864,7 +862,7 @@
                 }
             } catch(e){}
 
-            loadHistory(); loadTrash(); showToast('تم نقل الفاتورة لسلة المهملات 🗑️');
+            loadHistory(); loadTrash(); showToast('تم الحذف 🗑️');
         }
 
         function restoreFromTrash(invNum) {
@@ -880,11 +878,10 @@
             localStorage.setItem('nara_invoices', JSON.stringify(history));
             localStorage.setItem('nara_trash', JSON.stringify(trash));
             
-            // مزامنة الاسترجاع
             saveCloudSingle(invToRestore);
             deleteCloudTrash(invNum);
 
-            loadTrash(); loadHistory(); showToast('تم استرجاع الفاتورة بنجاح! 🔄🎉');
+            loadTrash(); loadHistory(); showToast('تم الاسترجاع 🔄');
         }
 
         function cleanOldTrash() {
@@ -893,7 +890,7 @@
             let keep = [];
             trash.forEach(item => {
                 if (item.deletedAt && (now - item.deletedAt) >= (7 * 24 * 60 * 60 * 1000)) {
-                    deleteCloudTrash(item.invNum); // حذف نهائي من السحابة أيضاً
+                    deleteCloudTrash(item.invNum); 
                 } else {
                     keep.push(item);
                 }
@@ -925,8 +922,8 @@
                             <b style="color:#ef4444;">${Number(item.total).toFixed(2)} ر.س</b>
                         </div>
                         <small style="color: #64748b; display:block;">البنود: ${itemsSummary}</small>
-                        <small style="color: #e11d48; font-weight:bold; font-size:11px; display:block; margin-top:4px;">⏳ متبقي على الحذف النهائي: ${daysLeft} يوم</small>
-                        <button style="margin-top:8px; width:100%; padding:8px; background:#10b981; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="restoreFromTrash('${item.invNum}')">🔄 استرجاع الفاتورة للسجل</button>
+                        <small style="color: #e11d48; font-weight:bold; font-size:11px; display:block; margin-top:4px;">⏳ متبقي للحذف النهائي: ${daysLeft} يوم</small>
+                        <button style="margin-top:8px; width:100%; padding:8px; background:#10b981; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="restoreFromTrash('${item.invNum}')">🔄 استرجاع للسجل</button>
                     </div>
                 `;
             }).join('');
@@ -943,7 +940,7 @@
             addItemRow();
         }
 
-        // ================= الإجراءات الجماعية (Bulk Actions) =================
+        // ================= الإجراءات الجماعية =================
         function handleMergeSelection() {
             const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
             const floatBar = document.getElementById('mergeFloatBar');
@@ -961,7 +958,7 @@
             const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
             if(checkedBoxes.length === 0) return;
             
-            if(!confirm('⚠️ هل أنت متأكد من نقل جميع الفواتير المحددة إلى سلة المهملات؟')) return;
+            if(!confirm('⚠️ نقل جميع الفواتير المحددة إلى المهملات؟')) return;
             
             let selectedNums = Array.from(checkedBoxes).map(cb => cb.value);
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
@@ -973,7 +970,7 @@
             toMove.forEach(inv => {
                 inv.deletedAt = now;
                 trash.unshift(inv);
-                saveCloudTrash(inv); // مزامنة الحذف الجماعي
+                saveCloudTrash(inv);
                 try {
                     if(window.db && window.deleteDoc && window.doc) {
                         window.deleteDoc(window.doc(window.db, "invoices", String(inv.invNum)));
@@ -986,7 +983,7 @@
             localStorage.setItem('nara_invoices', JSON.stringify(history));
             localStorage.setItem('nara_trash', JSON.stringify(trash));
             
-            showToast('تم نقل الفواتير المحددة للمهملات 🗑️');
+            showToast('تم النقل للمهملات 🗑️');
             loadHistory();
             loadTrash();
         }
@@ -1007,14 +1004,14 @@
                 if (targetBulkInvoices.includes(String(inv.invNum))) {
                     inv.isPaid = true;
                     inv.payMethod = method;
-                    saveCloudSingle(inv); // رفع السداد الجماعي
+                    saveCloudSingle(inv); 
                 }
                 return inv;
             });
             
             localStorage.setItem('nara_invoices', JSON.stringify(history));
             document.getElementById('bulkPaymentModal').style.display = 'none';
-            showToast('تم سداد الفواتير المحددة بنجاح! ✅');
+            showToast('تم السداد الجماعي بنجاح! ✅');
             loadHistory();
         }
 
@@ -1036,7 +1033,7 @@
             });
 
             if(namesSet.size > 1) {
-                showToast('⚠️ يرجى تحديد فواتير لنفس الشخص فقط لعمل كشف الحساب!');
+                showToast('⚠️ يرجى تحديد فواتير لنفس الشخص فقط!');
                 return;
             }
 
@@ -1052,7 +1049,7 @@
             document.getElementById('pdfInvDate').innerText = new Date().toLocaleDateString('ar-SA');
             document.getElementById('pdfInvNumber').innerText = 'كشف-' + Math.floor(1000 + Math.random() * 9000);
             document.getElementById('pdfEditedTag').innerText = '';
-            document.getElementById('pdfPaymentStatus').innerHTML = '<span style="color:#64748b; font-size:12px;">ملاحظة: تفاصيل السداد موضحة لكل بند في الجدول.</span>';
+            document.getElementById('pdfPaymentStatus').innerHTML = '<span style="color:#64748b; font-size:12px;">ملاحظة: حالة السداد موضحة لكل بند بالأسفل.</span>';
 
             let totalDebit = 0; 
             let totalCredit = 0; 
@@ -1130,7 +1127,7 @@
             checkedBoxes.forEach(cb => cb.checked = false);
         }
 
-        // ================= نظام المعاينة والطباعة الفردي الأصلي (A4) =================
+        // ================= المعاينة الفردية (A4) =================
         function openPreview(invNum) {
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
             let data = history.find(i => String(i.invNum) === String(invNum));
@@ -1144,9 +1141,9 @@
 
             let statusDiv = document.getElementById('pdfPaymentStatus');
             if (data.isPaid) {
-                statusDiv.innerHTML = `<span style="color:#10b981; font-weight:bold;">✅ حالة الدفع: مسددة (${data.payMethod})</span>`;
+                statusDiv.innerHTML = `<span style="color:#10b981; font-weight:bold;">✅ مسددة (${data.payMethod})</span>`;
             } else {
-                statusDiv.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ حالة الدفع: غير مسددة</span>`;
+                statusDiv.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ غير مسددة</span>`;
             }
 
             let subTotal = 0;
@@ -1171,7 +1168,7 @@
                         <td class="sum-val">${subTotal.toFixed(2)} ر.س</td>
                     </tr>
                     <tr>
-                        <td class="sum-title">مجموع الضريبة المضافة:</td>
+                        <td class="sum-title">الضريبة المضافة:</td>
                         <td class="sum-val">${Number(data.totalVat).toFixed(2)} ر.س</td>
                     </tr>
                     <tr class="total-row">
@@ -1197,7 +1194,7 @@
             window.print();
         }
 
-        // ================= فرز الفواتير (مع الحفاظ على الفواتير المحددة أثناء المزامنة الحية) =================
+        // ================= فرز وبناء الواجهة =================
         function loadHistory() {
             fixExistingData(); 
             
