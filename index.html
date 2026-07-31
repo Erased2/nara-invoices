@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Nara Invoices</title>
-
+    
     <!-- إعدادات الشاشة الكاملة للجوال (PWA Standalone) -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,13 +12,10 @@
     <meta name="apple-mobile-web-app-title" content="Nara Invoices">
     <meta name="theme-color" content="#1e293b">
 
-    <!-- أيقونة التطبيق -->
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1052/1052858.png">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1052/1052858.png">
-
-    <!-- ملف Manifest مدمج لتشغيل وضع الشاشة الكاملة -->
     <link rel="manifest" href='data:application/manifest+json,{"short_name":"NaraInvoices","name":"Nara Invoices","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/1052/1052858.png","type":"image/png","sizes":"512x512"}],"start_url":"./index.html","background_color":"#f8fafc","theme_color":"#1e293b","display":"standalone","orientation":"portrait"}'>
-    
+
     <style>
         :root {
             --primary: #1e293b;
@@ -750,7 +747,7 @@
             addItemRow();
         }
 
-        // ================= نظام المعاينة والطباعة الأصلي =================
+        // ================= نظام المعاينة والطباعة الأصلي (يحل مشكلة العربي 100%) =================
         function openPreview(invNum) {
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
             let data = history.find(i => String(i.invNum) === String(invNum));
@@ -791,9 +788,12 @@
             document.body.style.overflow = 'auto'; 
         }
 
+        // دالة الطباعة النظيفة التي تدعم حفظ PDF باللغة العربية بدقة 100%
         function printPDF() {
+            // نستخدم دالة الطباعة الخاصة بالمتصفح، عند ظهور النافذة اختر (حفظ بتنسيق PDF)
             window.print();
         }
+        // ======================================================================
 
         function loadHistory() {
             fixExistingData(); 
