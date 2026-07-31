@@ -11,18 +11,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <!-- أيقونات التطبيق للشاشة الرئيسية للجوال -->
-    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png?v=4">
-    <link rel="icon" type="image/png" sizes="180x180" href="icon-180.png?v=4">
-    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png?v=4">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png?v=5">
+    <link rel="icon" type="image/png" sizes="180x180" href="icon-180.png?v=5">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png?v=5">
     <meta name="theme-color" content="#1e293b">
 
     <!-- صورة المعاينة لقوقل والشبكات الاجتماعية (الواتساب، الخ) -->
     <meta property="og:title" content="Nara Invoices - النظام المالي الموحد">
     <meta property="og:description" content="نظام إدارة الفواتير والعمليات المالية بسهولة وأمان.">
-    <meta property="og:image" content="https://erased2.github.io/nara-invoices/icon-512.png">
+    <meta property="og:image" content="https://erased2.github.io/nara-invoices/icon-512.png?v=5">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://erased2.github.io/nara-invoices/icon-512.png">
+    <meta name="twitter:image" content="https://erased2.github.io/nara-invoices/icon-512.png?v=5">
     
     <style>
         :root {
@@ -51,6 +51,18 @@
         .header { text-align: center; margin-bottom: 15px; }
         .header h1 { font-size: 24px; color: var(--primary); font-weight: 800; letter-spacing: 1px; }
         .header p { font-size: 13px; color: #64748b; margin-bottom: 10px; }
+
+        /* الكلاس الجديد لشكل اللوجو الاحترافي */
+        .app-logo {
+            width: 70px; 
+            height: 70px; 
+            border-radius: 18px; /* شكل انسيابي مثل تطبيقات الآيفون */
+            margin: 0 auto 10px auto; 
+            display: block; 
+            box-shadow: 0 6px 16px rgba(11, 23, 50, 0.2), inset 0 0 0 1px rgba(255,255,255,0.2); 
+            object-fit: cover;
+            border: 2px solid #ffffff; /* إطار أبيض يفصلها عن الخلفية الفاتحة */
+        }
 
         .btn-sync {
             background: #10b981; color: white; border: none; padding: 8px 16px;
@@ -241,8 +253,8 @@
     <div id="toast">تم تحديث النظام بنجاح! ☁️🎉</div>
 
     <div class="header">
-        <!-- صورة اللوجو أعلى العنوان -->
-        <img src="icon-180.png" alt="Nara Logo" style="width: 75px; height: 75px; border-radius: 16px; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
+        <!-- صورة اللوجو أعلى العنوان بالشكل الاحترافي الجديد -->
+        <img src="icon-180.png?v=5" alt="Nara Logo" class="app-logo">
         <h1>NARA INVOICES</h1>
         <p>النظام المالي الموحد</p>
         <button id="autoSyncBtn" class="btn-sync">
