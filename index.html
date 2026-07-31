@@ -2,20 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nara Invoices</title>
     
-    <!-- إعدادات الشاشة الكاملة للجوال (PWA Standalone) -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Nara Invoices">
-    <meta name="theme-color" content="#1e293b">
-
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1052/1052858.png">
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1052/1052858.png">
-    <link rel="manifest" href='data:application/manifest+json,{"short_name":"NaraInvoices","name":"Nara Invoices","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/1052/1052858.png","type":"image/png","sizes":"512x512"}],"start_url":"./index.html","background_color":"#f8fafc","theme_color":"#1e293b","display":"standalone","orientation":"portrait"}'>
-
     <style>
         :root {
             --primary: #1e293b;
@@ -37,18 +26,25 @@
             max-width: 500px;
             margin: 0 auto;
             direction: rtl;
+            padding-bottom: 90px; 
         }
 
         .header { text-align: center; margin-bottom: 15px; }
-        .header h1 { font-size: 24px; color: var(--primary); font-weight: 800; }
+        .header h1 { font-size: 24px; color: var(--primary); font-weight: 800; letter-spacing: 1px; }
         .header p { font-size: 13px; color: #64748b; margin-bottom: 10px; }
 
         .btn-sync {
-            background: #0f172a; color: white; border: none; padding: 8px 16px;
+            background: #10b981; color: white; border: none; padding: 8px 16px;
             border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 6px;
+            transition: all 0.3s ease; width: 100%; justify-content: center; margin-bottom: 6px;
         }
-        .btn-sync:hover { background: #1e293b; }
+
+        .btn-danger-reset {
+            background: #ef4444; color: white; border: none; padding: 6px 12px;
+            border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;
+            width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 6px;
+        }
 
         #toast {
             display: none; position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
@@ -60,6 +56,7 @@
         .tab-btn {
             flex: 1; padding: 10px 4px; background: #e2e8f0; border: none;
             border-radius: 10px; font-weight: bold; font-size: 12px; color: #475569; cursor: pointer; text-align: center;
+            transition: all 0.2s;
         }
         .tab-btn.active { background: var(--accent); color: white; }
 
@@ -99,7 +96,7 @@
         .badge-debit { background-color: var(--debit); }
         .badge-edited { background-color: #f59e0b; }
 
-        .history-card { background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; }
+        .history-card { background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; padding-right: 40px; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding-left: 25px; }
 
         .menu-container { position: absolute; left: 10px; top: 10px; }
@@ -127,7 +124,26 @@
         .summary-credit { background: var(--credit); }
         .summary-debit { background: var(--debit); }
 
-        /* ================= شاشة المعاينة والقالب الرسمي ================= */
+        .date-filter-group { display: flex; gap: 10px; margin-top: 10px; }
+        .date-filter-group input { padding: 8px; border-radius: 8px; font-size: 12px; border: 1px solid var(--border); background: white;}
+
+        #mergeFloatBar {
+            display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #0f172a; color: white; padding: 12px 15px; border-radius: 16px;
+            z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 95%; max-width: 450px;
+            align-items: center; justify-content: space-between; border: 1px solid #334155;
+            flex-wrap: wrap; gap: 10px;
+        }
+
+        #paymentModal, #bulkPaymentModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15,23,42,0.8); z-index: 99999; padding: 20px;
+            align-items: center; justify-content: center; direction: rtl;
+        }
+        .payment-modal-card { background: white; padding: 20px; border-radius: 16px; width: 100%; max-width: 350px; }
+
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+
         #previewOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.9); z-index: 10000; overflow-y: auto;
@@ -149,54 +165,131 @@
         .btn-close-preview { background: #ef4444; }
 
         .a4-paper {
-            background: #ffffff; width: 100%; max-width: 800px; padding: 40px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); direction: rtl; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #334155; box-sizing: border-box; margin-bottom: 50px; border-radius: 8px;
+            background: #ffffff; width: 100%; max-width: 800px; padding: 40px 40px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08); direction: rtl; 
+            font-family: 'Cairo', sans-serif; color: #334155; box-sizing: border-box; 
+            margin-bottom: 50px; border-radius: 8px;
         }
 
-        .a4-header { display: flex; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 30px; }
-        .a4-header h1 { margin: 0; font-size: 26px; color: #0f172a; }
-        .a4-header p { margin: 5px 0 0 0; color: #64748b; font-size: 13px; letter-spacing: 1px;}
-        .a4-header-right h2 { margin: 0; font-size: 22px; color: #3b82f6; }
-        .a4-header-right p { margin: 5px 0 0 0; color: #94a3b8; font-size: 12px; }
-        
-        .a4-info-box { display: flex; justify-content: space-between; margin-bottom: 30px; }
-        .a4-info-panel { width: 48%; padding: 5px 0; }
-        .a4-info-panel .lbl { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-        .a4-info-panel .val { font-size: 18px; font-weight: bold; color: #1e293b; }
-        
-        .a4-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; text-align: right; font-size: 13px; }
-        .a4-table th { background: #f8fafc; color: #334155; padding: 12px; border-bottom: 2px solid #cbd5e1; font-weight: bold; }
-        .a4-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #1e293b; }
-        
-        .a4-summary { display: flex; justify-content: flex-end; margin-bottom: 20px; }
-        .a4-summary table { width: 45%; border-collapse: collapse; font-size: 13px; text-align: right; }
-        .a4-summary td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
-        .a4-summary .sum-title { color: #64748b; }
-        .a4-summary .sum-val { font-weight: bold; text-align: left; color: #1e293b; }
-        .a4-summary .total-row td { border-top: 2px solid #94a3b8; border-bottom: none; font-size: 16px; font-weight: bold; color: #0f172a; padding-top: 15px; background: #f8fafc; }
-        .a4-summary .total-val { color: #2563eb !important; font-weight: 900 !important; text-align: left; }
+        .a4-header-top { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1e293b; padding-bottom: 12px; margin-bottom: 20px; }
+        .a4-brand h1 { font-size: 26px; font-weight: 800; margin: 0; color: #1e293b; letter-spacing: 1px; }
+        .a4-brand p { margin: 2px 0 0 0; color: #64748b; font-size: 12px; }
+        .a4-title { text-align: left; }
+        .a4-title h2 { font-size: 20px; margin: 0 0 5px 0; color: #1e293b; letter-spacing: 1px; }
+        .a4-meta { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: #475569; }
 
-        /* ================= إعدادات الطباعة النظيفة للحفظ كـ PDF ================= */
-        @page { size: A4 portrait; margin: 15mm; }
+        .a4-client-section { 
+            display: flex; justify-content: space-between; align-items: center;
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; 
+            padding: 12px 18px; margin-bottom: 20px;
+        }
+        .a4-client-details .lbl { font-size: 11px; color: #64748b; margin-bottom: 2px; text-transform: uppercase; }
+        .a4-client-details .val { font-size: 15px; font-weight: 800; color: #0f172a; margin: 0; }
+        .a4-client-details .sub-val { font-size: 12px; color: #475569; margin-top: 2px; }
+        
+        .a4-payment-details { text-align: left; }
+        .a4-payment-details .lbl { font-size: 11px; color: #64748b; margin-bottom: 2px; }
+
+        .a4-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 20px; }
+        .a4-table th { background: #f1f5f9; color: #475569; padding: 10px 12px; font-weight: 700; font-size: 12px; text-align: right; }
+        .a4-table th.center { text-align: center; }
+        .a4-table th:first-child { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+        .a4-table th:last-child { border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
+        .a4-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 13px; }
+        .a4-table td.center { text-align: center; }
+        .a4-table tr:last-child td { border-bottom: none; }
+
+        .a4-footer-wrapper { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; }
+        .a4-notes { flex: 1; padding-left: 20px; margin-top: 10px; }
+        .a4-notes p { font-size: 12px; color: #64748b; line-height: 1.6; margin-bottom: 4px;}
+        
+        .a4-summary-box { width: 300px; background: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #e2e8f0; }
+        .a4-summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: #475569; }
+        .a4-summary-row.total { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 0; }
+
+        @page { size: A4 portrait; margin: 10mm; }
         @media print {
             body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             body > *:not(#previewOverlay) { display: none !important; }
-            #previewOverlay { display: block !important; position: relative !important; background: transparent !important; padding: 0 !important; overflow: visible !important; }
+            #previewOverlay { display: block !important; position: absolute !important; top:0; left:0; background: transparent !important; padding: 0 !important; overflow: visible !important; }
             .preview-actions { display: none !important; }
-            .a4-paper { box-shadow: none !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; border-radius: 0 !important; }
+            .a4-paper { box-shadow: none !important; margin: 0 !important; padding: 10mm !important; width: 100% !important; max-width: 100% !important; border-radius: 0 !important; border: none !important;}
         }
     </style>
 </head>
 <body>
 
-    <div id="toast">تم حفظ الفاتورة بنجاح! ☁️🎉</div>
+    <div id="toast">تم تحديث النظام بنجاح! ☁️🎉</div>
 
     <div class="header">
-        <h1>📑 Nara Invoices</h1>
-        <p>إدارة الفواتير والحسابات السريعة</p>
-        <button class="btn-sync" onclick="syncFromCloud()">☁️ استرجاع ومزامنة من السحابة</button>
+        <h1>NARA INVOICES</h1>
+        <p>النظام المالي الموحد</p>
+        <button id="autoSyncBtn" class="btn-sync">
+            ⏳ جاري الاتصال بالسحابة...
+        </button>
+        <button class="btn-danger-reset" onclick="resetCloudAndLocalDatabase()">
+            ⚠️ تصفير وحذف كل فواتير السحابة نهائياً
+        </button>
+    </div>
+
+    <!-- نافذة السداد (جزئي أو كلي) -->
+    <div id="paymentModal">
+        <div class="payment-modal-card">
+            <h3 style="color: #0f172a; margin-bottom: 15px;">تسجيل دفعة / سداد 💳</h3>
+            
+            <div class="form-group">
+                <label>المبلغ المدفوع (ر.س)</label>
+                <input type="number" id="payAmountInput" placeholder="اتركه فارغاً لسداد كامل المبلغ">
+            </div>
+
+            <div class="form-group">
+                <label>طريقة الدفع</label>
+                <select id="payMethodSelect">
+                    <option value="كاش">كاش 💵</option>
+                    <option value="تحويل بنكي">تحويل بنكي 🏦</option>
+                    <option value="شبكة / مدى">شبكة / مدى 💳</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn btn-success" onclick="confirmPayment()">تأكيد السداد</button>
+                <button class="btn" style="background:#ef4444;" onclick="cancelPayment()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bulkPaymentModal">
+        <div class="payment-modal-card">
+            <h3 style="color: #0f172a; margin-bottom: 15px;">سداد جماعي 💳</h3>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">سيتم اعتبار جميع الفواتير المحددة (مسددة بالكامل). اختر الطريقة:</p>
+            <select id="bulkPayMethodSelect" style="margin-bottom: 15px;">
+                <option value="كاش">كاش 💵</option>
+                <option value="تحويل بنكي">تحويل بنكي 🏦</option>
+                <option value="شبكة / مدى">شبكة / مدى 💳</option>
+            </select>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="confirmBulkPayment()">تأكيد للكل</button>
+                <button class="btn" style="background:#ef4444;" onclick="cancelBulkPayment()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mergeFloatBar">
+        <div style="display: flex; align-items: center;">
+            <span id="mergeCountText" style="font-size: 18px; font-weight: 800; color: #38bdf8;">0</span>
+            <span style="font-size: 12px; font-weight: bold; margin-right: 5px;">محددة</span>
+        </div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; flex: 1; justify-content: flex-end;">
+            <button onclick="previewMergedInvoices()" style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; flex: 1; min-width: 90px;">
+                كشف حساب 📄
+            </button>
+            <button onclick="bulkMarkPaid()" style="background: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; flex: 1; min-width: 90px;">
+                سداد جماعي ✅
+            </button>
+            <button onclick="bulkDelete()" style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; flex: 1; min-width: 90px;">
+                حذف جماعي 🗑️
+            </button>
+        </div>
     </div>
 
     <div class="tabs">
@@ -251,7 +344,7 @@
         <h3>🔍 فرز وحسابات الفواتير 🌟</h3>
         <div class="filter-card">
             <div class="form-group" style="margin-bottom: 8px;">
-                <input type="text" id="searchQuery" placeholder="🔎 بحث بالاسم أو الوصف..." oninput="loadHistory()">
+                <input type="text" id="searchQuery" placeholder="🔎 بحث بالاسم، الوصف، أو رقم الفاتورة..." oninput="loadHistory()">
             </div>
             <div class="row">
                 <div class="form-group" style="margin-bottom: 0;">
@@ -267,6 +360,17 @@
                     </select>
                 </div>
             </div>
+            
+            <div class="date-filter-group">
+                <div style="flex:1;">
+                    <label style="font-size:10px; margin-bottom:2px;">من تاريخ:</label>
+                    <input type="date" id="filterDateFrom" onchange="loadHistory()">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-size:10px; margin-bottom:2px;">إلى تاريخ:</label>
+                    <input type="date" id="filterDateTo" onchange="loadHistory()">
+                </div>
+            </div>
         </div>
 
         <div class="summary-box">
@@ -277,6 +381,8 @@
                 إجمالي عليك (مديون): <br><span id="totalDebit">0.00</span> ر.س
             </div>
         </div>
+
+        <p style="font-size: 11px; color: #64748b; text-align: center; margin-bottom: 10px;">💡 الإجمالي يحسب المبالغ المتبقية غير المسددة فقط</p>
 
         <div id="historyList"></div>
     </div>
@@ -313,7 +419,7 @@
         <div id="trashList"></div>
     </div>
 
-    <!-- ================= 4. شاشة معاينة الفاتورة (Preview Modal) ================= -->
+    <!-- ================= 4. شاشة المعاينة والقالب الحديث والنظيف (A4) ================= -->
     <div id="previewOverlay">
         <div class="preview-actions">
             <button class="btn-download" onclick="printPDF()">🖨️ طباعة / حفظ كملف PDF</button>
@@ -321,75 +427,68 @@
         </div>
 
         <div id="invoiceTemplate" class="a4-paper">
-            <div class="a4-header">
-                <div>
-                    <h1>فاتورة ضريبية</h1>
-                    <p>TAX INVOICE</p>
+            
+            <div class="a4-header-top">
+                <div class="a4-brand">
+                    <h1>NARA INVOICES</h1>
+                    <p>المملكة العربية السعودية، جازان</p>
                 </div>
-                <div class="a4-header-right">
-                    <h2>NARA INVOICES</h2>
-                    <p>نظام الإدارة المالية الشامل</p>
+                <div class="a4-title">
+                    <h2>فاتورة | INVOICE</h2>
+                    <div class="a4-meta">
+                        <div><span>رقم الفاتورة:</span> <strong style="color: #0f172a;">#<span id="pdfInvNumber"></span></strong></div>
+                        <div><span>تاريخ الإصدار:</span> <strong style="color: #0f172a;"><span id="pdfInvDate"></span></strong></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="a4-info-box">
-                <div class="a4-info-panel">
-                    <div class="lbl">مُصدرة إلى السيد / العميل:</div>
-                    <div class="val">
+            <div class="a4-client-section">
+                <div class="a4-client-details">
+                    <div class="lbl">مُصدرة إلى العميل / الحساب</div>
+                    <p class="val">
                         <span id="pdfClientName"></span> 
-                        <span id="pdfEditedTag" style="color:#f59e0b; font-size:12px; font-weight:normal; margin-right:5px;"></span>
-                    </div>
-                    <div style="margin-top: 4px; font-size: 13px; color: #64748b;">
-                        تصنيف الحساب: <span id="pdfPersonType" style="color: #334155;"></span>
-                    </div>
+                        <span id="pdfEditedTag" style="color:#f59e0b; font-size:11px; font-weight:normal; margin-right:5px;"></span>
+                    </p>
+                    <div class="sub-val">التصنيف المالي: <span id="pdfPersonType" style="font-weight: bold; color: #1e293b;"></span></div>
                 </div>
                 
-                <div class="a4-info-panel" style="text-align: left;">
-                    <div style="margin-bottom: 8px;"><span style="color:#94a3b8; font-size:12px;">رقم الفاتورة:</span> <strong style="color:#0f172a; font-size:14px; margin-right:5px;">#<span id="pdfInvNumber"></span></strong></div>
-                    <div><span style="color:#94a3b8; font-size:12px;">تاريخ الإصدار:</span> <strong id="pdfInvDate" style="color:#0f172a; font-size:14px; margin-right:5px;"></strong></div>
+                <div class="a4-payment-details">
+                    <div class="lbl">حالة الدفع (Status)</div>
+                    <div id="pdfPaymentStatus" style="font-size: 14px; font-weight: bold; margin-top: 2px;"></div>
                 </div>
             </div>
 
             <table class="a4-table">
                 <thead>
                     <tr>
-                        <th style="width: 5%; text-align: center;">#</th>
+                        <th class="center" style="width: 5%;">#</th>
                         <th style="width: 45%;">البيان / تفاصيل الخدمة</th>
-                        <th style="width: 15%; text-align: center;">المبلغ</th>
-                        <th style="width: 15%; text-align: center;">الضريبة</th>
-                        <th style="width: 20%; text-align: center;">الإجمالي</th>
+                        <th class="center" style="width: 15%;">المبلغ</th>
+                        <th class="center" style="width: 15%;">الضريبة</th>
+                        <th class="center" style="width: 20%;">الإجمالي</th>
                     </tr>
                 </thead>
                 <tbody id="pdfItemsTableBody"></tbody>
             </table>
 
-            <div class="a4-summary">
-                <table>
-                    <tr>
-                        <td class="sum-title">الإجمالي قبل الضريبة:</td>
-                        <td class="sum-val"><span id="pdfSubTotal"></span> ر.س</td>
-                    </tr>
-                    <tr>
-                        <td class="sum-title">مجموع ضريبة القيمة المضافة:</td>
-                        <td class="sum-val"><span id="pdfVatAmount"></span> ر.س</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td>الإجمالي الكلي المستحق:</td>
-                        <td class="total-val"><span id="pdfGrandTotal"></span> ر.س</td>
-                    </tr>
-                </table>
+            <div class="a4-footer-wrapper">
+                <div class="a4-notes">
+                    <p style="font-weight: 700; color: #0f172a; margin-bottom: 6px;">ملاحظات:</p>
+                    <p>• شكراً لثقتكم واختياركم التعامل معنا.</p>
+                    <p>• هذه الوثيقة مُصدرة آلياً وتعتبر كشف مالي معتمد.</p>
+                </div>
+                <div class="a4-summary-box" id="pdfSummaryContainer">
+                    <!-- المجاميع تحقن هنا -->
+                </div>
             </div>
 
-            <div style="text-align: center; font-size: 12px; color: #94a3b8; margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                وثيقة مُصدرة آلياً وتعتبر فاتورة مالية معتمدة - شكراً لثقتكم وتعاملكم معنا
-            </div>
         </div>
     </div>
 
     <!-- ربط Firebase السحابي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDGsMNwQy8tbK9DBYNn60zPA7UtoOvykmo",
@@ -408,11 +507,17 @@
         window.collection = collection;
         window.addDoc = addDoc;
         window.getDocs = getDocs;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.deleteDoc = deleteDoc;
+        window.onSnapshot = onSnapshot;
     </script>
 
     <script>
         let currentMode = 'new'; 
         let editingInvNum = null;
+        let targetInvForPayment = null; 
+        let targetBulkInvoices = [];
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -421,41 +526,98 @@
             setTimeout(() => { toast.style.display = 'none'; }, 2500);
         }
 
-        // --- المزامنة والاسترجاع من السحابة ---
-        async function syncFromCloud() {
-            showToast('جاري استرجاع فواتيرك من السحابة... ⏳');
+        async function resetCloudAndLocalDatabase() {
+            let passInput = prompt('الرجاء إدخال كلمة المرور الخاصة لتنفيذ عملية التصفير الكامل:');
+            if (passInput !== 'Iadmhal2006') {
+                showToast('كلمة المرور غير صحيحة ❌');
+                return;
+            }
+
+            if(!confirm('⚠️ تحذير شديد: هل أنت متأكد من حذف وحرق جميع بيانات الفواتير والأشخاص من السحابة والجهاز نهائياً؟')) return;
+            if(!confirm('🛑 تنبيه إضافي: هذه العملية نهائية ولا يمكن التراجع عنها أبداً. هل تريد المتابعة حقاً؟')) return;
+            if(!confirm('🚨 التأكيد الأخير: سيتم تفريغ السحابة بالكامل لتصبح نظيفة وفارغة. هل أنت موافق؟')) return;
+
+            showToast('جاري تصفير السحابة وحذف كافة البيانات... ⏳');
             try {
-                if (window.db && window.getDocs) {
-                    const querySnapshot = await window.getDocs(window.collection(window.db, "invoices"));
-                    let cloudInvoices = [];
-                    querySnapshot.forEach((doc) => {
-                        cloudInvoices.push(doc.data());
-                    });
-
-                    if (cloudInvoices.length > 0) {
-                        let localInvoices = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
-                        let merged = [...localInvoices];
-
-                        cloudInvoices.forEach(ci => {
-                            if (!merged.find(li => String(li.invNum) === String(ci.invNum))) {
-                                merged.push(ci);
-                            }
-                        });
-
-                        merged.sort((a, b) => b.invNum - a.invNum);
-                        localStorage.setItem('nara_invoices', JSON.stringify(merged));
-                        
-                        loadHistory();
-                        showToast('تم استرجاع البيانات السحابية بنجاح! ☁️✅');
-                    } else {
-                        showToast('لا توجد فواتير سابقة في السحابة 💡');
+                if (window.db && window.getDocs && window.deleteDoc) {
+                    const invSnap = await window.getDocs(window.collection(window.db, "invoices"));
+                    for (let d of invSnap.docs) {
+                        await window.deleteDoc(window.doc(window.db, "invoices", d.id));
+                    }
+                    const pSnap = await window.getDocs(window.collection(window.db, "people"));
+                    for (let d of pSnap.docs) {
+                        await window.deleteDoc(window.doc(window.db, "people", d.id));
+                    }
+                    const tSnap = await window.getDocs(window.collection(window.db, "trash"));
+                    for (let d of tSnap.docs) {
+                        await window.deleteDoc(window.doc(window.db, "trash", d.id));
                     }
                 }
-            } catch (e) {
-                showToast('حدث خطأ في الاتصال بالسحابة ❌');
+            } catch(e) {
                 console.error(e);
             }
+
+            localStorage.removeItem('nara_invoices');
+            localStorage.removeItem('nara_people');
+            localStorage.removeItem('nara_trash');
+
+            showToast('تم تصفير الموقع بالكامل وأصبح فارغاً بنجاح! 🧹✨');
+            loadHistory();
+            renderPeople();
+            loadTrash();
         }
+
+        async function saveCloudPerson(p) {
+            try { if(window.db) await window.setDoc(window.doc(window.db, "people", p.name), p); } catch(e){}
+        }
+        async function deleteCloudPerson(name) {
+            try { if(window.db) await window.deleteDoc(window.doc(window.db, "people", name)); } catch(e){}
+        }
+        async function saveCloudTrash(t) {
+            try { if(window.db) await window.setDoc(window.doc(window.db, "trash", String(t.invNum)), t); } catch(e){}
+        }
+        async function deleteCloudTrash(invNum) {
+            try { if(window.db) await window.deleteDoc(window.doc(window.db, "trash", String(invNum))); } catch(e){}
+        }
+        async function saveCloudSingle(data) {
+            try { if (window.db) await window.setDoc(window.doc(window.db, "invoices", String(data.invNum)), data); } catch(e){}
+        }
+
+        function initAutoSync() {
+            if (!window.db || !window.onSnapshot) {
+                setTimeout(initAutoSync, 1000); 
+                return;
+            }
+            
+            const syncBtn = document.getElementById('autoSyncBtn');
+            syncBtn.innerHTML = '🟢 متصل بالسحابة (مزامنة فورية)';
+            syncBtn.style.background = '#10b981';
+
+            window.onSnapshot(window.collection(window.db, "invoices"), (snapshot) => {
+                let cloudInvoices = [];
+                snapshot.forEach((doc) => cloudInvoices.push(doc.data()));
+                cloudInvoices.sort((a, b) => b.invNum - a.invNum);
+                localStorage.setItem('nara_invoices', JSON.stringify(cloudInvoices));
+                loadHistory(); 
+            }, () => { syncBtn.innerHTML = '🔴 تم فقد الاتصال'; syncBtn.style.background = '#ef4444'; });
+
+            window.onSnapshot(window.collection(window.db, "people"), (snapshot) => {
+                let cloudPeople = [];
+                snapshot.forEach((doc) => cloudPeople.push(doc.data()));
+                localStorage.setItem('nara_people', JSON.stringify(cloudPeople));
+                renderPeople(); 
+            });
+
+            window.onSnapshot(window.collection(window.db, "trash"), (snapshot) => {
+                let cloudTrash = [];
+                snapshot.forEach((doc) => cloudTrash.push(doc.data()));
+                cloudTrash.sort((a, b) => b.deletedAt - a.deletedAt);
+                localStorage.setItem('nara_trash', JSON.stringify(cloudTrash));
+                loadTrash(); 
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { initAutoSync(); });
 
         function fixExistingData() {
             let data = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
@@ -465,6 +627,16 @@
                 let cleanType = (inv.type || '').includes('مديون') ? 'مديون' : 'دائن';
                 if (inv.type !== cleanType) { inv.type = cleanType; isUpdated = true; }
                 
+                if (!inv.rawDate) {
+                    inv.rawDate = new Date().toISOString().split('T')[0];
+                    isUpdated = true;
+                }
+                
+                if (inv.paidAmount === undefined) {
+                    inv.paidAmount = inv.isPaid ? Number(inv.total) : 0;
+                    isUpdated = true;
+                }
+
                 if (!inv.items || !Array.isArray(inv.items)) {
                     inv.items = [{
                         desc: inv.desc || 'معاملة سابقة', price: Number(inv.price) || 0,
@@ -544,12 +716,15 @@
             let people = JSON.parse(localStorage.getItem('nara_people') || '[]');
             if (people.find(p => p.name === name)) return showToast('هذا الشخص موجود بالفعل ⚠️');
 
-            people.push({ name, type });
+            let newPerson = { name, type };
+            people.push(newPerson);
             localStorage.setItem('nara_people', JSON.stringify(people));
+            
+            saveCloudPerson(newPerson); 
 
             document.getElementById('newPersonName').value = '';
             renderPeople();
-            showToast('تم حفظ الشخص للقائمة الدائمة! 🎉');
+            showToast('تم حفظ الشخص! 🎉');
         }
 
         function deletePerson(name) {
@@ -557,6 +732,9 @@
             let people = JSON.parse(localStorage.getItem('nara_people') || '[]');
             people = people.filter(p => p.name !== name);
             localStorage.setItem('nara_people', JSON.stringify(people));
+            
+            deleteCloudPerson(name); 
+
             renderPeople();
         }
 
@@ -614,13 +792,26 @@
                 }
             });
 
-            const date = new Date().toLocaleDateString('ar-SA');
+            let inputDate = new Date().toISOString().split('T')[0];
+            let dateObj = new Date(inputDate);
+            let date = dateObj.toLocaleDateString('ar-SA'); 
+            let rawDate = inputDate; 
+
+            if (editingInvNum) {
+                let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+                let oldInv = history.find(i => String(i.invNum) === String(editingInvNum));
+                if (oldInv) {
+                    date = oldInv.date;
+                    rawDate = oldInv.rawDate || inputDate;
+                }
+            }
+            
             const invNum = editingInvNum || Math.floor(100000 + Math.random() * 900000);
 
-            return { name, type, items, total, totalVat, date, invNum, isEdited: !!editingInvNum };
+            return { name, type, items, total, totalVat, date, rawDate, invNum, isEdited: !!editingInvNum, isPaid: false, paidAmount: 0, payMethod: '' };
         }
 
-        async function saveInvoiceData() {
+        function saveInvoiceData() {
             const data = getInputs();
             if (currentMode === 'saved' && !data.name) return showToast('اختر شخص من القائمة أولاً ⚠️');
             if (data.items.length === 0) return showToast('أدخل بنداً واحداً ومبلغاً على الأقل ⚠️');
@@ -628,6 +819,12 @@
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
 
             if (editingInvNum) {
+                let oldInv = history.find(i => String(i.invNum) === String(editingInvNum));
+                if (oldInv) {
+                    data.isPaid = oldInv.isPaid || false;
+                    data.paidAmount = oldInv.paidAmount || 0;
+                    data.payMethod = oldInv.payMethod || '';
+                }
                 data.isEdited = true;
                 history = history.map(inv => String(inv.invNum) === String(editingInvNum) ? data : inv);
                 showToast('تم تحديث الفاتورة بنجاح! ✏️🎉');
@@ -640,9 +837,74 @@
             resetForm();
             loadHistory();
 
-            try {
-                if (window.db) await window.addDoc(window.collection(window.db, "invoices"), data);
-            } catch (e) { console.log('حفظ محلي فقط'); }
+            saveCloudSingle(data); 
+        }
+
+        // ================= نظام السداد الجزئي والكلي =================
+        function openPaymentModal(invNum) {
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let inv = history.find(i => String(i.invNum) === String(invNum));
+            if(!inv) return;
+            
+            targetInvForPayment = inv.invNum;
+            let remaining = inv.total - (inv.paidAmount || 0);
+            
+            document.getElementById('payAmountInput').value = '';
+            document.getElementById('payAmountInput').placeholder = `المبلغ المتبقي للداد: ${remaining.toFixed(2)} ر.س`;
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function confirmPayment() {
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let inv = history.find(i => String(i.invNum) === String(targetInvForPayment));
+            if(!inv) return;
+
+            let method = document.getElementById('payMethodSelect').value;
+            let inputVal = document.getElementById('payAmountInput').value;
+            let remaining = inv.total - (inv.paidAmount || 0);
+            
+            let paymentAmount = inputVal === '' ? remaining : parseFloat(inputVal);
+            
+            if (paymentAmount <= 0 || paymentAmount > remaining) {
+                showToast('المبلغ المدخل غير صحيح ❌');
+                return;
+            }
+
+            inv.paidAmount = (inv.paidAmount || 0) + paymentAmount;
+            
+            // هل تم سدادها بالكامل؟
+            if (inv.paidAmount >= inv.total - 0.01) { // -0.01 لتفادي كسور الجافاسكربت
+                inv.isPaid = true;
+                inv.paidAmount = inv.total;
+            }
+            inv.payMethod = method;
+
+            localStorage.setItem('nara_invoices', JSON.stringify(history));
+            saveCloudSingle(inv); 
+            
+            document.getElementById('paymentModal').style.display = 'none';
+            showToast('تم تسجيل الدفعة بنجاح ✅');
+            loadHistory();
+        }
+
+        function cancelPayment() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        function resetPayment(invNum) {
+            if(!confirm('⚠️ هل تريد إلغاء جميع الدفعات المسجلة لهذه الفاتورة وإعادتها كغير مسددة؟')) return;
+            
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let inv = history.find(i => String(i.invNum) === String(invNum));
+            if(inv) {
+                inv.isPaid = false;
+                inv.paidAmount = 0;
+                inv.payMethod = '';
+                localStorage.setItem('nara_invoices', JSON.stringify(history));
+                saveCloudSingle(inv); 
+                showToast('تم إلغاء السداد 🔄');
+                loadHistory();
+            }
         }
 
         function editInvoice(invNum) {
@@ -680,7 +942,15 @@
 
             localStorage.setItem('nara_invoices', JSON.stringify(history));
             localStorage.setItem('nara_trash', JSON.stringify(trash));
-            loadHistory(); loadTrash(); showToast('تم نقل الفاتورة لسلة المهملات 🗑️');
+            
+            saveCloudTrash(invToMove);
+            try {
+                if(window.db && window.deleteDoc && window.doc) {
+                    window.deleteDoc(window.doc(window.db, "invoices", String(invNum)));
+                }
+            } catch(e){}
+
+            loadHistory(); loadTrash(); showToast('تم الحذف 🗑️');
         }
 
         function restoreFromTrash(invNum) {
@@ -695,15 +965,26 @@
 
             localStorage.setItem('nara_invoices', JSON.stringify(history));
             localStorage.setItem('nara_trash', JSON.stringify(trash));
-            loadTrash(); loadHistory(); showToast('تم استرجاع الفاتورة بنجاح! 🔄🎉');
+            
+            saveCloudSingle(invToRestore);
+            deleteCloudTrash(invNum);
+
+            loadTrash(); loadHistory(); showToast('تم الاسترجاع 🔄');
         }
 
         function cleanOldTrash() {
             let trash = JSON.parse(localStorage.getItem('nara_trash') || '[]');
             const now = new Date().getTime();
-            trash = trash.filter(item => item.deletedAt && (now - item.deletedAt) < (7 * 24 * 60 * 60 * 1000));
-            localStorage.setItem('nara_trash', JSON.stringify(trash));
-            if(document.getElementById('trashCount')) document.getElementById('trashCount').innerText = trash.length;
+            let keep = [];
+            trash.forEach(item => {
+                if (item.deletedAt && (now - item.deletedAt) >= (7 * 24 * 60 * 60 * 1000)) {
+                    deleteCloudTrash(item.invNum); 
+                } else {
+                    keep.push(item);
+                }
+            });
+            localStorage.setItem('nara_trash', JSON.stringify(keep));
+            if(document.getElementById('trashCount')) document.getElementById('trashCount').innerText = keep.length;
         }
 
         function loadTrash() {
@@ -729,8 +1010,8 @@
                             <b style="color:#ef4444;">${Number(item.total).toFixed(2)} ر.س</b>
                         </div>
                         <small style="color: #64748b; display:block;">البنود: ${itemsSummary}</small>
-                        <small style="color: #e11d48; font-weight:bold; font-size:11px; display:block; margin-top:4px;">⏳ متبقي على الحذف النهائي: ${daysLeft} يوم</small>
-                        <button style="margin-top:8px; width:100%; padding:8px; background:#10b981; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="restoreFromTrash('${item.invNum}')">🔄 استرجاع الفاتورة للسجل</button>
+                        <small style="color: #e11d48; font-weight:bold; font-size:11px; display:block; margin-top:4px;">⏳ متبقي للحذف النهائي: ${daysLeft} يوم</small>
+                        <button style="margin-top:8px; width:100%; padding:8px; background:#10b981; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="restoreFromTrash('${item.invNum}')">🔄 استرجاع للسجل</button>
                     </div>
                 `;
             }).join('');
@@ -747,7 +1028,203 @@
             addItemRow();
         }
 
-        // ================= نظام المعاينة والطباعة الأصلي (يحل مشكلة العربي 100%) =================
+        // ================= الإجراءات الجماعية =================
+        function handleMergeSelection() {
+            const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
+            const floatBar = document.getElementById('mergeFloatBar');
+            const countText = document.getElementById('mergeCountText');
+
+            if (checkedBoxes.length > 0) {
+                countText.innerText = checkedBoxes.length;
+                floatBar.style.display = 'flex';
+            } else {
+                floatBar.style.display = 'none';
+            }
+        }
+
+        function bulkDelete() {
+            const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
+            if(checkedBoxes.length === 0) return;
+            
+            if(!confirm('⚠️ نقل جميع الفواتير المحددة إلى المهملات؟')) return;
+            
+            let selectedNums = Array.from(checkedBoxes).map(cb => cb.value);
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let trash = JSON.parse(localStorage.getItem('nara_trash') || '[]');
+            
+            let toMove = history.filter(i => selectedNums.includes(String(i.invNum)));
+            let now = new Date().getTime();
+            
+            toMove.forEach(inv => {
+                inv.deletedAt = now;
+                trash.unshift(inv);
+                saveCloudTrash(inv);
+                try {
+                    if(window.db && window.deleteDoc && window.doc) {
+                        window.deleteDoc(window.doc(window.db, "invoices", String(inv.invNum)));
+                    }
+                } catch(e){}
+            });
+            
+            history = history.filter(i => !selectedNums.includes(String(i.invNum)));
+            
+            localStorage.setItem('nara_invoices', JSON.stringify(history));
+            localStorage.setItem('nara_trash', JSON.stringify(trash));
+            
+            showToast('تم النقل للمهملات 🗑️');
+            loadHistory();
+            loadTrash();
+        }
+
+        function bulkMarkPaid() {
+            const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
+            if(checkedBoxes.length === 0) return;
+            
+            targetBulkInvoices = Array.from(checkedBoxes).map(cb => cb.value);
+            document.getElementById('bulkPaymentModal').style.display = 'flex';
+        }
+
+        function confirmBulkPayment() {
+            let method = document.getElementById('bulkPayMethodSelect').value;
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            
+            history = history.map(inv => {
+                if (targetBulkInvoices.includes(String(inv.invNum))) {
+                    inv.isPaid = true;
+                    inv.paidAmount = inv.total; // السداد الجماعي يعتبر سداد كامل
+                    inv.payMethod = method;
+                    saveCloudSingle(inv); 
+                }
+                return inv;
+            });
+            
+            localStorage.setItem('nara_invoices', JSON.stringify(history));
+            document.getElementById('bulkPaymentModal').style.display = 'none';
+            showToast('تم السداد الجماعي بنجاح! ✅');
+            loadHistory();
+        }
+
+        function cancelBulkPayment() {
+            document.getElementById('bulkPaymentModal').style.display = 'none';
+            loadHistory();
+        }
+
+        function previewMergedInvoices() {
+            const checkedBoxes = document.querySelectorAll('.merge-cb:checked');
+            if(checkedBoxes.length === 0) return;
+
+            let selectedNums = [];
+            let namesSet = new Set();
+            
+            checkedBoxes.forEach(cb => {
+                selectedNums.push(cb.value);
+                namesSet.add(cb.getAttribute('data-name'));
+            });
+
+            if(namesSet.size > 1) {
+                showToast('⚠️ يرجى تحديد فواتير لنفس الشخص فقط!');
+                return;
+            }
+
+            let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
+            let selectedInvoices = history.filter(i => selectedNums.includes(String(i.invNum)));
+            
+            selectedInvoices.sort((a,b) => new Date(a.rawDate || 0) - new Date(b.rawDate || 0));
+
+            let name = selectedInvoices[0].name;
+            
+            document.getElementById('pdfClientName').innerText = name;
+            document.getElementById('pdfPersonType').innerText = "كشف حساب ختامي (مقاصة)";
+            document.getElementById('pdfInvDate').innerText = new Date().toLocaleDateString('ar-SA');
+            document.getElementById('pdfInvNumber').innerText = 'كشف-' + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('pdfEditedTag').innerText = '';
+            document.getElementById('pdfPaymentStatus').innerHTML = '<span style="color:#64748b; font-size:12px;">ملاحظة: المبالغ المدفوعة موضحة بالأسفل إن وجدت.</span>';
+
+            let totalDebit = 0; 
+            let totalCredit = 0; 
+            let combinedItemsHtml = '';
+            let itemIndex = 1;
+            
+            selectedInvoices.forEach(inv => {
+                let isDebit = inv.type === 'مديون'; 
+                
+                // تحديد نص حالة السداد الجزئي أو الكلي
+                let paymentText = inv.isPaid 
+                    ? `<span style="color:#10b981; font-weight:bold;">[مسددة بالكامل]</span>` 
+                    : (inv.paidAmount > 0 
+                        ? `<span style="color:#f59e0b; font-weight:bold;">[مسدد جزئياً: ${inv.paidAmount} ر.س]</span>` 
+                        : `<span style="color:#ef4444; font-weight:bold;">[غير مسددة]</span>`);
+                
+                (inv.items || []).forEach(it => {
+                    // في حالة المقاصة، نحسب فقط المبالغ المتبقية للديون
+                    let remainingForInvoice = inv.total - (inv.paidAmount || 0);
+                    // نوزع المتبقي نظرياً أو نستخدمه في الجمع النهائي
+                    // لتسهيل الكشف، نجمع المتبقي فقط
+                    
+                    let typeBadge = isDebit ? '<span style="color:#ef4444; font-size:10px; margin-right:5px;">(عليه)</span>' : '<span style="color:#10b981; font-size:10px; margin-right:5px;">(له)</span>';
+
+                    combinedItemsHtml += `
+                    <tr>
+                        <td class="center">${itemIndex++}</td>
+                        <td style="font-weight: bold;">
+                            ${it.desc} ${typeBadge}
+                            <div style="font-size:11px; color:#64748b; font-weight:normal; margin-top:3px;">
+                                من فاتورة #${inv.invNum} بتاريخ (${inv.rawDate || inv.date}) - ${paymentText}
+                            </div>
+                        </td>
+                        <td class="center">${Number(it.price).toFixed(2)}</td>
+                        <td class="center" style="color: #64748b; font-size: 11px;">${Number(it.vatAmount).toFixed(2)} (${it.vatRate}%)</td>
+                        <td class="center" style="font-weight: bold; color: #1e293b;">${Number(it.itemTotal).toFixed(2)}</td>
+                    </tr>
+                    `;
+                });
+
+                // جمع المبالغ المتبقية فقط لعمل المقاصة
+                if (isDebit) totalDebit += (inv.total - (inv.paidAmount || 0));
+                else totalCredit += (inv.total - (inv.paidAmount || 0));
+            });
+
+            document.getElementById('pdfItemsTableBody').innerHTML = combinedItemsHtml;
+
+            let netBalance = Math.abs(totalDebit - totalCredit);
+            let netText = "";
+            let netColor = "#1e293b";
+            
+            if (totalDebit > totalCredit) {
+                netText = "الصافي المستحق النهائي (لك عليه):";
+                netColor = "#ef4444"; 
+            } else if (totalCredit > totalDebit) {
+                netText = "الصافي المستحق النهائي (له عليك):";
+                netColor = "#10b981"; 
+            } else {
+                netText = "الرصيد مصفر (خالصين):";
+            }
+
+            let summaryHtml = `
+                <div class="a4-summary-row">
+                    <span>إجمالي المتبقي (عليه):</span>
+                    <span style="color:#ef4444;">${totalDebit.toFixed(2)} ر.س</span>
+                </div>
+                <div class="a4-summary-row">
+                    <span>إجمالي المتبقي (له):</span>
+                    <span style="color:#10b981;">${totalCredit.toFixed(2)} ر.س</span>
+                </div>
+                <div class="a4-summary-row total">
+                    <span>${netText}</span>
+                    <span style="color:${netColor};">${netBalance.toFixed(2)} ر.س</span>
+                </div>
+            `;
+            
+            document.getElementById('pdfSummaryContainer').innerHTML = summaryHtml;
+
+            document.getElementById('mergeFloatBar').style.display = 'none';
+            document.getElementById('previewOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; 
+            
+            checkedBoxes.forEach(cb => cb.checked = false);
+        }
+
+        // ================= المعاينة الفردية (A4) =================
         function openPreview(invNum) {
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
             let data = history.find(i => String(i.invNum) === String(invNum));
@@ -755,9 +1232,18 @@
 
             document.getElementById('pdfClientName').innerText = data.name;
             document.getElementById('pdfPersonType').innerText = data.type;
-            document.getElementById('pdfInvDate').innerText = data.date;
+            document.getElementById('pdfInvDate').innerText = data.rawDate || data.date;
             document.getElementById('pdfInvNumber').innerText = data.invNum;
             document.getElementById('pdfEditedTag').innerText = data.isEdited ? '(معدّلة)' : '';
+
+            let statusDiv = document.getElementById('pdfPaymentStatus');
+            if (data.isPaid) {
+                statusDiv.innerHTML = `<span style="color:#10b981;">✅ مسددة بالكامل (${data.payMethod})</span>`;
+            } else if (data.paidAmount > 0) {
+                statusDiv.innerHTML = `<span style="color:#f59e0b;">⏳ مسددة جزئياً (متبقي: ${(data.total - data.paidAmount).toFixed(2)})</span>`;
+            } else {
+                statusDiv.innerHTML = `<span style="color:#ef4444;">❌ غير مسددة</span>`;
+            }
 
             let subTotal = 0;
             let tbody = document.getElementById('pdfItemsTableBody');
@@ -765,18 +1251,32 @@
                 subTotal += Number(it.price);
                 return `
                 <tr>
-                    <td style="text-align: center;">${index + 1}</td>
+                    <td class="center">${index + 1}</td>
                     <td style="font-weight: bold;">${it.desc}</td>
-                    <td style="text-align: center;">${Number(it.price).toFixed(2)}</td>
-                    <td style="text-align: center; color: #64748b; font-size: 11px;">${Number(it.vatAmount).toFixed(2)} (${it.vatRate}%)</td>
-                    <td style="text-align: center; font-weight: bold;">${Number(it.itemTotal).toFixed(2)}</td>
+                    <td class="center">${Number(it.price).toFixed(2)}</td>
+                    <td class="center" style="color: #64748b; font-size: 11px;">${Number(it.vatAmount).toFixed(2)} (${it.vatRate}%)</td>
+                    <td class="center" style="font-weight: bold; color: #1e293b;">${Number(it.itemTotal).toFixed(2)}</td>
                 </tr>
                 `;
             }).join('');
 
-            document.getElementById('pdfSubTotal').innerText = subTotal.toFixed(2);
-            document.getElementById('pdfVatAmount').innerText = Number(data.totalVat).toFixed(2);
-            document.getElementById('pdfGrandTotal').innerText = Number(data.total).toFixed(2);
+            let remaining = data.total - (data.paidAmount || 0);
+
+            let summaryHtml = `
+                <div class="a4-summary-row">
+                    <span>الإجمالي الشامل:</span>
+                    <span>${Number(data.total).toFixed(2)} ر.س</span>
+                </div>
+                <div class="a4-summary-row">
+                    <span>المبلغ المدفوع:</span>
+                    <span style="color:#10b981;">${Number(data.paidAmount || 0).toFixed(2)} ر.س</span>
+                </div>
+                <div class="a4-summary-row total">
+                    <span>المتبقي للدفع:</span>
+                    <span style="color: ${remaining > 0 ? '#ef4444' : '#1e293b'};">${remaining.toFixed(2)} ر.س</span>
+                </div>
+            `;
+            document.getElementById('pdfSummaryContainer').innerHTML = summaryHtml;
 
             document.getElementById('previewOverlay').style.display = 'flex';
             document.body.style.overflow = 'hidden'; 
@@ -785,29 +1285,52 @@
 
         function closePreview() {
             document.getElementById('previewOverlay').style.display = 'none';
-            document.body.style.overflow = 'auto'; 
+            document.body.style.overflow = 'auto';
+            handleMergeSelection();
         }
 
-        // دالة الطباعة النظيفة التي تدعم حفظ PDF باللغة العربية بدقة 100%
         function printPDF() {
-            // نستخدم دالة الطباعة الخاصة بالمتصفح، عند ظهور النافذة اختر (حفظ بتنسيق PDF)
             window.print();
         }
-        // ======================================================================
 
+        // ================= فرز وبناء الواجهة =================
         function loadHistory() {
             fixExistingData(); 
+            
+            let currentlyChecked = Array.from(document.querySelectorAll('.merge-cb:checked')).map(cb => cb.value);
+
             let history = JSON.parse(localStorage.getItem('nara_invoices') || '[]');
             let selectedPerson = document.getElementById('filterPerson').value;
             let selectedType = document.getElementById('filterType').value;
             let query = document.getElementById('searchQuery').value.trim().toLowerCase();
+            
+            let filterDateFrom = document.getElementById('filterDateFrom').value;
+            let filterDateTo = document.getElementById('filterDateTo').value;
+
+            if (query !== '') {
+                history = history.filter(inv => 
+                    inv.name.toLowerCase().includes(query) || 
+                    String(inv.invNum).includes(query) ||
+                    (inv.items || []).some(i => (i.desc || '').toLowerCase().includes(query))
+                );
+            }
 
             if (selectedPerson !== 'ALL') history = history.filter(inv => inv.name === selectedPerson);
             if (selectedType !== 'ALL') history = history.filter(inv => inv.type === selectedType);
-            if (query !== '') history = history.filter(inv => inv.name.toLowerCase().includes(query) || (inv.items || []).some(i => (i.desc || '').toLowerCase().includes(query)));
+            
+            if (filterDateFrom) history = history.filter(inv => inv.rawDate >= filterDateFrom);
+            if (filterDateTo) history = history.filter(inv => inv.rawDate <= filterDateTo);
+
+            history.sort((a, b) => new Date(b.rawDate || 0) - new Date(a.rawDate || 0));
 
             let sumCredit = 0, sumDebit = 0;
-            history.forEach(inv => { if (inv.type === 'مديون') sumDebit += Number(inv.total); else sumCredit += Number(inv.total); });
+            history.forEach(inv => { 
+                let remaining = inv.total - (inv.paidAmount || 0);
+                if (remaining > 0) {
+                    if (inv.type === 'مديون') sumDebit += remaining; 
+                    else sumCredit += remaining; 
+                }
+            });
 
             document.getElementById('totalCredit').innerText = sumCredit.toFixed(2);
             document.getElementById('totalDebit').innerText = sumDebit.toFixed(2);
@@ -815,7 +1338,9 @@
             let container = document.getElementById('historyList');
 
             if (history.length === 0) {
-                container.innerHTML = '<p style="font-size:12px; color:#aaa; text-align:center;">لا توجد فواتير مطابقة 💡</p>'; return;
+                container.innerHTML = '<p style="font-size:12px; color:#aaa; text-align:center;">لا توجد فواتير مطابقة 💡</p>'; 
+                handleMergeSelection(); 
+                return;
             }
 
             let creditInvoices = history.filter(i => i.type === 'دائن');
@@ -833,6 +1358,14 @@
 
             container.innerHTML = html;
             cleanOldTrash();
+            
+            setTimeout(() => {
+                currentlyChecked.forEach(val => {
+                    let cb = document.querySelector(`.merge-cb[value="${val}"]`);
+                    if(cb) cb.checked = true;
+                });
+                handleMergeSelection();
+            }, 50);
         }
 
         function renderSingleCard(item) {
@@ -840,8 +1373,29 @@
             let editedBadge = item.isEdited ? '<span class="badge badge-edited">معدّلة ✏️</span>' : '';
             let isDebit = item.type === 'مديون';
 
+            let remaining = item.total - (item.paidAmount || 0);
+            
+            let payButtonText = 'سداد 💳';
+            let payButtonColor = '#3b82f6';
+            if (item.isPaid) {
+                payButtonText = `مسددة ✅`;
+                payButtonColor = '#10b981';
+            } else if (item.paidAmount > 0) {
+                payButtonText = `باقي ${remaining.toFixed(2)} ⏳`;
+                payButtonColor = '#f59e0b';
+            }
+
+            let paymentActionsHtml = `
+                <div style="display: flex; gap: 5px;">
+                    <button onclick="openPaymentModal('${item.invNum}')" style="background:${payButtonColor}; color:white; border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
+                        ${payButtonText}
+                    </button>
+                    ${(item.paidAmount > 0 || item.isPaid) ? `<button onclick="resetPayment('${item.invNum}')" style="background:#ef4444; color:white; border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">إلغاء</button>` : ''}
+                </div>
+            `;
+
             return `
-                <div class="history-card">
+                <div class="history-card" style="border-right: 4px solid ${item.isPaid ? '#10b981' : (item.paidAmount > 0 ? '#f59e0b' : 'transparent')};">
                     <div class="menu-container">
                         <button class="dots-btn" onclick="toggleMenu('${item.invNum}', event)">⋮</button>
                         <div class="dropdown-menu" id="menu-${item.invNum}">
@@ -850,6 +1404,10 @@
                             <button class="danger" onclick="moveToTrash('${item.invNum}')">🗑️ نقل للمهملات</button>
                         </div>
                     </div>
+                    
+                    <div style="position: absolute; right: 15px; top: 15px;">
+                        <input type="checkbox" class="merge-cb" value="${item.invNum}" data-name="${item.name}" data-type="${item.type}" onchange="handleMergeSelection()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #3b82f6;">
+                    </div>
 
                     <div class="history-header">
                         <div>
@@ -857,10 +1415,14 @@
                             <span class="badge ${isDebit ? 'badge-debit' : 'badge-credit'}">${isDebit ? 'مديون' : 'دائن'}</span>
                             ${editedBadge}
                         </div>
-                        <b style="color:#2563eb;">${Number(item.total).toFixed(2)} ر.س</b>
+                        <b style="color:${item.isPaid ? '#10b981' : '#2563eb'}; text-decoration: ${item.isPaid ? 'line-through' : 'none'};">${Number(item.total).toFixed(2)} ر.س</b>
                     </div>
-                    <small style="color: #64748b; display:block;">البنود: ${itemsSummary}</small>
-                    <small style="color: #94a3b8; font-size:10px;">التاريخ: ${item.date} | رقم: #${item.invNum}</small>
+                    <small style="color: #64748b; display:block; margin-bottom: 8px;">البنود: ${itemsSummary}</small>
+                    
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #e2e8f0; padding-top:8px;">
+                        ${paymentActionsHtml}
+                        <small style="color: #94a3b8; font-size:10px;">التاريخ: ${item.rawDate || item.date} | رقم: #${item.invNum}</small>
+                    </div>
                 </div>
             `;
         }
