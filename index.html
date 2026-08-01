@@ -15,7 +15,6 @@
 <div id="paymentModal"><div class="payment-modal-card"><h3 style="color:#0f172a;margin-bottom:15px">تسجيل دفعة / سداد 💳</h3><div class="form-group"><label>المبلغ المدفوع (ر.س)</label><input type="number" id="payAmountInput" placeholder="اتركه فارغاً لسداد كامل المبلغ"></div><div class="form-group"><label>طريقة الدفع</label><select id="payMethodSelect"><option value="كاش">كاش 💵</option><option value="تحويل بنكي">تحويل بنكي 🏦</option><option value="شبكة / مدى">شبكة / مدى 💳</option></select></div><div style="display:flex;gap:10px;margin-top:15px"><button class="btn btn-success" onclick="confirmPayment()">تأكيد السداد</button><button class="btn" style="background:#ef4444" onclick="cancelPayment()">إلغاء</button></div></div></div>
 <div id="bulkPaymentModal"><div class="payment-modal-card"><h3 style="color:#0f172a;margin-bottom:15px">سداد جماعي 💳</h3><p style="font-size:12px;color:#64748b;margin-bottom:10px">سيتم اعتبار جميع الفواتير المحددة (مسددة بالكامل). اختر الطريقة:</p><select id="bulkPayMethodSelect" style="margin-bottom:15px"><option value="كاش">كاش 💵</option><option value="تحويل بنكي">تحويل بنكي 🏦</option><option value="شبكة / مدى">شبكة / مدى 💳</option></select><div style="display:flex;gap:10px"><button class="btn btn-success" onclick="confirmBulkPayment()">تأكيد للكل</button><button class="btn" style="background:#ef4444" onclick="cancelBulkPayment()">إلغاء</button></div></div></div>
 
-<!-- نافذة سداد/تعديل القطات -->
 <div id="splitPaymentModal"><div class="payment-modal-card"><h3 style="color:#0f172a;margin-bottom:15px">تسجيل سداد قطة 🍕</h3><p id="splitPayInfo" style="font-size:12px;color:#64748b;margin-bottom:10px"></p><div class="form-group"><label>المبلغ المدفوع (ر.س)</label><input type="number" id="splitPayAmountInput" placeholder=""></div><div class="form-group"><label>طريقة الدفع</label><select id="splitPayMethodSelect"><option value="كاش">كاش 💵</option><option value="تحويل بنكي">تحويل بنكي 🏦</option><option value="شبكة / مدى">شبكة / مدى 💳</option><option value="قطة جاهزة">قطة جاهزة 🤝</option></select></div><div style="display:flex;gap:10px;margin-top:15px"><button class="btn btn-success" onclick="confirmSplitPayment()">حفظ السداد</button><button class="btn" style="background:#ef4444" onclick="cancelSplitPayment()">إلغاء</button></div></div></div>
 
 <div id="mergeFloatBar"><div style="display:flex;align-items:center"><span id="mergeCountText" style="font-size:18px;font-weight:800;color:#38bdf8">0</span><span style="font-size:12px;font-weight:700;margin-right:5px">محددة</span></div><div style="display:flex;gap:6px;flex-wrap:wrap;flex:1;justify-content:flex-end"><button onclick="previewMergedInvoices()" style="background:#10b981;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;flex:1;min-width:90px">كشف حساب 📄</button><button onclick="bulkMarkPaid()" style="background:#3b82f6;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;flex:1;min-width:90px">سداد جماعي ✅</button><button onclick="bulkDelete()" style="background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;flex:1;min-width:90px">حذف جماعي 🗑️</button></div></div>
@@ -68,7 +67,6 @@
 <div id="tabPeople" style="display:none;max-width:700px;margin:0 auto"><div class="card"><h3>👤 حفظ شخص جديد للقائمة ✨</h3><div class="row"><div class="form-group"><label>الاسم</label><input type="text" id="newPersonName" placeholder="اسم الشخص"></div><div class="form-group"><label>التصنيف الافتراضي</label><select id="newPersonType"><option value="دائن">دائن (لك عليه)</option><option value="مديون">مديون (له عليك)</option></select></div></div><button class="btn btn-success" onclick="addPersonToLibrary()">+ إضافة للقائمة الدائمة</button></div><h3 style="margin:20px 0 10px;color:var(--primary)">📋 القائمة الدائمة للأشخاص 👍</h3><div id="peopleList"></div></div>
 <div id="tabTrash" style="display:none;max-width:800px;margin:0 auto"><div class="card" style="background:#fff1f2;border-color:#fecdd3"><h3 style="color:#e11d48;margin-bottom:5px">🗑️ سلة المهملات</h3><p style="font-size:13px;color:#9f1239">الفواتير في هذه القائمة تُحذف نهائياً وبشكل تلقائي بعد مرور 7 أيام.</p></div><div id="trashList"></div></div>
 
-<!-- قالب طباعة الديون العادي -->
 <div id="previewOverlay"><div class="preview-actions"><button class="btn-download" onclick="printPDF()">🖨️ طباعة الفاتورة</button><button class="btn-close-preview" onclick="closePreview()">❌ إغلاق المعاينة</button></div>
 <div id="invoiceTemplate" class="a4-paper">
     <div class="a4-header-top">
@@ -83,7 +81,6 @@
     <div class="a4-footer-wrapper"><div class="a4-notes"><p style="font-weight:700;color:#0f172a;margin-bottom:6px">ملاحظات:</p><p>• شكراً لثقتكم.</p><p>• وثيقة مُصدرة آلياً وتعتبر كشف مالي معتمد.</p></div><div class="a4-summary-box" id="pdfSummaryContainer"></div></div>
 </div></div>
 
-<!-- قالب طباعة القطات الفاخر -->
 <div id="splitPreviewOverlay"><div class="preview-actions"><button class="btn" style="background:var(--split); width:auto;" onclick="printPDF()">🖨️ طباعة كشف القطة</button><button class="btn-close-preview" style="width:auto;" onclick="closeSplitPreview()">❌ إغلاق المعاينة</button></div>
 <div id="splitInvoiceTemplate" class="split-a4-paper">
     <div class="split-header">
@@ -116,7 +113,7 @@ window.db=getFirestore(app);window.collection=collection;window.addDoc=addDoc;wi
 </script>
 <script>
 let currentMode='new',editingInvNum=null,targetInvForPayment=null,targetBulkInvoices=[];
-let splitPeopleArray=[], editingSplitId=null, currentSplitPayId=null, currentSplitPersonIdx=null, isEditingSplitPay=false;
+let splitPeopleArray=[], editingSplitId=null, currentSplitPayId=null, currentSplitPersonIdx=null, isEditingSplitPay=!1;
 
 function showToast(m){const t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 
@@ -124,7 +121,7 @@ async function resetCloudAndLocalDatabase(){
 if(prompt('الرجاء إدخال كلمة المرور:')!=='Iadmhal2006')return showToast('كلمة المرور غير صحيحة ❌');
 if(!confirm('⚠️ تحذير: حذف جميع البيانات؟')||!confirm('🛑 متأكد؟ لا يمكن التراجع.')||!confirm('🚨 التأكيد الأخير؟'))return;
 showToast('جاري التصفير... ⏳');
-try{if(window.db){for(let c of ["invoices","people","trash"]){let s=await window.getDocs(window.collection(window.db,c));for(let d of s.docs)await window.deleteDoc(window.doc(window.db,c,d.id));}}}catch(e){}
+try{if(window.db){for(let c of ["invoices","people","trash","splits","groups"]){let s=await window.getDocs(window.collection(window.db,c));for(let d of s.docs)await window.deleteDoc(window.doc(window.db,c,d.id));}}}catch(e){}
 ['nara_invoices','nara_people','nara_trash','nara_splits','nara_groups'].forEach(k=>localStorage.removeItem(k));
 showToast('تم التصفير بنجاح! 🧹✨');loadHistory();renderPeople();loadTrash();loadSplitsHistory();loadGroups();
 }
@@ -134,6 +131,9 @@ async function deleteCloudPerson(n){try{if(window.db)await window.deleteDoc(wind
 async function saveCloudTrash(t){try{if(window.db)await window.setDoc(window.doc(window.db,"trash",String(t.invNum)),t);}catch(e){}}
 async function deleteCloudTrash(i){try{if(window.db)await window.deleteDoc(window.doc(window.db,"trash",String(i)));}catch(e){}}
 async function saveCloudSingle(d){try{if(window.db)await window.setDoc(window.doc(window.db,"invoices",String(d.invNum)),d);}catch(e){}}
+async function saveCloudSplit(s){try{if(window.db)await window.setDoc(window.doc(window.db,"splits",String(s.id)),s);}catch(e){}}
+async function deleteCloudSplit(i){try{if(window.db)await window.deleteDoc(window.doc(window.db,"splits",String(i)));}catch(e){}}
+async function saveCloudGroup(g){try{if(window.db)await window.setDoc(window.doc(window.db,"groups",g.name),g);}catch(e){}}
 
 function initAutoSync(){
 if(!window.db||!window.onSnapshot)return setTimeout(initAutoSync,1000);
@@ -141,6 +141,8 @@ const b=document.getElementById('autoSyncBtn');b.innerHTML='🟢 متصل بال
 window.onSnapshot(window.collection(window.db,"invoices"),s=>{let a=[];s.forEach(d=>a.push(d.data()));a.sort((x,y)=>y.invNum-x.invNum);localStorage.setItem('nara_invoices',JSON.stringify(a));loadHistory();},()=>{b.innerHTML='🔴 فقد الاتصال';b.style.background='#ef4444';});
 window.onSnapshot(window.collection(window.db,"people"),s=>{let a=[];s.forEach(d=>a.push(d.data()));localStorage.setItem('nara_people',JSON.stringify(a));renderPeople();});
 window.onSnapshot(window.collection(window.db,"trash"),s=>{let a=[];s.forEach(d=>a.push(d.data()));a.sort((x,y)=>y.deletedAt-x.deletedAt);localStorage.setItem('nara_trash',JSON.stringify(a));loadTrash();});
+window.onSnapshot(window.collection(window.db,"splits"),s=>{let a=[];s.forEach(d=>a.push(d.data()));a.sort((x,y)=>y.id-x.id);localStorage.setItem('nara_splits',JSON.stringify(a));loadSplitsHistory();});
+window.onSnapshot(window.collection(window.db,"groups"),s=>{let a=[];s.forEach(d=>a.push(d.data()));localStorage.setItem('nara_groups',JSON.stringify(a));loadGroups();});
 }
 document.addEventListener('DOMContentLoaded',initAutoSync);
 
@@ -168,21 +170,81 @@ function editInvoice(i){let h=JSON.parse(localStorage.getItem('nara_invoices')||
 function moveToTrash(i){if(!confirm('⚠️ نقل للمهملات؟'))return;let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),v=h.find(x=>String(x.invNum)===String(i));if(!v)return;v.deletedAt=new Date().getTime();t.unshift(v);h=h.filter(x=>String(x.invNum)!==String(i));localStorage.setItem('nara_invoices',JSON.stringify(h));localStorage.setItem('nara_trash',JSON.stringify(t));saveCloudTrash(v);try{if(window.db)window.deleteDoc(window.doc(window.db,"invoices",String(i)));}catch(e){}loadHistory();loadTrash();showToast('تم الحذف 🗑️');}
 function restoreFromTrash(i){let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),v=t.find(x=>String(x.invNum)===String(i));if(!v)return;delete v.deletedAt;h.unshift(v);t=t.filter(x=>String(x.invNum)!==String(i));localStorage.setItem('nara_invoices',JSON.stringify(h));localStorage.setItem('nara_trash',JSON.stringify(t));saveCloudSingle(v);deleteCloudTrash(i);loadTrash();loadHistory();showToast('تم الاسترجاع 🔄');}
 function cleanOldTrash(){let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),n=new Date().getTime(),k=[];t.forEach(x=>{if(x.deletedAt&&(n-x.deletedAt)>=6048e5)deleteCloudTrash(x.invNum);else k.push(x);});localStorage.setItem('nara_trash',JSON.stringify(k));let c=document.getElementById('trashCount');if(c)c.innerText=k.length;}
-function loadTrash(){cleanOldTrash();let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),c=document.getElementById('trashList');if(!t.length)return c.innerHTML='<p style="text-align:center;color:#aaa;font-size:12px">سلة المهملات فارغة</p>';let n=new Date().getTime();c.innerHTML=t.map(x=>{let d=Math.ceil((6048e5-(n-x.deletedAt))/864e5),s=(x.items||[]).map(i=>i.desc).join(', ');return `<div class="history-card" style="border-right:4px solid #ef4444"><div class="history-header" style="padding-left:0"><div><b>${x.name}</b></div><b style="color:#ef4444">${Number(x.total).toFixed(2)} ر.س</b></div><small style="color:#64748b;display:block">البنود: ${s}</small><small style="color:#e11d48;font-weight:bold;font-size:11px;display:block;margin-top:4px">متبقي للحذف: ${d} يوم</small><button style="margin-top:8px;width:100%;padding:8px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer" onclick="restoreFromTrash('${x.invNum}')">استرجاع</button></div>`;}).join('');}
+function loadTrash(){cleanOldTrash();let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),c=document.getElementById('trashList');if(!t.length)return c.innerHTML='<p style="text-align:center;color:#aaa;font-size:12px">سلة المهملات فارغة</p>';let n=new Date().getTime();c.innerHTML=t.map(x=>{let d=Math.ceil((6048e5-(n-x.deletedAt))/864e5),s=(x.items||[]).map(i=>i.desc).join(', ');return `<div class="history-card" style="border-right:4px solid #ef4444; z-index:1;"><div class="history-header" style="padding-left:0"><div><b>${x.name}</b></div><b style="color:#ef4444">${Number(x.total).toFixed(2)} ر.س</b></div><small style="color:#64748b;display:block">البنود: ${s}</small><small style="color:#e11d48;font-weight:bold;font-size:11px;display:block;margin-top:4px">متبقي للحذف: ${d} يوم</small><button style="margin-top:8px;width:100%;padding:8px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer" onclick="restoreFromTrash('${x.invNum}')">استرجاع</button></div>`;}).join('');}
 function resetForm(){editingInvNum=null;document.getElementById('formTitle').innerText='📄 تسجيل فاتورة جديدة ✨';document.getElementById('btnSave').innerText='💾 حفظ الفاتورة';document.getElementById('btnCancelEdit').style.display='none';document.getElementById('directName').value='';document.getElementById('itemsContainer').innerHTML='';addItemRow();}
 function handleMergeSelection(){let c=document.querySelectorAll('.merge-cb:checked'),f=document.getElementById('mergeFloatBar');document.getElementById('mergeCountText').innerText=c.length;f.style.display=c.length>0?'flex':'none';}
 function bulkDelete(){let c=document.querySelectorAll('.merge-cb:checked');if(!c.length||!confirm('⚠️ حذف جميع المحدد؟'))return;let s=Array.from(c).map(x=>x.value),h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),n=new Date().getTime();h.filter(x=>s.includes(String(x.invNum))).forEach(x=>{x.deletedAt=n;t.unshift(x);saveCloudTrash(x);try{if(window.db)window.deleteDoc(window.doc(window.db,"invoices",String(x.invNum)));}catch(e){}});localStorage.setItem('nara_invoices',JSON.stringify(h.filter(x=>!s.includes(String(x.invNum)))));localStorage.setItem('nara_trash',JSON.stringify(t));showToast('تم الحذف 🗑️');loadHistory();loadTrash();}
 function bulkMarkPaid(){let c=document.querySelectorAll('.merge-cb:checked');if(!c.length)return;targetBulkInvoices=Array.from(c).map(x=>x.value);document.getElementById('bulkPaymentModal').style.display='flex';}
 function confirmBulkPayment(){let m=document.getElementById('bulkPayMethodSelect').value,h=JSON.parse(localStorage.getItem('nara_invoices')||'[]');h=h.map(x=>{if(targetBulkInvoices.includes(String(x.invNum))){x.isPaid=!0;x.paidAmount=x.total;x.payMethod=m;saveCloudSingle(x);}return x;});localStorage.setItem('nara_invoices',JSON.stringify(h));document.getElementById('bulkPaymentModal').style.display='none';showToast('تم السداد ✅');loadHistory();}
 function cancelBulkPayment(){document.getElementById('bulkPaymentModal').style.display='none';}
-function previewMergedInvoices(){let c=document.querySelectorAll('.merge-cb:checked');if(!c.length)return;let s=Array.from(c).map(x=>x.value),ns=new Set(Array.from(c).map(x=>x.getAttribute('data-name')));if(ns.size>1)return showToast('⚠️ اختر شخص واحد!');let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]').filter(x=>s.includes(String(x.invNum))).sort((a,b)=>new Date(a.rawDate||0)-new Date(b.rawDate||0));document.getElementById('pdfClientName').innerText=h[0].name;document.getElementById('pdfPersonType').innerText="كشف حساب ختامي";document.getElementById('pdfInvDate').innerText=new Date().toLocaleDateString('ar-SA');document.getElementById('pdfInvNumber').innerText='كشف-'+Math.floor(1e3+Math.random()*9e3);document.getElementById('pdfEditedTag').innerText='';document.getElementById('pdfPaymentStatus').innerHTML='<span style="color:#64748b;font-size:12px">المبالغ المدفوعة موضحة بالأسفل</span>';let td=0,tc=0,ht='',idx=1;h.forEach(v=>{let d=v.type==='مديون',pt=v.isPaid?'<span style="color:#10b981">[مسدد]</span>':(v.paidAmount>0?`<span style="color:#f59e0b">[جزئي: ${v.paidAmount}]</span>`:'<span style="color:#ef4444">[غير مسدد]</span>');(v.items||[]).forEach(i=>{ht+=`<tr><td class="center">${idx++}</td><td style="font-weight:bold">${i.desc} ${d?'(عليه)':'(له)'}<div style="font-size:11px;color:#64748b;font-weight:400;margin-top:3px">من #${v.invNum} - ${pt}</div></td><td class="center">${Number(i.price).toFixed(2)}</td><td class="center" style="font-size:11px;color:#64748b">${Number(i.vatAmount).toFixed(2)}</td><td class="center" style="font-weight:bold">${Number(i.itemTotal).toFixed(2)}</td></tr>`;});if(d)td+=(v.total-(v.paidAmount||0));else tc+=(v.total-(v.paidAmount||0));});document.getElementById('pdfItemsTableBody').innerHTML=ht;let nb=Math.abs(td-tc),nt=td>tc?"الصافي المستحق (لك):":tc>td?"الصافي المستحق (عليك):":"الرصيد مصفر:";document.getElementById('pdfSummaryContainer').innerHTML=`<div class="a4-summary-row"><span>المتبقي (عليه):</span><span style="color:#ef4444">${td.toFixed(2)}</span></div><div class="a4-summary-row"><span>المتبقي (له):</span><span style="color:#10b981">${tc.toFixed(2)}</span></div><div class="a4-summary-row total"><span>${nt}</span><span style="color:${td>tc?'#ef4444':tc>td?'#10b981':'#1e293b'}">${nb.toFixed(2)}</span></div>`;document.getElementById('mergeFloatBar').style.display='none';document.getElementById('previewOverlay').style.display='flex';document.body.style.overflow='hidden';c.forEach(x=>x.checked=!1);}
-function openPreview(i){let v=JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>String(x.invNum)===String(i));if(!v)return;document.getElementById('pdfClientName').innerText=v.name;document.getElementById('pdfPersonType').innerText=v.type;document.getElementById('pdfInvDate').innerText=v.rawDate||v.date;document.getElementById('pdfInvNumber').innerText=v.invNum;document.getElementById('pdfEditedTag').innerText=v.isEdited?'(معدّلة)':'';document.getElementById('pdfPaymentStatus').innerHTML=v.isPaid?`<span style="color:#10b981">✅ مسددة (${v.payMethod})</span>`:v.paidAmount>0?`<span style="color:#f59e0b">⏳ جزئي (متبقي: ${(v.total-v.paidAmount).toFixed(2)})</span>`:`<span style="color:#ef4444">❌ غير مسددة</span>`;document.getElementById('pdfItemsTableBody').innerHTML=(v.items||[]).map((x,j)=>`<tr><td class="center">${j+1}</td><td style="font-weight:bold">${x.desc}</td><td class="center">${Number(x.price).toFixed(2)}</td><td class="center" style="font-size:11px;color:#64748b">${Number(x.vatAmount).toFixed(2)}</td><td class="center" style="font-weight:bold">${Number(x.itemTotal).toFixed(2)}</td></tr>`).join('');let r=v.total-(v.paidAmount||0);document.getElementById('pdfSummaryContainer').innerHTML=`<div class="a4-summary-row"><span>الإجمالي:</span><span>${Number(v.total).toFixed(2)}</span></div><div class="a4-summary-row"><span>المدفوع:</span><span style="color:#10b981">${Number(v.paidAmount||0).toFixed(2)}</span></div><div class="a4-summary-row total"><span>المتبقي:</span><span style="color:${r>0?'#ef4444':'#1e293b'}">${r.toFixed(2)}</span></div>`;document.getElementById('previewOverlay').style.display='flex';document.body.style.overflow='hidden';document.querySelectorAll('.dropdown-menu').forEach(m=>m.style.display='none');}
+
+function previewMergedInvoices(){
+    let c=document.querySelectorAll('.merge-cb:checked');if(!c.length)return;
+    let s=Array.from(c).map(x=>x.value),ns=new Set(Array.from(c).map(x=>x.getAttribute('data-name')));
+    if(ns.size>1)return showToast('⚠️ اختر شخص واحد!');
+    let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]').filter(x=>s.includes(String(x.invNum))).sort((a,b)=>new Date(a.rawDate||0)-new Date(b.rawDate||0));
+    document.getElementById('pdfClientName').innerText=h[0].name;
+    document.getElementById('pdfPersonType').innerText="كشف حساب ختامي";
+    document.getElementById('pdfInvDate').innerText=new Date().toLocaleDateString('ar-SA');
+    document.getElementById('pdfInvNumber').innerText='كشف-'+Math.floor(1e3+Math.random()*9e3);
+    document.getElementById('pdfEditedTag').innerText='';
+    document.getElementById('pdfPaymentStatus').innerHTML='<span style="color:#64748b;font-size:12px">المبالغ المدفوعة موضحة بالأسفل</span>';
+    let td=0,tc=0,ht='',idx=1;
+    h.forEach(v=>{
+        let d=v.type==='مديون',pt=v.isPaid?'<span style="color:#10b981">[مسدد]</span>':(v.paidAmount>0?`<span style="color:#f59e0b">[جزئي: ${v.paidAmount}]</span>`:'<span style="color:#ef4444">[غير مسدد]</span>');
+        (v.items||[]).forEach(i=>{ht+=`<tr><td class="center">${idx++}</td><td style="font-weight:bold">${i.desc} ${d?'(عليه)':'(له)'}<div style="font-size:11px;color:#64748b;font-weight:400;margin-top:3px">من #${v.invNum} - ${pt}</div></td><td class="center">${Number(i.price).toFixed(2)}</td><td class="center" style="font-size:11px;color:#64748b">${Number(i.vatAmount).toFixed(2)}</td><td class="center" style="font-weight:bold">${Number(i.itemTotal).toFixed(2)}</td></tr>`;});
+        if(d)td+=(v.total-(v.paidAmount||0));else tc+=(v.total-(v.paidAmount||0));
+    });
+    document.getElementById('pdfItemsTableBody').innerHTML=ht;
+    let nb=Math.abs(td-tc),nt=td>tc?"الصافي المستحق (لك):":tc>td?"الصافي المستحق (عليك):":"الرصيد مصفر:";
+    document.getElementById('pdfSummaryContainer').innerHTML=`<div class="a4-summary-row"><span>المتبقي (عليه):</span><span style="color:#ef4444">${td.toFixed(2)}</span></div><div class="a4-summary-row"><span>المتبقي (له):</span><span style="color:#10b981">${tc.toFixed(2)}</span></div><div class="a4-summary-row total"><span>${nt}</span><span style="color:${td>tc?'#ef4444':tc>td?'#10b981':'#1e293b'}">${nb.toFixed(2)}</span></div>`;
+    document.getElementById('mergeFloatBar').style.display='none';
+    document.getElementById('previewOverlay').style.display='flex';
+    document.body.style.overflow='hidden';c.forEach(x=>x.checked=!1);
+}
+
+function openPreview(i){
+    let v=JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>String(x.invNum)===String(i));if(!v)return;
+    document.getElementById('pdfClientName').innerText=v.name;
+    document.getElementById('pdfPersonType').innerText=v.type;
+    document.getElementById('pdfInvDate').innerText=v.rawDate||v.date;
+    document.getElementById('pdfInvNumber').innerText=v.invNum;
+    document.getElementById('pdfEditedTag').innerText=v.isEdited?'(معدّلة)':'';
+    document.getElementById('pdfPaymentStatus').innerHTML=v.isPaid?`<span style="color:#10b981">✅ مسددة (${v.payMethod})</span>`:v.paidAmount>0?`<span style="color:#f59e0b">⏳ جزئي (متبقي: ${(v.total-v.paidAmount).toFixed(2)})</span>`:`<span style="color:#ef4444">❌ غير مسددة</span>`;
+    document.getElementById('pdfItemsTableBody').innerHTML=(v.items||[]).map((x,j)=>`<tr><td class="center">${j+1}</td><td style="font-weight:bold">${x.desc}</td><td class="center">${Number(x.price).toFixed(2)}</td><td class="center" style="font-size:11px;color:#64748b">${Number(x.vatAmount).toFixed(2)}</td><td class="center" style="font-weight:bold">${Number(x.itemTotal).toFixed(2)}</td></tr>`).join('');
+    let r=v.total-(v.paidAmount||0);
+    document.getElementById('pdfSummaryContainer').innerHTML=`<div class="a4-summary-row"><span>الإجمالي:</span><span>${Number(v.total).toFixed(2)}</span></div><div class="a4-summary-row"><span>المدفوع:</span><span style="color:#10b981">${Number(v.paidAmount||0).toFixed(2)}</span></div><div class="a4-summary-row total"><span>المتبقي:</span><span style="color:${r>0?'#ef4444':'#1e293b'}">${r.toFixed(2)}</span></div>`;
+    document.getElementById('previewOverlay').style.display='flex';
+    document.body.style.overflow='hidden';
+    document.querySelectorAll('.dropdown-menu').forEach(m=>m.style.display='none');
+}
+
 function closePreview(){document.getElementById('previewOverlay').style.display='none';document.body.style.overflow='auto';handleMergeSelection();}
 function printPDF(){window.print();}
-function loadHistory(){fixExistingData();let c=Array.from(document.querySelectorAll('.merge-cb:checked')).map(x=>x.value),h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),sp=document.getElementById('filterPerson').value,st=document.getElementById('filterType').value,q=document.getElementById('searchQuery').value.trim().toLowerCase(),f1=document.getElementById('filterDateFrom').value,f2=document.getElementById('filterDateTo').value;if(q!=='')h=h.filter(x=>x.name.toLowerCase().includes(q)||String(x.invNum).includes(q)||(x.items||[]).some(i=>(i.desc||'').toLowerCase().includes(q)));if(sp!=='ALL')h=h.filter(x=>x.name===sp);if(st!=='ALL')h=h.filter(x=>x.type===st);if(f1)h=h.filter(x=>x.rawDate>=f1);if(f2)h=h.filter(x=>x.rawDate<=f2);h.sort((a,b)=>new Date(b.rawDate||0)-new Date(a.rawDate||0));let sc=0,sd=0;h.forEach(x=>{let r=x.total-(x.paidAmount||0);if(r>0){if(x.type==='مديون')sd+=r;else sc+=r;}});document.getElementById('totalCredit').innerText=sc.toFixed(2);document.getElementById('totalDebit').innerText=sd.toFixed(2);let lst=document.getElementById('historyList');if(!h.length){lst.innerHTML='<p style="text-align:center;font-size:12px;color:#aaa">لا توجد فواتير</p>';handleMergeSelection();return;}let hc=h.filter(x=>x.type==='دائن'),hd=h.filter(x=>x.type==='مديون'),ht='';if(hc.length){ht+=`<div class="section-title title-credit">🟩 فواتير دائنة (لك): ${hc.length}</div>`+hc.map(renderSingleCard).join('');}if(hd.length){ht+=`<div class="section-title title-debit">🟥 فواتير مديونة (عليك): ${hd.length}</div>`+hd.map(renderSingleCard).join('');}lst.innerHTML=ht;cleanOldTrash();setTimeout(()=>{c.forEach(x=>{let b=document.querySelector(`.merge-cb[value="${x}"]`);if(b)b.checked=!0;});handleMergeSelection();},50);}
-function renderSingleCard(v){let s=(v.items||[]).map(i=>`${i.desc}`).join(', '),r=v.total-(v.paidAmount||0),pt='سداد 💳',pc='#3b82f6';if(v.isPaid){pt='مسددة ✅';pc='#10b981';}else if(v.paidAmount>0){pt=`باقي ${r.toFixed(2)} ⏳`;pc='#f59e0b';}return `<div class="history-card" style="border-right:4px solid ${v.isPaid?'#10b981':v.paidAmount>0?'#f59e0b':'transparent'}"><div class="menu-container"><button class="dots-btn" onclick="toggleMenu('${v.invNum}', event)">⋮</button><div class="dropdown-menu" id="menu-${v.invNum}"><button onclick="openPreview('${v.invNum}')">📄 معاينة وإصدار PDF</button><button onclick="editInvoice('${v.invNum}')">✏️ تعديل الفاتورة</button><button class="danger" onclick="moveToTrash('${v.invNum}')">🗑️ نقل للمهملات</button></div></div><div style="position:absolute;right:15px;top:15px"><input type="checkbox" class="merge-cb" value="${v.invNum}" data-name="${v.name}" data-type="${v.type}" onchange="handleMergeSelection()" style="width:18px;height:18px;cursor:pointer;accent-color:#3b82f6"></div><div class="history-header"><div><b>${v.name}</b> <span class="badge ${v.type==='مديون'?'badge-debit':'badge-credit'}">${v.type}</span> ${v.isEdited?'<span class="badge badge-edited">معدلة</span>':''}</div><b style="color:${v.isPaid?'#10b981':'#2563eb'};text-decoration:${v.isPaid?'line-through':'none'}">${Number(v.total).toFixed(2)}</b></div><small style="color:#64748b;display:block;margin-bottom:8px">البنود: ${s}</small><div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed #e2e8f0;padding-top:8px"><div style="display:flex;gap:5px"><button onclick="openPaymentModal('${v.invNum}')" style="background:${pc};color:#fff;border:none;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer">${pt}</button>${(v.paidAmount>0||v.isPaid)?`<button onclick="resetPayment('${v.invNum}')" style="background:#ef4444;color:#fff;border:none;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer">إلغاء</button>`:''}</div><small style="color:#94a3b8;font-size:10px">${v.rawDate||v.date} | #${v.invNum}</small></div></div>`;}
 
-// ================= كود القطات الجديد وتعديلاته =================
+function loadHistory(){
+    fixExistingData();
+    let c=Array.from(document.querySelectorAll('.merge-cb:checked')).map(x=>x.value),h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),sp=document.getElementById('filterPerson').value,st=document.getElementById('filterType').value,q=document.getElementById('searchQuery').value.trim().toLowerCase(),f1=document.getElementById('filterDateFrom').value,f2=document.getElementById('filterDateTo').value;
+    if(q!=='')h=h.filter(x=>x.name.toLowerCase().includes(q)||String(x.invNum).includes(q)||(x.items||[]).some(i=>(i.desc||'').toLowerCase().includes(q)));
+    if(sp!=='ALL')h=h.filter(x=>x.name===sp);if(st!=='ALL')h=h.filter(x=>x.type===st);if(f1)h=h.filter(x=>x.rawDate>=f1);if(f2)h=h.filter(x=>x.rawDate<=f2);
+    h.sort((a,b)=>new Date(b.rawDate||0)-new Date(a.rawDate||0));
+    let sc=0,sd=0;h.forEach(x=>{let r=x.total-(x.paidAmount||0);if(r>0){if(x.type==='مديون')sd+=r;else sc+=r;}});
+    document.getElementById('totalCredit').innerText=sc.toFixed(2);document.getElementById('totalDebit').innerText=sd.toFixed(2);
+    let lst=document.getElementById('historyList');if(!h.length){lst.innerHTML='<p style="text-align:center;font-size:12px;color:#aaa">لا توجد فواتير</p>';handleMergeSelection();return;}
+    let hc=h.filter(x=>x.type==='دائن'),hd=h.filter(x=>x.type==='مديون'),ht='';
+    if(hc.length){ht+=`<div class="section-title title-credit">🟩 فواتير دائنة (لك): ${hc.length}</div>`+hc.map(renderSingleCard).join('');}
+    if(hd.length){ht+=`<div class="section-title title-debit">🟥 فواتير مديونة (عليك): ${hd.length}</div>`+hd.map(renderSingleCard).join('');}
+    lst.innerHTML=ht;cleanOldTrash();
+    setTimeout(()=>{c.forEach(x=>{let b=document.querySelector(`.merge-cb[value="${x}"]`);if(b)b.checked=!0;});handleMergeSelection();},50);
+}
+
+function renderSingleCard(v){
+    let s=(v.items||[]).map(i=>`${i.desc}`).join(', '),r=v.total-(v.paidAmount||0),pt='سداد 💳',pc='#3b82f6';
+    if(v.isPaid){pt='مسددة ✅';pc='#10b981';}else if(v.paidAmount>0){pt=`باقي ${r.toFixed(2)} ⏳`;pc='#f59e0b';}
+    return `<div class="history-card" style="border-right:4px solid ${v.isPaid?'#10b981':v.paidAmount>0?'#f59e0b':'transparent'}"><div class="menu-container"><button class="dots-btn" onclick="toggleMenu('${v.invNum}', event)">⋮</button><div class="dropdown-menu" id="menu-${v.invNum}"><button onclick="openPreview('${v.invNum}')">📄 معاينة وإصدار PDF</button><button onclick="editInvoice('${v.invNum}')">✏️ تعديل الفاتورة</button><button class="danger" onclick="moveToTrash('${v.invNum}')">🗑️ نقل للمهملات</button></div></div><div style="position:absolute;right:15px;top:15px"><input type="checkbox" class="merge-cb" value="${v.invNum}" data-name="${v.name}" data-type="${v.type}" onchange="handleMergeSelection()" style="width:18px;height:18px;cursor:pointer;accent-color:#3b82f6"></div><div class="history-header"><div><b>${v.name}</b> <span class="badge ${v.type==='مديون'?'badge-debit':'badge-credit'}">${v.type}</span> ${v.isEdited?'<span class="badge badge-edited">معدلة</span>':''}</div><b style="color:${v.isPaid?'#10b981':'#2563eb'};text-decoration:${v.isPaid?'line-through':'none'}">${Number(v.total).toFixed(2)}</b></div><small style="color:#64748b;display:block;margin-bottom:8px">البنود: ${s}</small><div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed #e2e8f0;padding-top:8px"><div style="display:flex;gap:5px"><button onclick="openPaymentModal('${v.invNum}')" style="background:${pc};color:#fff;border:none;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer">${pt}</button>${(v.paidAmount>0||v.isPaid)?`<button onclick="resetPayment('${v.invNum}')" style="background:#ef4444;color:#fff;border:none;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer">إلغاء</button>`:''}</div><small style="color:#94a3b8;font-size:10px">${v.rawDate||v.date} | #${v.invNum}</small></div></div>`;
+}
+
+// ================= كود القطات والمجموعات =================
 function loadGroups() {
     let groups = JSON.parse(localStorage.getItem('nara_groups')||'[]');
     let sel = document.getElementById('groupSelect');
@@ -196,8 +258,10 @@ function saveGroup() {
     let members = document.getElementById('groupMembersInput').value.split(',').map(s=>s.trim()).filter(s=>s);
     if(!name || members.length===0) return showToast('أدخل الاسم والأعضاء ⚠️');
     let groups = JSON.parse(localStorage.getItem('nara_groups')||'[]');
-    groups.push({name, members});
+    let o = {name, members};
+    groups.push(o);
     localStorage.setItem('nara_groups', JSON.stringify(groups));
+    saveCloudGroup(o);
     document.getElementById('groupNameInput').value = '';
     document.getElementById('groupMembersInput').value = '';
     loadGroups();
@@ -253,21 +317,25 @@ function saveSplitData(){
     if(!t||a<=0||!splitPeopleArray.length)return showToast('أكمل البيانات ⚠️');
     let s=JSON.parse(localStorage.getItem('nara_splits')||'[]');
     let perPerson = a / splitPeopleArray.length;
+    let targetObj;
     if (editingSplitId) {
         s = s.map(x => {
             if(x.id === editingSplitId) {
                 x.title = t; x.total = a; x.perPerson = perPerson; x.people = splitPeopleArray;
+                targetObj = x;
             } return x;
         });
         showToast('تم تعديل القطة ✏️✅');
     } else {
-        s.unshift({
+        targetObj = {
             id:Math.floor(1e5+Math.random()*9e5), title:t, total:a, perPerson:perPerson,
             date:new Date().toLocaleDateString('ar-SA'), people: splitPeopleArray
-        });
+        };
+        s.unshift(targetObj);
         showToast('تم الحفظ 🍕✅');
     }
     localStorage.setItem('nara_splits',JSON.stringify(s));
+    saveCloudSplit(targetObj);
     resetSplitForm();
     loadSplitsHistory();
 }
@@ -299,8 +367,8 @@ function openSplitPayment(splitId, personIdx, isEdit = false) {
     let infoTxt = isEdit ? `تعديل سداد (${p.name}) من (${s.title})` : `تسديد لـ (${p.name}) من (${s.title})`;
     document.getElementById('splitPayInfo').innerText = infoTxt;
     
-    document.getElementById('splitPayAmountInput').value = isEdit ? (p.paidAmount || 0) : '';
-    document.getElementById('splitPayAmountInput').placeholder = isEdit ? `إجمالي ما تم دفعه: ${p.paidAmount}` : `المتبقي للسداد: ${remaining.toFixed(2)}`;
+    document.getElementById('splitPayAmountInput').value = isEdit ? (p.paidAmount || '') : '';
+    document.getElementById('splitPayAmountInput').placeholder = isEdit ? `المبلغ المدفوع كان: ${p.paidAmount}` : `المتبقي للسداد: ${remaining.toFixed(2)}`;
     
     if (p.payMethod) document.getElementById('splitPayMethodSelect').value = p.payMethod;
     document.getElementById('splitPaymentModal').style.display = 'flex';
@@ -339,6 +407,7 @@ function confirmSplitPayment() {
     
     p.payMethod = document.getElementById('splitPayMethodSelect').value;
     localStorage.setItem('nara_splits', JSON.stringify(splits));
+    saveCloudSplit(s);
     cancelSplitPayment();
     loadSplitsHistory();
     showToast(isEditingSplitPay ? 'تم تعديل السداد ✏️✅' : 'تم السداد ✅');
@@ -397,47 +466,34 @@ function loadSplitsHistory(){
     }).join('');
 }
 
-function deleteSplit(id){if(!confirm('حذف القطة؟'))return;let s=JSON.parse(localStorage.getItem('nara_splits')||'[]').filter(x=>x.id!==id);localStorage.setItem('nara_splits',JSON.stringify(s));loadSplitsHistory();}
+function deleteSplit(id){if(!confirm('حذف القطة؟'))return;let s=JSON.parse(localStorage.getItem('nara_splits')||'[]');let tg=s.find(x=>x.id===id);if(!tg)return;s=s.filter(x=>x.id!==id);localStorage.setItem('nara_splits',JSON.stringify(s));deleteCloudSplit(id);loadSplitsHistory();}
 
 function openSplitPreview(id) {
     let s=JSON.parse(localStorage.getItem('nara_splits')||'[]').find(x=>x.id===id);
     if(!s) return;
-    
     document.getElementById('printSplitId').innerText = s.id;
     document.getElementById('printSplitDate').innerText = s.date;
     document.getElementById('printSplitTitle').innerText = s.title;
     document.getElementById('printSplitTotal').innerText = s.total.toFixed(2) + ' ر.س';
     document.getElementById('printSplitPerPerson').innerText = s.perPerson.toFixed(2) + ' ر.س';
-    
-    let totalCollected = 0;
-    let tbody = '';
-    
+    let totalCollected = 0, tbody = '';
     s.people.forEach((p, idx) => {
         let pPaid = p.paidAmount || 0;
         totalCollected += pPaid;
         let pRem = s.perPerson - pPaid;
-        
         let statusClass = p.paid ? 'paid-full' : (pPaid > 0 ? 'paid-partial' : 'unpaid');
         let statusText = p.paid ? `مسدد (${p.payMethod||''})` : (pPaid > 0 ? 'سداد جزئي' : 'غير مسدد');
-        
         tbody += `<tr>
-            <td>${idx+1}</td>
-            <td style="font-weight:bold;">${p.name}</td>
-            <td>${s.perPerson.toFixed(2)}</td>
-            <td class="${statusClass}">${pPaid.toFixed(2)}</td>
-            <td>${pRem.toFixed(2)}</td>
-            <td class="${statusClass}">${statusText}</td>
+            <td>${idx+1}</td><td style="font-weight:bold;">${p.name}</td><td>${s.perPerson.toFixed(2)}</td>
+            <td class="${statusClass}">${pPaid.toFixed(2)}</td><td>${pRem.toFixed(2)}</td><td class="${statusClass}">${statusText}</td>
         </tr>`;
     });
-    
     document.getElementById('printSplitTableBody').innerHTML = tbody;
     document.getElementById('printSplitCollected').innerText = totalCollected.toFixed(2);
     document.getElementById('printSplitRemaining').innerText = (s.total - totalCollected).toFixed(2);
-    
     document.getElementById('splitPreviewOverlay').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
-
 function closeSplitPreview() {
     document.getElementById('splitPreviewOverlay').style.display = 'none';
     document.body.style.overflow = 'auto';
