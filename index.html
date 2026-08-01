@@ -7,115 +7,107 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png?v=5">
-    <link rel="icon" type="image/png" sizes="180x180" href="icon-180.png?v=5">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/1052/1052858.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/1052/1052858.png">
     <meta name="theme-color" content="#f8fafc">
     
-    <!-- رابط التثبيت كـ تطبيق للجوال -->
-    <link rel="manifest" href='data:application/manifest+json,{"short_name":"NaraInvoices","name":"Nara Invoices","icons":[{"src":"icon-512.png","type":"image/png","sizes":"512x512"}],"start_url":".","background_color":"#f8fafc","theme_color":"#0f172a","display":"standalone","orientation":"portrait"}'>
+    <link rel="manifest" href='data:application/manifest+json,{"short_name":"NaraInvoices","name":"Nara Invoices","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/1052/1052858.png","type":"image/png","sizes":"512x512"}],"start_url":".","background_color":"#f8fafc","theme_color":"#0f172a","display":"standalone","orientation":"portrait"}'>
     
     <style>
-        /* ============ الألوان الأساسية ============ */
-        :root { --primary: #0f172a; --accent: #2563eb; --split: #7c3aed; --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --input-bg: #f1f5f9; --text: #1e293b; --text-muted: #64748b; --credit: #10b981; --debit: #ef4444; }
+        :root { --primary: #0f172a; --accent: #2563eb; --split: #7c3aed; --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --input-bg: #ffffff; --text: #1e293b; --text-muted: #64748b; --credit: #10b981; --debit: #ef4444; }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); padding: 15px; max-width: 1000px; margin: 0 auto; direction: rtl; padding-bottom: 90px; -webkit-font-smoothing: antialiased; }
+        body { background-color: var(--bg); color: var(--text); padding: 15px; max-width: 1050px; margin: 0 auto; direction: rtl; padding-bottom: 90px; -webkit-font-smoothing: antialiased; }
 
-        /* ============ الهيدر ============ */
         .header-card { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-top: 10px; }
         .header-brand { display: flex; align-items: center; gap: 15px; }
-        .header-brand h1 { font-size: 22px; color: var(--primary); font-weight: 800; margin: 0; letter-spacing: -0.5px; }
-        .header-brand p { font-size: 12px; color: var(--text-muted); font-weight: 700; margin: 2px 0 0; }
-        .app-logo { width: 48px; height: 48px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+        .header-brand h1 { font-size: 24px; color: var(--primary); font-weight: 900; margin: 0; letter-spacing: -0.5px; }
+        .header-brand p { font-size: 13px; color: var(--text-muted); font-weight: 700; margin: 2px 0 0; }
+        .app-logo { width: 50px; height: 50px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .header-buttons { display: flex; gap: 8px; }
-        .btn-action { color: #fff; border: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 11px; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-action { color: #fff; border: none; padding: 10px 16px; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 12px; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .btn-sync { background: var(--text-muted); } .btn-reset { background: var(--debit); }
 
-        #toast { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 12px 24px; border-radius: 12px; font-size: 13px; font-weight: 700; z-index: 99999; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        #toast { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 14px 28px; border-radius: 14px; font-size: 14px; font-weight: 800; z-index: 99999; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 
-        /* ============ شريط التبويبات (كمبيوتر وجوال) ============ */
-        .tabs { display: flex; background: #e2e8f0; padding: 5px; border-radius: 14px; margin: 0 auto 25px; max-width: 650px; gap: 5px; }
-        .tab-btn { flex: 1; padding: 10px 5px; background: transparent; border: none; border-radius: 10px; font-weight: 700; font-size: 13px; color: var(--text-muted); cursor: pointer; transition: 0.2s; text-align: center; }
-        .tab-btn.active { background: var(--card); color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .tabs { display: flex; background: #e2e8f0; padding: 6px; border-radius: 16px; margin: 0 auto 25px; max-width: 650px; gap: 5px; }
+        .tab-btn { flex: 1; padding: 12px 6px; background: transparent; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; color: var(--text-muted); cursor: pointer; transition: 0.2s; text-align: center; }
+        .tab-btn.active { background: var(--card); color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
         @media(max-width: 600px) {
-            .tabs { position: fixed; bottom: 0; left: 0; width: 100%; max-width: 100%; border-radius: 20px 20px 0 0; padding: 10px 10px 25px 10px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 9000; border-top: 1px solid var(--border); margin: 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); }
-            body { padding-bottom: 110px; }
-            .tab-btn { font-size: 12px; padding: 10px 2px; }
+            .tabs { position: fixed; bottom: 0; left: 0; width: 100%; max-width: 100%; border-radius: 24px 24px 0 0; padding: 12px 12px 25px 12px; background: rgba(255,255,255,0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 9000; border-top: 1px solid var(--border); margin: 0; box-shadow: 0 -4px 25px rgba(0,0,0,0.06); }
+            body { padding-bottom: 120px; }
+            .tab-btn { font-size: 12px; padding: 12px 2px; }
         }
 
-        /* ============ التخطيط والبطاقات ============ */
         .dashboard-layout { display: flex; gap: 20px; align-items: flex-start; }
-        .layout-side { flex: 0 0 350px; position: sticky; top: 20px; }
+        .layout-side { flex: 0 0 360px; position: sticky; top: 20px; }
         .layout-main { flex: 1; min-width: 0; }
         @media(max-width: 850px) { .dashboard-layout { flex-direction: column; } .layout-side { flex: none; width: 100%; position: static; } }
 
-        .card { background: var(--card); padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; border: 1px solid var(--border); }
-        .card h3 { font-size: 16px; margin-bottom: 20px; color: var(--primary); font-weight: 800; }
+        .card { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 20px; border: 1px solid var(--border); }
+        .card h3 { font-size: 17px; margin-bottom: 22px; color: var(--primary); font-weight: 900; }
 
-        /* ============ النماذج والإدخال ============ */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
-        input, select { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; font-size: 16px; background: var(--card); color: var(--text); outline: none; transition: 0.2s; font-weight: 600; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); }
-        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 13px; font-weight: 800; color: var(--text-muted); margin-bottom: 8px; }
+        input, select { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 16px; background: var(--input-bg); color: var(--text); outline: none; transition: 0.2s; font-weight: 700; box-shadow: 0 2px 5px rgba(0,0,0,0.01); }
+        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
         
-        .mode-toggle { display: flex; background: var(--input-bg); padding: 4px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); }
-        .mode-btn { flex: 1; padding: 10px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; background: transparent; color: var(--text-muted); transition: 0.2s; }
-        .mode-btn.active { background: var(--card); color: var(--accent); box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .mode-toggle { display: flex; background: #f1f5f9; padding: 5px; border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .mode-btn { flex: 1; padding: 10px; border: none; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; background: transparent; color: var(--text-muted); transition: 0.2s; }
+        .mode-btn.active { background: var(--card); color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
-        .row { display: flex; gap: 12px; } .row .form-group { flex: 1; }
-        .item-row { background: var(--input-bg); padding: 15px; border-radius: 14px; border: 1px dashed var(--border); margin-bottom: 12px; position: relative; }
-        .btn-remove-item { position: absolute; left: -8px; top: -8px; background: var(--debit); color: #fff; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 12px; font-weight: bold; box-shadow: 0 2px 8px rgba(239,68,68,0.3); }
+        .row { display: flex; gap: 15px; } .row .form-group { flex: 1; }
+        .item-row { background: var(--bg); padding: 18px; border-radius: 16px; border: 1px dashed #cbd5e1; margin-bottom: 15px; position: relative; }
+        .btn-remove-item { position: absolute; left: -8px; top: -8px; background: var(--debit); color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 12px; font-weight: bold; box-shadow: 0 4px 10px rgba(239,68,68,0.3); }
 
-        .btn { width: 100%; padding: 14px; background-color: var(--accent); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 5px; transition: 0.2s; }
+        .btn { width: 100%; padding: 16px; background-color: var(--accent); color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(37,99,235,0.2); }
         .btn:active { transform: scale(0.98); }
-        .btn-success { background-color: var(--credit); }
+        .btn-success { background-color: var(--credit); box-shadow: 0 4px 15px rgba(16,185,129,0.2); }
 
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; color: #fff; display: inline-block; }
+        .badge { padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 900; color: #fff; display: inline-block; }
         .badge-credit { background-color: var(--credit); } .badge-debit { background-color: var(--debit); } .badge-edited { background-color: #f59e0b; }
 
-        /* ============ بطاقات السجل ============ */
-        .history-card { background: var(--card); padding: 18px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; z-index: 1; transition: 0.2s; }
-        .history-card:hover { border-color: var(--text-muted); }
+        .history-card { background: var(--card); padding: 22px; border-radius: 18px; margin-bottom: 18px; border: 1px solid var(--border); position: relative; transition: 0.2s; z-index: 1; }
+        .history-card:hover { border-color: #cbd5e1; box-shadow: 0 6px 20px rgba(0,0,0,0.04); }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-left: 35px; padding-right: 35px; }
-        .menu-container { position: absolute; left: 12px; top: 12px; z-index: 10; }
-        .dots-btn { background: var(--input-bg); border: none; font-size: 20px; font-weight: bold; color: var(--text-muted); cursor: pointer; padding: 2px 10px; border-radius: 8px; }
-        .dropdown-menu { display: none; position: absolute; left: 0; top: 38px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 1000; min-width: 150px; overflow: hidden; padding: 6px; }
-        .dropdown-menu button { width: 100%; padding: 10px 14px; border: none; background: transparent; text-align: right; font-size: 13px; font-weight: 800; cursor: pointer; color: var(--text); border-radius: 8px; }
-        .dropdown-menu button:hover { background: var(--input-bg); color: var(--accent); } .dropdown-menu button.danger { color: var(--debit); }
+        .menu-container { position: absolute; left: 15px; top: 15px; z-index: 100; }
+        .dots-btn { background: #f1f5f9; border: 1px solid var(--border); font-size: 18px; font-weight: bold; color: var(--text-muted); cursor: pointer; padding: 4px 12px; border-radius: 10px; }
+        .dropdown-menu { display: none; position: absolute; left: 0; top: 40px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); z-index: 9999; min-width: 160px; overflow: hidden; padding: 8px; }
+        .dropdown-menu button { width: 100%; padding: 12px 16px; border: none; background: transparent; text-align: right; font-size: 13px; font-weight: 800; cursor: pointer; color: var(--text); border-radius: 10px; transition: 0.2s; }
+        .dropdown-menu button:hover { background: #f8fafc; color: var(--accent); } .dropdown-menu button.danger { color: var(--debit); }
         
-        .progress-container { width: 100%; background: var(--border); height: 6px; border-radius: 4px; margin: 12px 0; overflow: hidden; }
-        .progress-bar { height: 100%; border-radius: 4px; transition: 0.4s ease; }
+        .progress-container { width: 100%; background: #e2e8f0; height: 8px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { height: 100%; border-radius: 10px; transition: 0.4s ease; }
 
-        .section-title { font-size: 13px; font-weight: 800; padding: 6px 12px; border-radius: 8px; margin: 20px 0 10px; color: #fff; display: inline-block; }
+        .section-title { font-size: 15px; font-weight: 900; padding: 10px 16px; border-radius: 10px; margin: 25px 0 15px; color: #fff; display: inline-block; }
         .title-credit { background: var(--credit); } .title-debit { background: var(--debit); }
 
-        .summary-box { display: flex; gap: 12px; margin-bottom: 20px; }
-        .summary-item { flex: 1; padding: 15px; border-radius: 14px; color: #fff; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .summary-credit { background: var(--credit); } .summary-debit { background: var(--debit); }
+        .summary-box { display: flex; gap: 15px; margin-bottom: 25px; }
+        .summary-item { flex: 1; padding: 20px; border-radius: 16px; color: #fff; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+        .summary-credit { background: linear-gradient(135deg, #059669, #10b981); } .summary-debit { background: linear-gradient(135deg, #dc2626, #ef4444); }
 
-        #mergeFloatBar { display: none; position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 12px 20px; border-radius: 16px; z-index: 9999; box-shadow: 0 10px 40px rgba(0,0,0,0.2); border: 1px solid #334155; width: 92%; max-width: 500px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-        @media(min-width: 601px) { #mergeFloatBar { bottom: 20px; } }
-        .payment-modal-card { background: var(--card); padding: 25px; border-radius: 20px; width: 100%; max-width: 360px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid var(--border); }
-        #bulkPaymentModal, #paymentModal, #splitPaymentModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.7); z-index: 99999; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        #mergeFloatBar { display: none; position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 15px 25px; border-radius: 20px; z-index: 9999; box-shadow: 0 15px 40px rgba(0,0,0,0.2); border: 1px solid #334155; width: 95%; max-width: 550px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+        @media(min-width: 601px) { #mergeFloatBar { bottom: 25px; } }
+        .payment-modal-card { background: var(--card); padding: 30px; border-radius: 24px; width: 100%; max-width: 380px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); }
+        #bulkPaymentModal, #paymentModal, #splitPaymentModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); z-index: 99999; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
 
-        .contact-chip { display: inline-flex; align-items: center; background: var(--input-bg); color: var(--text); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; margin: 4px; cursor: pointer; border: 1px solid var(--border); transition: 0.2s; user-select: none; }
+        .contact-chip { display: inline-flex; align-items: center; background: #f8fafc; color: var(--text); padding: 10px 18px; border-radius: 24px; font-size: 13px; font-weight: 800; margin: 5px; cursor: pointer; border: 1px solid var(--border); transition: 0.2s; user-select: none; }
         .contact-chip:hover { border-color: var(--text-muted); } .contact-chip.active { background: rgba(124, 58, 237, 0.1); color: var(--split); border-color: var(--split); }
-        .wa-btn { background: #25D366; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; }
+        .wa-btn { background: #25D366; color: white; border: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; transition: 0.2s; } .wa-btn:hover { background: #20b858; }
 
-        /* ============ المعاينة والطباعة النظيفة 100% ============ */
-        #previewOverlay, #splitPreviewOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.95); z-index: 100000; overflow-y: auto; flex-direction: column; align-items: center; padding: 20px 15px; }
+        #previewOverlay, #splitPreviewOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.95); z-index: 100000; overflow-y: auto; flex-direction: column; align-items: center; padding: 30px 15px; }
         .print-active-overlay { display: flex !important; }
         
-        .preview-actions { display: flex; gap: 10px; background: var(--card); padding: 12px 20px; border-radius: 14px; position: sticky; top: 10px; z-index: 100001; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 25px; border: 1px solid var(--border); }
-        .preview-actions button { padding: 10px 20px; font-size: 13px; font-weight: 800; border-radius: 10px; border: none; cursor: pointer; color: #fff; }
+        .preview-actions { display: flex; gap: 12px; background: var(--card); padding: 15px 25px; border-radius: 16px; position: sticky; top: 15px; z-index: 100001; box-shadow: 0 15px 35px rgba(0,0,0,0.15); margin-bottom: 25px; border: 1px solid var(--border); }
+        .preview-actions button { padding: 12px 24px; font-size: 14px; font-weight: 900; border-radius: 12px; border: none; cursor: pointer; color: #fff; }
         
         .a4-paper, .split-a4-paper { background: #fff; width: 100%; max-width: 750px; padding: 45px; direction: rtl; color: #1e293b; border-radius: 16px; margin-bottom: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
         .split-a4-paper { border-top: 10px solid var(--split); }
         .a4-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; text-align: right; }
         .a4-table th, .a4-table td { padding: 12px 15px; border: 1px solid #cbd5e1; font-size: 14px; }
         .a4-table th { background: #f1f5f9; color: #0f172a; font-weight: 900; }
-        .a4-table td { font-weight: 700; color: #1e293b; }
+        .a4-table td { font-weight: 800; color: #1e293b; }
         
         @page { size: A4 portrait; margin: 10mm; }
         @media print {
@@ -135,8 +127,8 @@
     <div id="toast">تم التحديث بنجاح! ☁️🎉</div>
 
     <div class="header-card">
-        <div class="header-brand"><img src="icon-180.png?v=5" alt="Nara Logo" class="app-logo"><div><h1>NARA INVOICES</h1><p>النظام المالي الموحد</p></div></div>
-        <div class="header-buttons"><button id="autoSyncBtn" class="btn-action btn-sync">📴 أوفلاين</button><button class="btn-action btn-reset" onclick="resetCloudAndLocalDatabase()">⚠️ تصفير</button></div>
+        <div class="header-brand"><img src="https://cdn-icons-png.flaticon.com/512/1052/1052858.png" alt="Nara Logo" class="app-logo"><div><h1>NARA INVOICES</h1><p>النظام المالي الموحد</p></div></div>
+        <div class="header-buttons"><button id="autoSyncBtn" class="btn-action btn-sync">⏳ الاتصال...</button><button class="btn-action btn-reset" onclick="resetCloudAndLocalDatabase()">⚠️ تصفير</button></div>
     </div>
 
     <div class="tabs">
@@ -146,18 +138,16 @@
         <button class="tab-btn" onclick="switchTab('trash')">🗑️ المهملات</button>
     </div>
 
-    <!-- نوافذ السداد -->
     <div id="paymentModal"><div class="payment-modal-card"><h3 style="color:var(--primary);margin-bottom:20px;font-weight:900;">تسجيل سداد 💳</h3><div class="form-group"><label>المبلغ المدفوع (ر.س)</label><input type="number" id="payAmountInput" placeholder="اتركه فارغاً للسداد الكامل"></div><div class="form-group"><label>طريقة الدفع</label><select id="payMethodSelect"><option value="كاش">كاش 💵</option><option value="تحويل">تحويل بنكي 🏦</option><option value="شبكة">شبكة 💳</option></select></div><div style="display:flex;gap:15px;margin-top:25px"><button class="btn btn-success" onclick="confirmPayment()">تأكيد الاعتماد</button><button class="btn" style="background:var(--input-bg);color:var(--text);box-shadow:none;" onclick="cancelPayment()">إلغاء</button></div></div></div>
     <div id="bulkPaymentModal"><div class="payment-modal-card"><h3 style="color:var(--primary);margin-bottom:20px;font-weight:900;">سداد جماعي 💳</h3><div class="form-group"><label>طريقة الدفع للكل</label><select id="bulkPayMethodSelect"><option value="كاش">كاش</option><option value="تحويل">تحويل</option><option value="شبكة">شبكة</option></select></div><div style="display:flex;gap:15px;margin-top:25px"><button class="btn btn-success" onclick="confirmBulkPayment()">اعتماد الكل</button><button class="btn" style="background:var(--input-bg);color:var(--text);box-shadow:none;" onclick="cancelBulkPayment()">إلغاء</button></div></div></div>
     <div id="splitPaymentModal"><div class="payment-modal-card"><h3 style="color:var(--primary);margin-bottom:15px;font-weight:900;">إدارة سداد القطة 🍕</h3><p id="splitPayInfo" style="font-size:13px;color:var(--text-muted);margin-bottom:20px;font-weight:bold;"></p><div class="form-group"><label>المبلغ المدفوع</label><input type="number" id="splitPayAmountInput"></div><div class="form-group"><label>طريقة الدفع</label><select id="splitPayMethodSelect"><option value="كاش">كاش</option><option value="تحويل">تحويل</option><option value="شبكة">شبكة</option></select></div><div style="display:flex;gap:15px;margin-top:25px"><button class="btn btn-success" onclick="confirmSplitPayment()">حفظ السداد</button><button class="btn" style="background:var(--input-bg);color:var(--text);box-shadow:none;" onclick="cancelSplitPayment()">إلغاء</button></div></div></div>
 
-    <!-- شريط الإجراءات الجماعية -->
     <div id="mergeFloatBar">
-        <div style="display:flex;align-items:center"><span id="mergeCountText" style="font-size:22px;font-weight:900;color:var(--accent);">0</span><span style="font-size:14px;font-weight:800;margin-right:8px;color:var(--text);">محددة</span></div>
+        <div style="display:flex;align-items:center"><span id="mergeCountText" style="font-size:22px;font-weight:900;color:var(--accent);">0</span><span style="font-size:14px;font-weight:800;margin-right:8px;color:#fff;">محددة</span></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-            <button onclick="previewMergedInvoices()" style="background:var(--credit);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;box-shadow:0 2px 5px rgba(0,0,0,0.1);">كشف مقاصة 📄</button>
-            <button onclick="bulkMarkPaid()" style="background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;box-shadow:0 2px 5px rgba(0,0,0,0.1);">سداد للكل ✅</button>
-            <button onclick="bulkDelete()" style="background:var(--debit);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;box-shadow:0 2px 5px rgba(0,0,0,0.1);">حذف للكل 🗑️</button>
+            <button onclick="previewMergedInvoices()" style="background:var(--credit);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;box-shadow:0 4px 10px rgba(0,0,0,0.15);">كشف مقاصة 📄</button>
+            <button onclick="bulkMarkPaid()" style="background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;box-shadow:0 4px 10px rgba(0,0,0,0.15);">سداد للكل ✅</button>
+            <button onclick="bulkDelete()" style="background:var(--debit);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;box-shadow:0 4px 10px rgba(0,0,0,0.15);">حذف للكل 🗑️</button>
         </div>
     </div>
 
@@ -196,22 +186,22 @@
     <div id="tabSplits" style="display:none;max-width:850px;margin:0 auto">
         <div class="dashboard-layout">
             <div class="layout-side">
-                <div class="card" style="border-top: 4px solid var(--split);">
+                <div class="card" style="border-top: 5px solid var(--split);">
                     <h3 id="splitFormTitle" style="color:var(--split);">🍕 إنشاء حساب جماعي</h3>
                     <div class="form-group"><label>عنوان القطة / المناسبة</label><input type="text" id="splitTitle" placeholder="مثال: عشاء الخميس"></div>
                     <div class="form-group"><label>المبلغ الإجمالي (ر.س)</label><input type="number" id="splitTotalAmount" placeholder="0.00" oninput="calculateSplit()"></div>
-                    <div class="form-group" style="margin-top:20px; padding:15px; background:var(--input-bg); border-radius:14px; border:1px solid var(--border);">
+                    <div class="form-group" style="margin-top:25px; padding:18px; background:var(--bg); border-radius:14px; border:1px solid var(--border);">
                         <label style="color:var(--split); margin-bottom:12px;">إضافة سريعة من جهات الاتصال:</label>
                         <div id="splitQuickContacts" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
                     </div>
-                    <div class="form-group" style="margin-top:15px;">
+                    <div class="form-group" style="margin-top:20px;">
                         <label>أو كتابة اسم خارجي:</label>
-                        <div style="display:flex;gap:10px;"><input type="text" id="splitPersonInput" placeholder="اسم الشخص"><button class="btn" style="background:var(--split); width:auto; margin-top:0; padding:0 20px; font-size:14px; box-shadow:none;" onclick="addPersonToSplit()">إضافة</button></div>
+                        <div style="display:flex;gap:10px;"><input type="text" id="splitPersonInput" placeholder="اسم الشخص"><button class="btn" style="background:var(--split); width:auto; margin-top:0; padding:0 25px; font-size:14px; box-shadow:none;" onclick="addPersonToSplit()">إضافة</button></div>
                     </div>
-                    <div id="splitPeopleList" style="display:flex;flex-wrap:wrap;gap:8px; margin:15px 0;"></div>
+                    <div id="splitPeopleList" style="display:flex;flex-wrap:wrap;gap:8px; margin:20px 0;"></div>
                     <div style="background:rgba(139, 92, 246, 0.05);padding:25px;border-radius:16px;text-align:center;border:1px dashed var(--split); margin-top:25px;">
                         <span style="font-size:14px;color:var(--split);font-weight:900;">المطلوب من كل شخص:</span><br>
-                        <strong style="font-size:30px;color:var(--split);"><span id="splitAmountPerPerson">0.00</span> <span style="font-size:16px;">ر.س</span></strong>
+                        <strong style="font-size:32px;color:var(--split);"><span id="splitAmountPerPerson">0.00</span> <span style="font-size:16px;">ر.س</span></strong>
                     </div>
                     <button class="btn" style="background:var(--split); margin-top:20px;" id="btnSaveSplit" onclick="saveSplitData()">💾 حفظ واعتماد القطة</button>
                     <button class="btn" id="btnCancelSplitEdit" style="background:var(--input-bg);color:var(--text);display:none;box-shadow:none;" onclick="resetSplitForm()">إلغاء التعديل</button>
@@ -232,16 +222,16 @@
 
     <!-- ================= 4. سلة المهملات ================= -->
     <div id="tabTrash" style="display:none;max-width:850px;margin:0 auto">
-        <div class="card" style="background:rgba(239, 68, 68, 0.05);border:1px dashed var(--debit);">
-            <h3 style="color:var(--debit);margin-bottom:10px; font-size:16px;">🗑️ سلة المهملات</h3>
-            <p style="font-size:13px;color:var(--debit);font-weight:800;">السجلات هنا تُحذف نهائياً وتلقائياً بعد 7 أيام.</p>
+        <div class="card" style="background:rgba(239, 68, 68, 0.05);border:2px dashed var(--debit);">
+            <h3 style="color:var(--debit);margin-bottom:10px; font-size:18px;">🗑️ سلة المهملات</h3>
+            <p style="font-size:14px;color:var(--debit);font-weight:800;">السجلات هنا تُحذف نهائياً وتلقائياً بعد 7 أيام.</p>
         </div>
         <div id="trashList"></div>
     </div>
 
-    <!-- ================= قوالب الطباعة الفاخرة (A4) ================= -->
+    <!-- ================= قوالب الطباعة הפاخرة (A4) ================= -->
     
-    <!-- كشف الديون العادي والنظيف جداً -->
+    <!-- كشف الديون العادي -->
     <div id="previewOverlay">
         <div class="preview-actions"><button style="background:var(--credit);" onclick="printPDF()">🖨️ طباعة الكشف</button><button style="background:var(--debit);" onclick="closePreview()">❌ إغلاق</button></div>
         <div id="invoiceTemplate" class="a4-paper">
@@ -288,36 +278,26 @@
         </div>
     </div>
 
-    <!-- السكريبت الديناميكي لتشغيل الأوفلاين والسحابة بأمان -->
+    <!-- Firebase والمزامنة (Offline First) -->
     <script>
         let currentMode='new', editingInvNum=null, targetInvForPayment=null, targetBulkInvoices=[];
         let splitPeopleArray=[], editingSplitId=null, currentSplitPayId=null, currentSplitPersonIdx=null, isEditingSplitPay=!1;
         let isFirebaseLoaded = false;
         window.db = null; window.fbDb = null;
 
+        if('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW setup skipped')); }); }
+
         function showToast(m){const t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 
-        // الاتصال الذكي بالسحابة (يعمل أوفلاين كلياً ولا يعلق)
         async function initCloudSync() {
             const btn = document.getElementById('autoSyncBtn');
-            if(!navigator.onLine) { 
-                btn.innerHTML = '📴 محلي (أوفلاين)'; 
-                btn.style.background = 'var(--text-muted)'; 
-                return; 
-            }
+            if(!navigator.onLine) { btn.innerHTML = '📴 محلي (أوفلاين)'; btn.style.background = 'var(--text-muted)'; return; }
             if(isFirebaseLoaded) return;
             try {
                 btn.innerHTML = '⏳ جاري الاتصال...';
                 const fbApp = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
                 const fbStore = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-                const app = fbApp.initializeApp({
-                    apiKey: "AIzaSyDGsMNwQy8tbK9DBYNn60zPA7UtoOvykmo",
-                    authDomain: "nara-invoices-5d481.firebaseapp.com",
-                    projectId: "nara-invoices-5d481",
-                    storageBucket: "nara-invoices-5d481.firebasestorage.app",
-                    messagingSenderId: "1090499233942",
-                    appId: "1:1090499233942:web:dd63607c9eff6eb9055ab7"
-                });
+                const app = fbApp.initializeApp({ apiKey: "AIzaSyDGsMNwQy8tbK9DBYNn60zPA7UtoOvykmo", authDomain: "nara-invoices-5d481.firebaseapp.com", projectId: "nara-invoices-5d481", storageBucket: "nara-invoices-5d481.firebasestorage.app", messagingSenderId: "1090499233942", appId: "1:1090499233942:web:dd63607c9eff6eb9055ab7" });
                 window.db = fbStore.getFirestore(app); window.fbDb = fbStore; isFirebaseLoaded = true;
                 btn.innerHTML = '🟢 متصل بالسحابة'; btn.style.background = 'var(--credit)';
 
@@ -348,11 +328,10 @@
 
         function fixExistingData(){
             let d=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),u=!1;
-            d=d.map(i=>{let c=(i.type||'').includes('مديون')?'مديون':'دائن';if(i.type!==c){i.type=c;u=!0}if(!i.rawDate){i.rawDate=new Date().toISOString().split('T')[0];u=!0}if(i.paidAmount===undefined){i.paidAmount=i.isPaid?Number(i.total):0;u=!0}if(!i.items||!Array.isArray(i.items)){i.items=[{desc:i.desc||'معاملة',price:Number(i.price)||0,itemTotal:Number(i.total)||0}];u=!0}return i;});
+            d=d.map(i=>{let c=(i.type||'').includes('مديون')?'مديون':'دائن';if(i.type!==c){i.type=c;u=!0}if(!i.rawDate){i.rawDate=new Date().toISOString().split('T')[0];u=!0}if(i.paidAmount===undefined){i.paidAmount=i.isPaid?Number(i.total):0;u=!0}if(!i.items||!Array.isArray(i.items)){i.items=[{desc:i.desc||'معاملة',price:Number(i.price)||0,qty:1,itemDate:i.rawDate,itemTotal:Number(i.total)||0}];u=!0}else{i.items.forEach(it=>{if(it.qty===undefined){it.qty=1;u=!0}if(!it.itemDate){it.itemDate=i.rawDate;u=!0}});}return i;});
             if(u)localStorage.setItem('nara_invoices',JSON.stringify(d));
         }
 
-        // حل مشكلة القوائم المنسدلة باللابتوب نهائياً
         document.addEventListener('click',e=>{
             if(!e.target.classList.contains('dots-btn')){
                 document.querySelectorAll('.dropdown-menu').forEach(m=>m.style.display='none');
@@ -370,9 +349,10 @@
         function switchTab(t){['invoices','splits','people','trash'].forEach((x,i)=>{document.getElementById(`tab${x.charAt(0).toUpperCase()+x.slice(1)}`).style.display=t===x?'block':'none';document.querySelectorAll('.tab-btn')[i].classList.toggle('active',t===x);});if(t==='trash')loadTrash();if(t==='splits')loadSplitsHistory(); if(t==='people')renderPeople();window.scrollTo(0,0);}
         function setPersonMode(m){currentMode=m;document.getElementById('btnNewMode').classList.toggle('active',m==='new');document.getElementById('btnSavedMode').classList.toggle('active',m==='saved');document.getElementById('newPersonFields').style.display=m==='new'?'block':'none';document.getElementById('savedPersonFields').style.display=m==='saved'?'block':'none';}
         
-        function addItemRow(d='',p=''){
+        function addItemRow(d='',p='',q=1,dt=''){
+            let tdy=new Date().toISOString().split('T')[0], itemDt=dt||tdy;
             let c=document.getElementById('itemsContainer'),r=document.createElement('div');r.className='item-row';
-            r.innerHTML=`<button class="btn-remove-item" onclick="this.parentElement.remove()">✕</button><div class="row"><div class="form-group" style="flex:3;margin-bottom:0;"><input type="text" class="item-desc" value="${d}" placeholder="البيان (مثال: سلف، عشاء...)"></div><div class="form-group" style="flex:2;margin-bottom:0;"><input type="number" class="item-price" value="${p}" placeholder="المبلغ"></div></div>`;
+            r.innerHTML=`<button class="btn-remove-item" onclick="this.parentElement.remove()">✕</button><div class="row" style="margin-bottom:12px;"><div class="form-group" style="flex:2;margin-bottom:0;"><input type="text" class="item-desc" value="${d}" placeholder="البيان (مثال: سلف، عشاء...)"></div><div class="form-group" style="flex:1;margin-bottom:0;"><input type="date" class="item-date" value="${itemDt}"></div></div><div class="row"><div class="form-group" style="flex:1;margin-bottom:0;"><input type="number" class="item-price" value="${p}" placeholder="السعر (للحبة)"></div><div class="form-group" style="flex:1;margin-bottom:0;"><input type="number" class="item-qty" value="${q}" placeholder="العدد" min="1"></div></div>`;
             c.appendChild(r);
         }
 
@@ -402,8 +382,8 @@
             let n=""; if(currentMode==='new'){n=document.getElementById('directName').value.trim()||'جهة خارجية';}else{n=document.getElementById('selectSavedPerson').value;}
             let t=document.getElementById('invoiceType').value, i=[], tot=0;
             document.querySelectorAll('.item-row').forEach(r=>{
-                let d=r.querySelector('.item-desc').value||'بند', p=parseFloat(r.querySelector('.item-price').value)||0;
-                if(p>0){i.push({desc:d,price:p,itemTotal:p}); tot+=p;}
+                let d=r.querySelector('.item-desc').value||'بند', p=parseFloat(r.querySelector('.item-price').value)||0, q=parseFloat(r.querySelector('.item-qty').value)||1, dt=r.querySelector('.item-date').value, it=p*q;
+                if(p>0){i.push({desc:d,price:p,qty:q,itemDate:dt,itemTotal:it}); tot+=it;}
             });
             let rd=new Date().toISOString().split('T')[0], dt=new Date(rd).toLocaleDateString('ar-SA');
             if(editingInvNum){let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>String(x.invNum)===String(editingInvNum)); if(h){dt=h.date; rd=h.rawDate||rd;}}
@@ -424,12 +404,12 @@
         function cancelPayment(){document.getElementById('paymentModal').style.display='none';}
         function resetPayment(i){if(!confirm('⚠️ سيتم إلغاء جميع الدفعات، هل أنت متأكد؟'))return;let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),v=h.find(x=>String(x.invNum)===String(i));if(v){v.isPaid=!1;v.paidAmount=0;v.payMethod='';localStorage.setItem('nara_invoices',JSON.stringify(h));saveCloudSingle(v);showToast('تم الإلغاء 🔄');loadHistory();}}
         
-        function editInvoice(i){let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>String(x.invNum)===String(i));if(!h)return;editingInvNum=h.invNum;document.getElementById('formTitle').innerText='✏️ تعديل معاملة #'+h.invNum;document.getElementById('btnSave').innerText='💾 حفظ التعديل';document.getElementById('btnCancelEdit').style.display='block';setPersonMode('new');document.getElementById('directName').value=h.name;document.getElementById('invoiceType').value=h.type;let c=document.getElementById('itemsContainer');c.innerHTML='';(h.items||[]).forEach(x=>addItemRow(x.desc,x.price));window.scrollTo({top:0,behavior:'smooth'});}
+        function editInvoice(i){let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>String(x.invNum)===String(i));if(!h)return;editingInvNum=h.invNum;document.getElementById('formTitle').innerText='✏️ تعديل معاملة #'+h.invNum;document.getElementById('btnSave').innerText='💾 حفظ التعديل';document.getElementById('btnCancelEdit').style.display='block';setPersonMode('new');document.getElementById('directName').value=h.name;document.getElementById('invoiceType').value=h.type;let c=document.getElementById('itemsContainer');c.innerHTML='';(h.items||[]).forEach(x=>addItemRow(x.desc,x.price,x.qty||1,x.itemDate));window.scrollTo({top:0,behavior:'smooth'});}
         
         function moveToTrash(i){if(!confirm('⚠️ نقل للمهملات؟'))return;let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),v=h.find(x=>String(x.invNum)===String(i));if(!v)return;v.deletedAt=new Date().getTime();t.unshift(v);h=h.filter(x=>String(x.invNum)!==String(i));localStorage.setItem('nara_invoices',JSON.stringify(h));localStorage.setItem('nara_trash',JSON.stringify(t));saveCloudTrash(v);try{if(window.db && navigator.onLine)window.fbDb.deleteDoc(window.fbDb.doc(window.db,"invoices",String(i)));}catch(e){}loadHistory();loadTrash();showToast('تم الحذف 🗑️');}
         function restoreFromTrash(i){let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),v=t.find(x=>String(x.invNum)===String(i));if(!v)return;delete v.deletedAt;h.unshift(v);t=t.filter(x=>String(x.invNum)!==String(i));localStorage.setItem('nara_invoices',JSON.stringify(h));localStorage.setItem('nara_trash',JSON.stringify(t));saveCloudSingle(v);deleteCloudTrash(i);loadTrash();loadHistory();showToast('تم الاسترجاع 🔄');}
         function cleanOldTrash(){let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),n=new Date().getTime(),k=[];t.forEach(x=>{if(x.deletedAt&&(n-x.deletedAt)>=6048e5)deleteCloudTrash(x.invNum);else k.push(x);});localStorage.setItem('nara_trash',JSON.stringify(k));let c=document.getElementById('trashCount');if(c)c.innerText=k.length;}
-        function loadTrash(){cleanOldTrash();let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),c=document.getElementById('trashList');if(!t.length)return c.innerHTML='<p style="text-align:center;color:var(--text-muted);font-size:14px;padding:30px;font-weight:bold;">السلة فارغة</p>';let n=new Date().getTime();c.innerHTML=t.map(x=>{let d=Math.ceil((6048e5-(n-x.deletedAt))/864e5),s=(x.items||[]).map(i=>i.desc).join(', ');return `<div class="history-card" style="border-right:4px solid var(--debit); z-index:1;"><div class="history-header" style="padding:0;"><div><b style="font-size:15px; color:var(--text);">${x.name}</b></div><b style="color:var(--debit); font-size:18px; font-weight:900;">${Number(x.total).toFixed(2)} ر.س</b></div><small style="color:var(--text-muted);display:block;font-size:12px;margin-top:6px;font-weight:bold;">البنود: ${s}</small><small style="color:var(--debit);font-weight:900;font-size:12px;display:block;margin-top:10px">يُحذف خلال: ${d} يوم</small><button style="margin-top:15px;width:100%;padding:12px;background:var(--credit);color:#fff;border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:13px;box-shadow:0 2px 5px rgba(0,0,0,0.1);" onclick="restoreFromTrash('${x.invNum}')">استرجاع للسجل</button></div>`;}).join('');}
+        function loadTrash(){cleanOldTrash();let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),c=document.getElementById('trashList');if(!t.length)return c.innerHTML='<p style="text-align:center;color:var(--text-muted);font-size:13px;padding:20px;font-weight:bold;">السلة فارغة</p>';let n=new Date().getTime();c.innerHTML=t.map(x=>{let d=Math.ceil((6048e5-(n-x.deletedAt))/864e5),s=(x.items||[]).map(i=>i.desc).join(', ');return `<div class="history-card" style="border-right:4px solid var(--debit); z-index:1;"><div class="history-header" style="padding:0;"><div><b style="font-size:15px; color:var(--text);">${x.name}</b></div><b style="color:var(--debit); font-size:18px; font-weight:900;">${Number(x.total).toFixed(2)} ر.س</b></div><small style="color:var(--text-muted);display:block;font-size:12px;margin-top:6px;font-weight:bold;">البنود: ${s}</small><small style="color:var(--debit);font-weight:900;font-size:12px;display:block;margin-top:10px">يُحذف خلال: ${d} يوم</small><button style="margin-top:15px;width:100%;padding:12px;background:var(--credit);color:#fff;border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:13px;box-shadow:0 2px 5px rgba(0,0,0,0.1);" onclick="restoreFromTrash('${x.invNum}')">استرجاع للسجل</button></div>`;}).join('');}
         function resetForm(){editingInvNum=null;document.getElementById('formTitle').innerText='📄 تسجيل معاملة جديدة';document.getElementById('btnSave').innerText='💾 حفظ واعتماد';document.getElementById('btnCancelEdit').style.display='none';document.getElementById('directName').value='';document.getElementById('itemsContainer').innerHTML='';addItemRow();}
         
         function handleMergeSelection(){let c=document.querySelectorAll('.merge-cb:checked'),f=document.getElementById('mergeFloatBar');document.getElementById('mergeCountText').innerText=c.length;f.style.display=c.length>0?'flex':'none';}
@@ -450,10 +430,9 @@
             document.getElementById('pdfInvDate').innerText=new Date().toLocaleDateString('ar-SA');
             document.getElementById('pdfInvNumber').innerText='كشف-'+Math.floor(1e3+Math.random()*9e3);
             document.getElementById('pdfEditedTag').innerText='';
-            document.getElementById('pdfPaymentStatus').innerHTML=''; // مخفي لأن التفاصيل بالجدول
+            document.getElementById('pdfPaymentStatus').innerHTML='<span style="color:#64748b;font-size:12px">المبالغ المدفوعة تم خصمها من الإجمالي</span>';
             
-            // تغيير الهيدر ليكون مناسب للمقاصة
-            document.getElementById('pdfTableHeader').innerHTML = `<tr style="background:#f1f5f9;"><th style="text-align:center; width:6%; border-radius:0 10px 10px 0;">م</th><th style="text-align:right; width:34%;">الفاتورة / البيان</th><th style="text-align:center; width:15%;">الإجمالي</th><th style="text-align:center; width:15%;">المدفوع</th><th style="text-align:center; width:15%;">المتبقي</th><th style="text-align:center; width:15%; border-radius:10px 0 0 10px;">الحالة</th></tr>`;
+            document.getElementById('pdfTableHeader').innerHTML = `<tr style="background:#f1f5f9;"><th style="text-align:center; width:6%; border-radius:0 10px 10px 0;">م</th><th style="text-align:center; width:14%;">تاريخ الفاتورة</th><th style="text-align:right; width:30%;">البنود المشمولة</th><th style="text-align:center; width:12%;">الإجمالي</th><th style="text-align:center; width:12%;">المدفوع</th><th style="text-align:center; width:12%;">المتبقي</th><th style="text-align:center; width:14%; border-radius:10px 0 0 10px;">الحالة</th></tr>`;
 
             let td=0,tc=0,ht='',idx=1;
             h.forEach(v=>{
@@ -462,15 +441,16 @@
                 let pRem = v.total - pPaid;
                 let statTxt = v.isPaid ? 'مسدد' : (pPaid > 0 ? 'جزئي' : 'غير مسدد');
                 let statColor = v.isPaid ? '#10b981' : (pPaid > 0 ? '#f59e0b' : '#ef4444');
-                let itemsSummary = (v.items||[]).map(i=>i.desc).join(' + ');
+                let itemsSummary = (v.items||[]).map(i=>`${i.desc} (x${i.qty||1})`).join('<br>');
 
                 ht+=`<tr>
-                    <td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${idx++}</td>
-                    <td style="font-weight:bold; text-align:right; padding:14px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${itemsSummary} <span style="color:${d?'#ef4444':'#10b981'};font-size:11px">(${d?'عليه':'له'})</span><div style="font-size:11px;color:#64748b;font-weight:normal;margin-top:4px">كود #${v.invNum} | ${v.rawDate||v.date}</div></td>
-                    <td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${v.total.toFixed(2)}</td>
-                    <td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:${pPaid>0?'#10b981':'#1e293b'};">${pPaid.toFixed(2)}</td>
-                    <td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:${pRem>0?'#ef4444':'#1e293b'};">${pRem.toFixed(2)}</td>
-                    <td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:${statColor};">${statTxt}</td>
+                    <td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${idx++}</td>
+                    <td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; color:#64748b; font-size:11px; font-weight:bold;">${v.rawDate||v.date}</td>
+                    <td style="font-weight:bold; text-align:right; padding:12px; border-bottom:1px solid #e2e8f0; color:#1e293b; font-size:12px; line-height:1.6;">${itemsSummary} <div style="font-size:10px;color:${d?'#ef4444':'#10b981'};margin-top:4px;">(${d?'عليه':'له'}) | كود #${v.invNum}</div></td>
+                    <td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${v.total.toFixed(2)}</td>
+                    <td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:${pPaid>0?'#10b981':'#1e293b'};">${pPaid.toFixed(2)}</td>
+                    <td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:${pRem>0?'#ef4444':'#1e293b'};">${pRem.toFixed(2)}</td>
+                    <td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:${statColor};">${statTxt}</td>
                 </tr>`;
                 
                 if(d)td+=pRem;else tc+=pRem;
@@ -485,7 +465,7 @@
             document.body.style.overflow='hidden';c.forEach(x=>x.checked=!1);
         }
 
-        // ================= كشف الديون المنفصل وإصلاحه =================
+        // ================= كشف الديون الفردي وإصلاحه الجذري =================
         function openPreview(i){
             let v=JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>String(x.invNum)===String(i));if(!v)return;
             document.getElementById('pdfClientName').innerText=v.name;
@@ -495,10 +475,9 @@
             document.getElementById('pdfEditedTag').innerText=v.isEdited?'(معدّلة)':'';
             document.getElementById('pdfPaymentStatus').innerHTML=v.isPaid?`<span style="color:#10b981">✅ مسددة بالكامل (${v.payMethod})</span>`:v.paidAmount>0?`<span style="color:#f59e0b">⏳ مسددة جزئياً (متبقي: ${(v.total-v.paidAmount).toFixed(2)})</span>`:`<span style="color:#ef4444">❌ غير مسددة</span>`;
             
-            // الهيدر الخاص بالفاتورة الفردية
-            document.getElementById('pdfTableHeader').innerHTML = `<tr style="background:#f1f5f9;"><th style="text-align:center; width:10%; border-radius:0 10px 10px 0;">م</th><th style="text-align:right; width:60%;">البيان والتفاصيل</th><th style="text-align:center; width:30%; border-radius:10px 0 0 10px;">المبلغ (ر.س)</th></tr>`;
+            document.getElementById('pdfTableHeader').innerHTML = `<tr style="background:#f1f5f9;"><th style="text-align:center; width:8%; border-radius:0 10px 10px 0;">م</th><th style="text-align:center; width:15%;">التاريخ</th><th style="text-align:right; width:35%;">البيان والتفاصيل</th><th style="text-align:center; width:12%;">العدد</th><th style="text-align:center; width:15%;">السعر</th><th style="text-align:center; width:15%; border-radius:10px 0 0 10px;">الإجمالي</th></tr>`;
             
-            document.getElementById('pdfItemsTableBody').innerHTML=(v.items||[]).map((x,j)=>`<tr><td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${j+1}</td><td style="font-weight:bold; text-align:right; padding:14px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${x.desc}</td><td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${Number(x.price).toFixed(2)}</td></tr>`).join('');
+            document.getElementById('pdfItemsTableBody').innerHTML=(v.items||[]).map((x,j)=>`<tr><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${j+1}</td><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; color:#64748b; font-size:12px; font-weight:bold;">${x.itemDate||(v.rawDate||v.date)}</td><td style="font-weight:bold; text-align:right; padding:12px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${x.desc}</td><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${x.qty||1}</td><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${Number(x.price).toFixed(2)}</td><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${Number(x.itemTotal).toFixed(2)}</td></tr>`).join('');
             
             let r=v.total-(v.paidAmount||0);
             document.getElementById('pdfSummaryContainer').innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;font-weight:bold;color:#1e293b;"><span>الإجمالي:</span><span>${Number(v.total).toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;font-weight:bold;color:#10b981;"><span>المدفوع:</span><span>${Number(v.paidAmount||0).toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-top:15px;padding-top:15px;border-top:2px dashed #cbd5e1;font-size:18px;font-weight:900;color:${r>0?'#ef4444':'#1e293b'};"><span>المتبقي:</span><span>${r.toFixed(2)}</span></div>`;
@@ -514,7 +493,7 @@
             overlay.classList.remove('print-active-overlay');
             document.body.style.overflow='auto';
             handleMergeSelection();
-            loadHistory(); // تحديث القائمة لمنع التعليق
+            loadHistory(); 
         }
         function printPDF(){window.print();}
 
@@ -522,7 +501,7 @@
             let inv = JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>x.invNum == invNum);
             if(!inv) return;
             let rem = (inv.total - (inv.paidAmount||0)).toFixed(2);
-            let items = (inv.items||[]).map(i => `- ${i.desc}`).join('%0A');
+            let items = (inv.items||[]).map(i => `- ${i.desc} (x${i.qty||1})`).join('%0A');
             let text = `مرحباً ${inv.name}،%0Aهذا تذكير بكشف حساب مالي:%0A${items}%0A%0Aالمتبقي للدفع: *${rem} ر.س*%0Aتاريخ: ${inv.rawDate || inv.date}%0A%0A(مُرسل عبر NARA Invoices)`;
             window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
         }
@@ -544,7 +523,7 @@
         }
 
         function renderSingleCard(v){
-            let s=(v.items||[]).map(i=>`${i.desc}`).join(' + '),r=v.total-(v.paidAmount||0),pt='سداد',pc='var(--accent)';
+            let s=(v.items||[]).map(i=>`${i.desc} (x${i.qty||1})`).join(' + '),r=v.total-(v.paidAmount||0),pt='سداد',pc='var(--accent)';
             if(v.isPaid){pt='مسددة';pc='var(--credit)';}else if(v.paidAmount>0){pt=`باقي ${r.toFixed(2)}`;pc='#f59e0b';}
             
             let paidPercent = (v.paidAmount / v.total) * 100; if(paidPercent > 100) paidPercent = 100;
@@ -585,7 +564,7 @@
         function renderSplitPeople(){
             let c = document.getElementById('splitPeopleList');
             if(!splitPeopleArray.length) { c.innerHTML = ''; return; }
-            c.innerHTML=splitPeopleArray.map((p,i)=>`<div style="background:var(--card);padding:6px 12px;border-radius:20px;font-size:12px;font-weight:bold;color:var(--text);border:1px solid var(--split);display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 5px rgba(139,92,246,0.1)">${p.name} <button style="background:none;border:none;color:var(--debit);font-weight:900;font-size:14px;cursor:pointer;padding:0" onclick="removePersonFromSplit(${i})">✕</button></div>`).join('');
+            c.innerHTML=splitPeopleArray.map((p,i)=>`<div style="background:var(--card);padding:8px 15px;border-radius:20px;font-size:13px;font-weight:800;color:var(--text);border:1px solid var(--split);display:inline-flex;align-items:center;gap:10px;box-shadow:0 4px 10px rgba(139,92,246,0.1)">${p.name} <button style="background:none;border:none;color:var(--debit);font-weight:900;font-size:16px;cursor:pointer;padding:0" onclick="removePersonFromSplit(${i})">✕</button></div>`).join('');
         }
 
         function calculateSplit(){
@@ -686,7 +665,7 @@
                 
                 return `<div class="card" style="border:1px solid ${isCompleted?'var(--credit)':'var(--border)'};position:relative;margin-bottom:20px; z-index:1; padding:25px;">
                     <div style="position:absolute;left:20px;top:20px;display:flex;gap:6px; z-index:50;">
-                        <button onclick="shareSplitWA(${x.id})" class="wa-btn" style="background:#25D366;color:white;border:none;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:bold;cursor:pointer;margin-left:5px;display:inline-flex;align-items:center;">مشاركة 💬</button>
+                        <button onclick="shareSplitWA(${x.id})" class="wa-btn" style="background:#25D366;color:white;border:none;padding:6px 12px;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;margin-left:5px;display:inline-flex;align-items:center;">مشاركة 💬</button>
                         <button style="background:var(--input-bg);border:1px solid var(--border);color:var(--text-muted);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:15px;transition:0.2s" onclick="openSplitPreview(${x.id})">🖨️</button>
                         <button style="background:rgba(139, 92, 246, 0.1);border:none;color:var(--split);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:15px;transition:0.2s" onclick="editSplit(${x.id})">✏️</button>
                         <button style="background:rgba(239, 68, 68, 0.1);border:none;color:var(--debit);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:15px;transition:0.2s" onclick="deleteSplit(${x.id})">🗑️</button>
