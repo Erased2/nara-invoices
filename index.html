@@ -12,23 +12,23 @@
     <meta name="theme-color" content="#f8fafc">
     
     <style>
-        :root { --primary: #0f172a; --accent: #2563eb; --split: #7c3aed; --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #1e293b; --text-muted: #64748b; --credit: #10b981; --debit: #ef4444; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 15px; max-width: 1000px; margin: 0 auto; direction: rtl; padding-bottom: 80px; -webkit-font-smoothing: antialiased; }
+        :root { --primary: #0f172a; --accent: #2563eb; --split: #7c3aed; --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --input-bg: #f1f5f9; --text: #1e293b; --text-muted: #64748b; --credit: #10b981; --debit: #ef4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 15px; max-width: 1050px; margin: 0 auto; direction: rtl; padding-bottom: 90px; -webkit-font-smoothing: antialiased; }
 
         .header-card { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-top: 10px; }
         .header-brand { display: flex; align-items: center; gap: 15px; }
-        .header-brand h1 { font-size: 24px; color: var(--primary); font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+        .header-brand h1 { font-size: 24px; color: var(--primary); font-weight: 900; margin: 0; letter-spacing: -0.5px; }
         .header-brand p { font-size: 13px; color: var(--text-muted); font-weight: 600; margin: 2px 0 0; }
         .app-logo { width: 50px; height: 50px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
         .header-buttons { display: flex; gap: 8px; }
-        .btn-action { color: #fff; border: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 12px; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-action { color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 12px; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .btn-sync { background: var(--credit); } .btn-reset { background: var(--debit); }
 
         #toast { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 700; z-index: 99999; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
 
-        .tabs { display: flex; background: #e2e8f0; padding: 4px; border-radius: 12px; margin: 0 auto 25px; overflow-x: auto; max-width: 700px; }
-        .tab-btn { flex: 1; padding: 10px 8px; background: transparent; border: none; border-radius: 10px; font-weight: 700; font-size: 13px; color: var(--text-muted); cursor: pointer; transition: 0.2s; text-align: center; min-width: 100px; }
+        .tabs { display: flex; background: #e2e8f0; padding: 5px; border-radius: 12px; margin: 0 auto 25px; overflow-x: auto; max-width: 700px; }
+        .tab-btn { flex: 1; padding: 12px 8px; background: transparent; border: none; border-radius: 10px; font-weight: 700; font-size: 13px; color: var(--text-muted); cursor: pointer; transition: 0.2s; text-align: center; min-width: 100px; }
         .tab-btn.active { background: var(--card); color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
         .dashboard-layout { display: flex; gap: 20px; align-items: flex-start; }
@@ -36,20 +36,20 @@
         .layout-main { flex: 1; min-width: 0; }
         @media(max-width: 850px) { .dashboard-layout { flex-direction: column; } .layout-side { flex: none; width: 100%; position: static; } }
 
-        .card { background: var(--card); padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; border: 1px solid var(--border); }
+        .card { background: var(--card); padding: 22px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; border: 1px solid var(--border); }
         .card h3 { font-size: 16px; margin-bottom: 20px; color: var(--primary); font-weight: 800; }
 
         .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
-        input, select { width: 100%; padding: 12px 15px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: #fff; color: var(--text); outline: none; transition: 0.2s; font-weight: 600; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); }
-        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
+        input, select { width: 100%; padding: 12px 15px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: #fff; color: var(--text); outline: none; transition: 0.2s; font-weight: 600; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); }
+        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
         
-        .mode-toggle { display: flex; background: #f1f5f9; padding: 4px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--border); }
-        .mode-btn { flex: 1; padding: 8px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; background: transparent; color: var(--text-muted); transition: 0.2s; }
+        .mode-toggle { display: flex; background: var(--input-bg); padding: 4px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .mode-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; background: transparent; color: var(--text-muted); transition: 0.2s; }
         .mode-btn.active { background: var(--card); color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
         .row { display: flex; gap: 12px; } .row .form-group { flex: 1; }
-        .item-row { background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; position: relative; }
+        .item-row { background: var(--input-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; position: relative; }
         .btn-remove-item { position: absolute; left: -8px; top: -8px; background: var(--debit); color: #fff; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 11px; font-weight: bold; box-shadow: 0 2px 5px rgba(239,68,68,0.3); }
 
         .btn { width: 100%; padding: 14px; background-color: var(--accent); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 5px; transition: 0.2s; }
@@ -217,6 +217,7 @@
     </div>
 
     <!-- ================= قوالب الطباعة (A4) ================= -->
+    
     <!-- كشف الديون العادي -->
     <div id="previewOverlay">
         <div class="preview-actions"><button style="background:var(--credit);" onclick="printPDF()">🖨️ طباعة الكشف</button><button style="background:var(--debit);" onclick="closePreview()">❌ إغلاق</button></div>
@@ -226,7 +227,7 @@
                 <div style="text-align:left;"><h2 style="font-size:20px; margin:0 0 5px; color:var(--primary); font-weight:800;">كشف حساب مالي</h2><div style="font-size:12px; color:var(--text-muted); font-weight:700;">رقم الكشف: <strong style="color:#000;">#<span id="pdfInvNumber"></span></strong><br>التاريخ: <strong style="color:#000;"><span id="pdfInvDate"></span></strong></div></div>
             </div>
             <div style="background:#f8fafc; border:1px solid var(--border); border-radius:12px; padding:15px; margin-bottom:25px; display:flex; justify-content:space-between; align-items:center;">
-                <div><div style="font-size:11px; color:var(--text-muted); font-weight:bold; margin-bottom:5px;">الطرف الثاني / الحساب</div><div style="font-size:18px; font-weight:bold; color:#000; margin-bottom:4px;"><span id="pdfClientName"></span></div><div style="font-size:12px; font-weight:bold; color:var(--text-muted);">تصنيف الحساب: <span id="pdfPersonType" style="color:var(--primary);"></span></div></div>
+                <div><div style="font-size:11px; color:var(--text-muted); font-weight:bold; margin-bottom:5px;">الطرف الثاني / الحساب</div><div style="font-size:18px; font-weight:bold; color:#000; margin-bottom:4px;"><span id="pdfClientName"></span> <span id="pdfEditedTag" style="color:#f59e0b;font-size:12px;font-weight:bold;margin-right:5px"></span></div><div style="font-size:12px; font-weight:bold; color:var(--text-muted);">تصنيف الحساب: <span id="pdfPersonType" style="color:var(--primary);"></span></div></div>
                 <div style="text-align:left; padding-right:20px; border-right:2px dashed var(--border);"><div style="font-size:11px; color:var(--text-muted); font-weight:bold; margin-bottom:5px;">حالة السداد</div><div id="pdfPaymentStatus" style="font-size:15px; font-weight:bold;"></div></div>
             </div>
             <table class="a4-table">
@@ -297,7 +298,7 @@
 
         function initAutoSync(){
             if(!window.db||!window.onSnapshot)return setTimeout(initAutoSync,1000);
-            const b=document.getElementById('autoSyncBtn');b.innerHTML='🟢 متصل';
+            const b=document.getElementById('autoSyncBtn');b.innerHTML='🟢 متصل';b.style.background='var(--credit)';
             window.onSnapshot(window.collection(window.db,"invoices"),s=>{let a=[];s.forEach(d=>a.push(d.data()));a.sort((x,y)=>y.invNum-x.invNum);localStorage.setItem('nara_invoices',JSON.stringify(a));loadHistory();},()=>{b.innerHTML='🔴 غير متصل';b.style.background='var(--debit)';});
             window.onSnapshot(window.collection(window.db,"people"),s=>{let a=[];s.forEach(d=>a.push(d.data()));localStorage.setItem('nara_people',JSON.stringify(a));renderPeople();});
             window.onSnapshot(window.collection(window.db,"trash"),s=>{let a=[];s.forEach(d=>a.push(d.data()));a.sort((x,y)=>y.deletedAt-x.deletedAt);localStorage.setItem('nara_trash',JSON.stringify(a));loadTrash();});
@@ -307,11 +308,10 @@
 
         function fixExistingData(){
             let d=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),u=!1;
-            d=d.map(i=>{let c=(i.type||'').includes('مديون')?'مديون':'دائن';if(i.type!==c){i.type=c;u=!0}if(!i.rawDate){i.rawDate=new Date().toISOString().split('T')[0];u=!0}if(i.paidAmount===undefined){i.paidAmount=i.isPaid?Number(i.total):0;u=!0}if(!i.items||!Array.isArray(i.items)){i.items=[{desc:i.desc||'معاملة',price:Number(i.price)||0,vatRate:0,vatAmount:0,itemTotal:Number(i.total)||0}];i.totalVat=0;u=!0}return i;});
+            d=d.map(i=>{let c=(i.type||'').includes('مديون')?'مديون':'دائن';if(i.type!==c){i.type=c;u=!0}if(!i.rawDate){i.rawDate=new Date().toISOString().split('T')[0];u=!0}if(i.paidAmount===undefined){i.paidAmount=i.isPaid?Number(i.total):0;u=!0}if(!i.items||!Array.isArray(i.items)){i.items=[{desc:i.desc||'معاملة',price:Number(i.price)||0,itemTotal:Number(i.total)||0}];u=!0}return i;});
             if(u)localStorage.setItem('nara_invoices',JSON.stringify(d));
         }
 
-        // حل مشكلة القوائم المنسدلة (Z-index) برمجياً
         document.addEventListener('click',e=>{
             if(!e.target.classList.contains('dots-btn')){
                 document.querySelectorAll('.dropdown-menu').forEach(m=>m.style.display='none');
@@ -323,10 +323,7 @@
             document.querySelectorAll('.history-card').forEach(c=>c.style.zIndex='1');
             document.querySelectorAll('.dropdown-menu').forEach(x=>x.style.display='none');
             let m=document.getElementById(`menu-${i}`);
-            if(m){
-                m.style.display='block';
-                m.closest('.history-card').style.zIndex='999';
-            }
+            if(m){ m.style.display='block'; m.closest('.history-card').style.zIndex='999'; }
         }
 
         function switchTab(t){['invoices','splits','people','trash'].forEach((x,i)=>{document.getElementById(`tab${x.charAt(0).toUpperCase()+x.slice(1)}`).style.display=t===x?'block':'none';document.querySelectorAll('.tab-btn')[i].classList.toggle('active',t===x);});if(t==='trash')loadTrash();if(t==='splits')loadSplitsHistory(); if(t==='people')renderPeople();}
@@ -353,7 +350,7 @@
         }
         function renderPeople(){
             let p=JSON.parse(localStorage.getItem('nara_people')||'[]'),c=document.getElementById('peopleList');
-            c.innerHTML=p.map(x=>`<div style="background:var(--card);padding:12px 15px;border-radius:12px;margin-bottom:10px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 5px rgba(0,0,0,0.02);"><div><b style="font-size:14px; color:var(--text);">${x.name}</b></div><button style="background:transparent;color:var(--debit);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:11px;transition:0.2s;" onclick="deletePerson('${x.name}')">حذف</button></div>`).join('')||'<p style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px;">القائمة فارغة</p>';
+            c.innerHTML=p.map(x=>`<div style="background:var(--card);padding:12px 15px;border-radius:12px;margin-bottom:10px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 5px rgba(0,0,0,0.02);"><div><b style="font-size:14px; color:var(--text);">${x.name}</b></div><button style="background:transparent;color:var(--debit);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:11px;transition:0.2s;" onclick="deletePerson('${x.name}')">حذف</button></div>`).join('')||'<p style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px;">القائمة فارغة</p>';
             let s1=document.getElementById('selectSavedPerson');
             s1.innerHTML='<option value="">-- اختر --</option>';
             p.forEach(x=>s1.innerHTML+=`<option value="${x.name}">${x.name}</option>`);
@@ -369,7 +366,7 @@
             });
             let rd=new Date().toISOString().split('T')[0], dt=new Date(rd).toLocaleDateString('ar-SA');
             if(editingInvNum){let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>String(x.invNum)===String(editingInvNum)); if(h){dt=h.date; rd=h.rawDate||rd;}}
-            return{name:n, type:t, items:i, total:tot, totalVat:0, date:dt, rawDate:rd, invNum:editingInvNum||Math.floor(1e5+Math.random()*9e5), isEdited:!!editingInvNum, isPaid:!1, paidAmount:0, payMethod:''};
+            return{name:n, type:t, items:i, total:tot, date:dt, rawDate:rd, invNum:editingInvNum||Math.floor(1e5+Math.random()*9e5), isEdited:!!editingInvNum, isPaid:!1, paidAmount:0, payMethod:''};
         }
         function saveInvoiceData(){
             let d=getInputs(); if(currentMode==='saved'&&!d.name)return showToast('اختر اسم من القائمة ⚠️'); if(d.items.length===0)return showToast('يجب إدخال مبلغ ⚠️');
@@ -391,7 +388,7 @@
         function moveToTrash(i){if(!confirm('⚠️ نقل للمهملات؟'))return;let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),v=h.find(x=>String(x.invNum)===String(i));if(!v)return;v.deletedAt=new Date().getTime();t.unshift(v);h=h.filter(x=>String(x.invNum)!==String(i));localStorage.setItem('nara_invoices',JSON.stringify(h));localStorage.setItem('nara_trash',JSON.stringify(t));saveCloudTrash(v);try{if(window.db)window.deleteDoc(window.doc(window.db,"invoices",String(i)));}catch(e){}loadHistory();loadTrash();showToast('تم الحذف 🗑️');}
         function restoreFromTrash(i){let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),v=t.find(x=>String(x.invNum)===String(i));if(!v)return;delete v.deletedAt;h.unshift(v);t=t.filter(x=>String(x.invNum)!==String(i));localStorage.setItem('nara_invoices',JSON.stringify(h));localStorage.setItem('nara_trash',JSON.stringify(t));saveCloudSingle(v);deleteCloudTrash(i);loadTrash();loadHistory();showToast('تم الاسترجاع 🔄');}
         function cleanOldTrash(){let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),n=new Date().getTime(),k=[];t.forEach(x=>{if(x.deletedAt&&(n-x.deletedAt)>=6048e5)deleteCloudTrash(x.invNum);else k.push(x);});localStorage.setItem('nara_trash',JSON.stringify(k));let c=document.getElementById('trashCount');if(c)c.innerText=k.length;}
-        function loadTrash(){cleanOldTrash();let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),c=document.getElementById('trashList');if(!t.length)return c.innerHTML='<p style="text-align:center;color:var(--text-muted);font-size:12px;padding:20px;font-weight:bold;">السلة فارغة</p>';let n=new Date().getTime();c.innerHTML=t.map(x=>{let d=Math.ceil((6048e5-(n-x.deletedAt))/864e5),s=(x.items||[]).map(i=>i.desc).join(', ');return `<div class="history-card" style="border-right:4px solid var(--debit);"><div class="history-header" style="padding:0;"><div><b style="font-size:14px; color:var(--text);">${x.name}</b></div><b style="color:var(--debit); font-size:16px;">${Number(x.total).toFixed(2)} ر.س</b></div><small style="color:var(--text-muted);display:block;font-size:11px;margin-top:6px;font-weight:bold;">البنود: ${s}</small><small style="color:var(--debit);font-weight:bold;font-size:11px;display:block;margin-top:8px">يُحذف خلال: ${d} يوم</small><button style="margin-top:12px;width:100%;padding:10px;background:var(--credit);color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;font-size:12px;box-shadow:0 2px 5px rgba(0,0,0,0.1);" onclick="restoreFromTrash('${x.invNum}')">استرجاع للسجل</button></div>`;}).join('');}
+        function loadTrash(){cleanOldTrash();let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),c=document.getElementById('trashList');if(!t.length)return c.innerHTML='<p style="text-align:center;color:var(--text-muted);font-size:12px;padding:20px;font-weight:bold;">السلة فارغة</p>';let n=new Date().getTime();c.innerHTML=t.map(x=>{let d=Math.ceil((6048e5-(n-x.deletedAt))/864e5),s=(x.items||[]).map(i=>i.desc).join(', ');return `<div class="history-card" style="border-right:4px solid var(--debit); z-index:1;"><div class="history-header" style="padding:0;"><div><b style="font-size:14px; color:var(--text);">${x.name}</b></div><b style="color:var(--debit); font-size:16px; font-weight:900;">${Number(x.total).toFixed(2)} ر.س</b></div><small style="color:var(--text-muted);display:block;font-size:12px;margin-top:6px;font-weight:bold;">البنود: ${s}</small><small style="color:var(--debit);font-weight:900;font-size:12px;display:block;margin-top:10px">يُحذف خلال: ${d} يوم</small><button style="margin-top:15px;width:100%;padding:12px;background:var(--credit);color:#fff;border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:13px;box-shadow:0 2px 5px rgba(0,0,0,0.1);" onclick="restoreFromTrash('${x.invNum}')">استرجاع للسجل</button></div>`;}).join('');}
         function resetForm(){editingInvNum=null;document.getElementById('formTitle').innerText='📄 تسجيل معاملة جديدة';document.getElementById('btnSave').innerText='💾 حفظ واعتماد';document.getElementById('btnCancelEdit').style.display='none';document.getElementById('directName').value='';document.getElementById('itemsContainer').innerHTML='';addItemRow();}
         
         function handleMergeSelection(){let c=document.querySelectorAll('.merge-cb:checked'),f=document.getElementById('mergeFloatBar');document.getElementById('mergeCountText').innerText=c.length;f.style.display=c.length>0?'flex':'none';}
@@ -411,16 +408,16 @@
             document.getElementById('pdfInvDate').innerText=new Date().toLocaleDateString('ar-SA');
             document.getElementById('pdfInvNumber').innerText='كشف-'+Math.floor(1e3+Math.random()*9e3);
             document.getElementById('pdfEditedTag').innerText='';
-            document.getElementById('pdfPaymentStatus').innerHTML='<span style="color:var(--text-muted);font-size:12px">المبالغ المدفوعة مخصومة من الإجمالي</span>';
+            document.getElementById('pdfPaymentStatus').innerHTML='<span style="color:#64748b;font-size:12px">المبالغ المدفوعة تم خصمها من الإجمالي</span>';
             let td=0,tc=0,ht='',idx=1;
             h.forEach(v=>{
                 let d=v.type==='مديون',pt=v.isPaid?'<span style="color:#10b981">[مسدد]</span>':(v.paidAmount>0?`<span style="color:#f59e0b">[جزئي: ${v.paidAmount}]</span>`:'<span style="color:#ef4444">[غير مسدد]</span>');
-                (v.items||[]).forEach(i=>{ht+=`<tr><td style="text-align:center;">${idx++}</td><td style="font-weight:bold; text-align:right;">${i.desc} ${d?'<span style="color:#ef4444;font-size:10px">(عليه)</span>':'<span style="color:#10b981;font-size:10px">(له)</span>'}<div style="font-size:11px;color:#64748b;font-weight:normal;margin-top:4px">كود #${v.invNum} - ${pt}</div></td><td style="text-align:center;font-weight:bold;">${Number(i.price).toFixed(2)}</td></tr>`;});
+                (v.items||[]).forEach(i=>{ht+=`<tr><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${idx++}</td><td style="font-weight:bold; text-align:right; padding:12px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${i.desc} ${d?'<span style="color:#ef4444;font-size:10px">(عليه)</span>':'<span style="color:#10b981;font-size:10px">(له)</span>'}<div style="font-size:11px;color:#64748b;font-weight:normal;margin-top:4px">كود #${v.invNum} - ${pt}</div></td><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${Number(i.price).toFixed(2)}</td></tr>`;});
                 if(d)td+=(v.total-(v.paidAmount||0));else tc+=(v.total-(v.paidAmount||0));
             });
             document.getElementById('pdfItemsTableBody').innerHTML=ht;
             let nb=Math.abs(td-tc),nt=td>tc?"الصافي المستحق (لك):":tc>td?"الصافي المستحق (عليك):":"الرصيد مصفر:";
-            document.getElementById('pdfSummaryContainer').innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;font-weight:bold;color:#000;"><span>المتبقي (عليه):</span><span style="color:#ef4444">${td.toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;font-weight:bold;color:#000;"><span>المتبقي (له):</span><span style="color:#10b981">${tc.toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-top:15px;padding-top:15px;border-top:2px dashed #cbd5e1;font-size:16px;font-weight:900;color:#000;"><span>${nt}</span><span style="color:${td>tc?'#ef4444':tc>td?'#10b981':'#000'}">${nb.toFixed(2)}</span></div>`;
+            document.getElementById('pdfSummaryContainer').innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;font-weight:bold;color:#1e293b;"><span>المتبقي (عليه):</span><span style="color:#ef4444">${td.toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;font-weight:bold;color:#10b981;"><span>المتبقي (له):</span><span>${tc.toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-top:15px;padding-top:15px;border-top:2px dashed #cbd5e1;font-size:16px;font-weight:900;color:${td>tc?'#ef4444':tc>td?'#10b981':'#1e293b'};"><span>${nt}</span><span>${nb.toFixed(2)}</span></div>`;
             document.getElementById('mergeFloatBar').style.display='none';
             document.getElementById('previewOverlay').style.display='flex';
             document.body.style.overflow='hidden';c.forEach(x=>x.checked=!1);
@@ -430,17 +427,16 @@
         function openPreview(i){
             let v=JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>String(x.invNum)===String(i));if(!v)return;
             document.getElementById('pdfClientName').innerText=v.name;
+            document.getElementById('pdfEditedTag').innerText=v.isEdited?'(معدّلة)':'';
             document.getElementById('pdfPersonType').innerText=v.type;
             document.getElementById('pdfInvDate').innerText=v.rawDate||v.date;
             document.getElementById('pdfInvNumber').innerText=v.invNum;
-            document.getElementById('pdfEditedTag').innerText=v.isEdited?'(معدّلة)':'';
             document.getElementById('pdfPaymentStatus').innerHTML=v.isPaid?`<span style="color:#10b981">✅ مسددة بالكامل (${v.payMethod})</span>`:v.paidAmount>0?`<span style="color:#f59e0b">⏳ مسددة جزئياً (متبقي: ${(v.total-v.paidAmount).toFixed(2)})</span>`:`<span style="color:#ef4444">❌ غير مسددة</span>`;
             
-            // إصلاح الجدول (3 أعمدة فقط لتطابق HTML)
-            document.getElementById('pdfItemsTableBody').innerHTML=(v.items||[]).map((x,j)=>`<tr><td style="text-align:center;">${j+1}</td><td style="font-weight:bold; text-align:right;">${x.desc}</td><td style="text-align:center;font-weight:bold;">${Number(x.price).toFixed(2)}</td></tr>`).join('');
+            document.getElementById('pdfItemsTableBody').innerHTML=(v.items||[]).map((x,j)=>`<tr><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${j+1}</td><td style="font-weight:bold; text-align:right; padding:12px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${x.desc}</td><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${Number(x.price).toFixed(2)}</td></tr>`).join('');
             
             let r=v.total-(v.paidAmount||0);
-            document.getElementById('pdfSummaryContainer').innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;font-weight:bold;color:#000;"><span>الإجمالي:</span><span>${Number(v.total).toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;font-weight:bold;color:#10b981;"><span>المدفوع:</span><span>${Number(v.paidAmount||0).toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-top:15px;padding-top:15px;border-top:2px dashed #cbd5e1;font-size:16px;font-weight:900;color:${r>0?'#ef4444':'#000'};"><span>المتبقي:</span><span>${r.toFixed(2)}</span></div>`;
+            document.getElementById('pdfSummaryContainer').innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;font-weight:bold;color:#1e293b;"><span>الإجمالي:</span><span>${Number(v.total).toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;font-weight:bold;color:#10b981;"><span>المدفوع:</span><span>${Number(v.paidAmount||0).toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-top:15px;padding-top:15px;border-top:2px dashed #cbd5e1;font-size:16px;font-weight:900;color:${r>0?'#ef4444':'#1e293b'};"><span>المتبقي:</span><span>${r.toFixed(2)}</span></div>`;
             document.getElementById('previewOverlay').style.display='flex';
             document.body.style.overflow='hidden';
             document.querySelectorAll('.dropdown-menu').forEach(m=>m.style.display='none');
@@ -466,7 +462,7 @@
             h.sort((a,b)=>new Date(b.rawDate||0)-new Date(a.rawDate||0));
             let sc=0,sd=0;h.forEach(x=>{let r=x.total-(x.paidAmount||0);if(r>0){if(x.type==='مديون')sd+=r;else sc+=r;}});
             document.getElementById('totalCredit').innerText=sc.toFixed(2);document.getElementById('totalDebit').innerText=sd.toFixed(2);
-            let lst=document.getElementById('historyList');if(!h.length){lst.innerHTML='<div style="background:var(--card);padding:35px;border-radius:16px;text-align:center;color:var(--text-muted);font-size:13px;border:1px dashed var(--border); font-weight:bold;">لا توجد سجلات 💡</div>';handleMergeSelection();return;}
+            let lst=document.getElementById('historyList');if(!h.length){lst.innerHTML='<div style="background:var(--card);padding:40px;border-radius:16px;text-align:center;color:var(--text-muted);font-size:14px;border:1px dashed var(--border); font-weight:bold;">لا توجد سجلات 💡</div>';handleMergeSelection();return;}
             let hc=h.filter(x=>x.type==='دائن'),hd=h.filter(x=>x.type==='مديون'),ht='';
             if(hc.length){ht+=`<div class="section-title title-credit">🟩 دائن (لك): ${hc.length}</div>`+hc.map(renderSingleCard).join('');}
             if(hd.length){ht+=`<div class="section-title title-debit">🟥 مديون (عليك): ${hd.length}</div>`+hd.map(renderSingleCard).join('');}
@@ -478,18 +474,17 @@
             let s=(v.items||[]).map(i=>`${i.desc}`).join(' + '),r=v.total-(v.paidAmount||0),pt='سداد',pc='var(--accent)';
             if(v.isPaid){pt='مسددة';pc='var(--credit)';}else if(v.paidAmount>0){pt=`باقي ${r.toFixed(2)}`;pc='#f59e0b';}
             
-            // شريط التقدم الفخم
             let paidPercent = (v.paidAmount / v.total) * 100; if(paidPercent > 100) paidPercent = 100;
             let progHtml = `<div class="progress-container"><div class="progress-bar" style="width:${paidPercent}%; background:${pc};"></div></div>`;
 
-            return `<div class="history-card" style="border-right:4px solid ${v.isPaid?'var(--credit)':v.paidAmount>0?'#f59e0b':'transparent'}"><div class="menu-container"><button class="dots-btn" onclick="toggleMenu('${v.invNum}', event)">⋮</button><div class="dropdown-menu" id="menu-${v.invNum}"><button onclick="openPreview('${v.invNum}')">📄 كشف حساب</button><button onclick="editInvoice('${v.invNum}')">✏️ تعديل</button><button class="danger" onclick="moveToTrash('${v.invNum}')">🗑️ حذف</button></div></div><div style="position:absolute;right:15px;top:15px;z-index:40;"><input type="checkbox" class="merge-cb" value="${v.invNum}" data-name="${v.name}" data-type="${v.type}" onchange="handleMergeSelection()" style="width:18px;height:18px;cursor:pointer;accent-color:var(--accent)"></div><div class="history-header"><div style="display:flex; flex-direction:column; gap:4px;"><b style="font-size:15px; color:var(--text); font-weight:800;">${v.name}</b><div><span class="badge ${v.type==='مديون'?'badge-debit':'badge-credit'}">${v.type}</span> ${v.isEdited?'<span class="badge badge-edited">معدلة</span>':''}</div></div><b style="color:${v.isPaid?'var(--credit)':(v.type==='مديون'?'var(--debit)':'var(--accent)')};font-size:18px;font-weight:900;text-decoration:${v.isPaid?'line-through':'none'}">${Number(v.total).toFixed(2)}</b></div><small style="color:var(--text-muted);display:block;margin-bottom:6px;font-size:12px;font-weight:bold;">البنود: ${s}</small>${progHtml}<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--border);padding-top:12px; margin-top:12px;"><div style="display:flex;gap:6px;flex-wrap:wrap;"><button onclick="openPaymentModal('${v.invNum}')" style="background:${pc};color:#fff;border:none;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer">${pt}</button>${(v.paidAmount>0||v.isPaid)?`<button onclick="resetPayment('${v.invNum}')" style="background:transparent;color:var(--debit);border:1px solid var(--debit);padding:4px 8px;border-radius:8px;font-size:10px;font-weight:800;cursor:pointer">إلغاء</button>`:''}<button onclick="shareInvoiceWA('${v.invNum}')" class="wa-btn">واتساب 💬</button></div><small style="color:var(--text-muted);font-size:10px;font-weight:bold">${v.rawDate||v.date}</small></div></div>`;
+            return `<div class="history-card" style="border-right:5px solid ${v.isPaid?'var(--credit)':v.paidAmount>0?'#f59e0b':'transparent'}"><div class="menu-container"><button class="dots-btn" onclick="toggleMenu('${v.invNum}', event)">⋮</button><div class="dropdown-menu" id="menu-${v.invNum}"><button onclick="openPreview('${v.invNum}')">📄 كشف حساب</button><button onclick="editInvoice('${v.invNum}')">✏️ تعديل</button><button class="danger" onclick="moveToTrash('${v.invNum}')">🗑️ حذف</button></div></div><div style="position:absolute;right:20px;top:20px;z-index:40;"><input type="checkbox" class="merge-cb" value="${v.invNum}" data-name="${v.name}" data-type="${v.type}" onchange="handleMergeSelection()" style="width:20px;height:20px;cursor:pointer;accent-color:var(--accent)"></div><div class="history-header"><div style="display:flex; flex-direction:column; gap:6px;"><b style="font-size:16px; color:var(--text); font-weight:900;">${v.name}</b><div><span class="badge ${v.type==='مديون'?'badge-debit':'badge-credit'}">${v.type}</span> ${v.isEdited?'<span class="badge badge-edited">معدلة</span>':''}</div></div><b style="color:${v.isPaid?'var(--credit)':(v.type==='مديون'?'var(--debit)':'var(--accent)')};font-size:20px;font-weight:900;text-decoration:${v.isPaid?'line-through':'none'}">${Number(v.total).toFixed(2)}</b></div><small style="color:var(--text-muted);display:block;margin-bottom:10px;font-size:13px;font-weight:bold;">البنود: ${s}</small>${progHtml}<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--border);padding-top:15px; margin-top:15px;"><div style="display:flex;gap:8px;flex-wrap:wrap;"><button onclick="openPaymentModal('${v.invNum}')" style="background:${pc};color:#fff;border:none;padding:6px 14px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer">${pt}</button>${(v.paidAmount>0||v.isPaid)?`<button onclick="resetPayment('${v.invNum}')" style="background:transparent;color:var(--debit);border:1px solid var(--debit);padding:6px 10px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer">إلغاء</button>`:''}<button onclick="shareInvoiceWA('${v.invNum}')" class="wa-btn">مشاركة 💬</button></div><small style="color:var(--text-muted);font-size:11px;font-weight:800">${v.rawDate||v.date}</small></div></div>`;
         }
 
         // ================= كود القطات =================
         function renderSplitQuickContacts() {
             let p=JSON.parse(localStorage.getItem('nara_people')||'[]');
             let c = document.getElementById('splitQuickContacts');
-            if(!p.length) { c.innerHTML = '<span style="font-size:11px;color:var(--text-muted);font-weight:bold;">لا توجد أسماء محفوظة.</span>'; return; }
+            if(!p.length) { c.innerHTML = '<span style="font-size:12px;color:var(--text-muted);font-weight:bold;">لا توجد أسماء محفوظة.</span>'; return; }
             c.innerHTML = p.map(x => {
                 let isActive = splitPeopleArray.find(sp => sp.name === x.name);
                 return `<button class="contact-chip ${isActive ? 'active' : ''}" onclick="toggleSplitPerson('${x.name}')">${x.name}</button>`;
@@ -498,14 +493,16 @@
 
         function toggleSplitPerson(name) {
             let idx = splitPeopleArray.findIndex(p => p.name === name);
-            if(idx > -1) { splitPeopleArray.splice(idx, 1); } else { splitPeopleArray.push({name: name, paidAmount: 0, payMethod: '', isEdited: false}); }
+            if(idx > -1) { splitPeopleArray.splice(idx, 1); } 
+            else { splitPeopleArray.push({name: name, paidAmount: 0, payMethod: '', isEdited: false}); }
             renderSplitQuickContacts(); renderSplitPeople(); calculateSplit();
         }
 
         document.getElementById('splitPersonInput').addEventListener('keypress',e=>{if(e.key==='Enter')addPersonToSplit();});
         function addPersonToSplit(){
             let i=document.getElementById('splitPersonInput'),n=i.value.trim();
-            if(!n)return; if(splitPeopleArray.find(p => p.name === n))return showToast('موجود مسبقاً ⚠️');
+            if(!n)return;
+            if(splitPeopleArray.find(p => p.name === n))return showToast('موجود مسبقاً ⚠️');
             splitPeopleArray.push({name: n, paidAmount: 0, payMethod: '', isEdited: false});
             i.value=''; renderSplitQuickContacts(); renderSplitPeople(); calculateSplit();
         }
@@ -515,7 +512,7 @@
         function renderSplitPeople(){
             let c = document.getElementById('splitPeopleList');
             if(!splitPeopleArray.length) { c.innerHTML = ''; return; }
-            c.innerHTML=splitPeopleArray.map((p,i)=>`<div style="background:var(--card);padding:6px 12px;border-radius:12px;font-size:12px;font-weight:bold;color:var(--text);border:1px solid var(--split);display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 5px rgba(139,92,246,0.1)">${p.name} <button style="background:none;border:none;color:var(--debit);font-weight:900;font-size:14px;cursor:pointer;padding:0" onclick="removePersonFromSplit(${i})">✕</button></div>`).join('');
+            c.innerHTML=splitPeopleArray.map((p,i)=>`<div style="background:var(--card);padding:6px 12px;border-radius:20px;font-size:12px;font-weight:bold;color:var(--text);border:1px solid var(--split);display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 5px rgba(139,92,246,0.1)">${p.name} <button style="background:none;border:none;color:var(--debit);font-weight:900;font-size:14px;cursor:pointer;padding:0" onclick="removePersonFromSplit(${i})">✕</button></div>`).join('');
         }
 
         function calculateSplit(){
@@ -560,7 +557,6 @@
             let s = JSON.parse(localStorage.getItem('nara_splits')||'[]').find(x => x.id === splitId); if(!s) return;
             currentSplitPayId = splitId; currentSplitPersonIdx = personIdx; isEditingSplitPay = isEdit;
             let p = s.people[personIdx]; let remaining = s.perPerson - (p.paidAmount || 0);
-            
             document.getElementById('splitPayInfo').innerText = isEdit ? `تعديل سداد (${p.name})` : `تسديد لـ (${p.name})`;
             document.getElementById('splitPayAmountInput').value = isEdit ? (p.paidAmount || '') : '';
             document.getElementById('splitPayAmountInput').placeholder = isEdit ? `المدفوع حالياً: ${p.paidAmount}` : `المتبقي: ${remaining.toFixed(2)}`;
@@ -592,12 +588,10 @@
 
         function loadSplitsHistory(){
             let s=JSON.parse(localStorage.getItem('nara_splits')||'[]'),c=document.getElementById('splitsHistoryList');
-            if(!s.length)return c.innerHTML='<div style="background:var(--card);padding:35px;border-radius:16px;text-align:center;color:var(--text-muted);font-size:13px;border:1px dashed var(--border);font-weight:bold;">لا توجد قطات مسجلة 💡</div>';
+            if(!s.length)return c.innerHTML='<div style="background:var(--card);padding:40px;border-radius:18px;text-align:center;color:var(--text-muted);font-size:14px;border:1px dashed var(--border);font-weight:bold;">لا توجد قطات مسجلة 💡</div>';
             c.innerHTML=s.map(x=>{
                 let totalPaid = x.people.reduce((sum, p) => sum + (p.paidAmount || 0), 0);
                 let isCompleted = totalPaid >= x.total - 0.01;
-                
-                // شريط التقدم الفخم
                 let paidPercent = (totalPaid / x.total) * 100; if(paidPercent>100) paidPercent=100;
                 let progHtml = `<div class="progress-container"><div class="progress-bar" style="width:${paidPercent}%; background:var(--split);"></div></div>`;
 
@@ -605,36 +599,34 @@
                     let pRem = x.perPerson - (p.paidAmount || 0);
                     let statTxt = p.paid ? `سدد ✅` : (p.paidAmount > 0 ? `سدد ${p.paidAmount} ⏳` : 'غير مسدد ❌');
                     if (p.isEdited) statTxt += ' <span style="font-size:9px; color:#f59e0b; margin-right:2px;">(معدّل✏️)</span>';
-                    
                     let statColor = p.paid ? 'var(--credit)' : (p.paidAmount > 0 ? '#f59e0b' : 'var(--debit)');
                     let statBg = p.paid ? 'rgba(16, 185, 129, 0.1)' : (p.paidAmount > 0 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(239, 68, 68, 0.1)');
-                    
                     let actionBtns = '';
                     if (!p.paid) actionBtns += `<button style="background:var(--split);color:white;border:none;padding:4px 8px;border-radius:6px;font-size:10px;cursor:pointer;font-weight:bold;" onclick="openSplitPayment(${x.id}, ${i})">سداد</button>`;
                     if (p.paidAmount > 0 || p.paid) actionBtns += `<button style="background:transparent;color:var(--text-muted);border:1px solid var(--border);padding:3px 6px;border-radius:6px;font-size:10px;cursor:pointer;font-weight:bold;margin-right:4px;" onclick="openSplitPayment(${x.id}, ${i}, true)">تعديل</button>`;
 
-                    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+                    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
                         <div><span style="display:block; font-weight:bold; color:var(--text); font-size:13px;">${p.name}</span><span style="font-size:10px; color:var(--text-muted); font-weight:bold;">مطلوب: ${x.perPerson.toFixed(2)} | باقي: ${pRem.toFixed(2)}</span></div>
                         <div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;font-weight:bold;padding:4px 6px;border-radius:6px;background:${statBg};color:${statColor}">${statTxt}</span><div>${actionBtns}</div></div>
                     </div>`;
                 }).join('');
                 
-                return `<div class="card" style="border:1px solid ${isCompleted?'var(--credit)':'var(--border)'};position:relative;margin-bottom:15px; padding:20px;">
-                    <div style="position:absolute;left:15px;top:15px;display:flex;gap:4px; z-index:50;">
-                        <button onclick="shareSplitWA(${x.id})" class="wa-btn" style="margin-left:5px;">واتساب 💬</button>
-                        <button style="background:var(--input-bg);border:1px solid var(--border);color:var(--text-muted);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;transition:0.2s" onclick="openSplitPreview(${x.id})">🖨️</button>
-                        <button style="background:rgba(139, 92, 246, 0.1);border:none;color:var(--split);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;transition:0.2s" onclick="editSplit(${x.id})">✏️</button>
-                        <button style="background:rgba(239, 68, 68, 0.1);border:none;color:var(--debit);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;transition:0.2s" onclick="deleteSplit(${x.id})">🗑️</button>
+                return `<div class="card" style="border:1px solid ${isCompleted?'var(--credit)':'var(--border)'};position:relative;margin-bottom:15px; padding:25px;">
+                    <div style="position:absolute;left:20px;top:20px;display:flex;gap:6px; z-index:50;">
+                        <button onclick="shareSplitWA(${x.id})" class="wa-btn" style="margin-left:5px;">مشاركة 💬</button>
+                        <button style="background:var(--input-bg);border:1px solid var(--border);color:var(--text-muted);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:15px;transition:0.2s" onclick="openSplitPreview(${x.id})">🖨️</button>
+                        <button style="background:rgba(139, 92, 246, 0.1);border:none;color:var(--split);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:15px;transition:0.2s" onclick="editSplit(${x.id})">✏️</button>
+                        <button style="background:rgba(239, 68, 68, 0.1);border:none;color:var(--debit);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:15px;transition:0.2s" onclick="deleteSplit(${x.id})">🗑️</button>
                     </div>
-                    <h4 style="margin-bottom:12px;font-size:16px;color:${isCompleted?'var(--credit)':'var(--primary)'};font-weight:900; padding-left:140px;">${x.title} ${isCompleted?'🎉':''}</h4>
-                    <div style="display:flex;justify-content:space-between;background:var(--input-bg);padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid var(--border);">
-                        <span>إجمالي القطة:<br><b style="color:var(--split);font-size:16px">${x.total.toFixed(2)}</b></span>
-                        <span style="text-align:left;">نصيب الفرد:<br><b style="font-size:16px;color:var(--text);">${x.perPerson.toFixed(2)}</b></span>
+                    <h4 style="margin-bottom:15px;font-size:18px;color:${isCompleted?'var(--credit)':'var(--primary)'};font-weight:900; padding-left:150px;">${x.title} ${isCompleted?'🎉':''}</h4>
+                    <div style="display:flex;justify-content:space-between;background:var(--input-bg);padding:15px;border-radius:14px;margin-bottom:15px;border:1px solid var(--border);">
+                        <span>إجمالي القطة:<br><b style="color:var(--split);font-size:18px">${x.total.toFixed(2)}</b></span>
+                        <span style="text-align:left;">نصيب الفرد:<br><b style="font-size:18px;color:var(--text);">${x.perPerson.toFixed(2)}</b></span>
                     </div>
                     ${progHtml}
-                    <div style="font-size:12px;margin-bottom:10px;margin-top:10px;font-weight:bold;color:var(--text-muted)">المحصل: (${totalPaid.toFixed(2)} من ${x.total.toFixed(2)})</div>
-                    <div style="background:var(--card);padding:0 12px;border-radius:12px;border:1px solid var(--border)">${ph}</div>
-                    <div style="font-size:10px;color:var(--text-muted);margin-top:12px;font-weight:bold">${x.date} | #${x.id}</div>
+                    <div style="font-size:13px;margin-bottom:12px;margin-top:10px;font-weight:bold;color:var(--text-muted)">المحصل: (${totalPaid.toFixed(2)} من ${x.total.toFixed(2)})</div>
+                    <div style="background:var(--card);padding:0 15px;border-radius:14px;border:1px solid var(--border)">${ph}</div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:15px;font-weight:bold">${x.date} | #${x.id}</div>
                 </div>`;
             }).join('');
         }
@@ -652,7 +644,7 @@
             let totalCollected = 0, tbody = '';
             s.people.forEach((p, idx) => {
                 let pPaid = p.paidAmount || 0; totalCollected += pPaid; let pRem = s.perPerson - pPaid;
-                tbody += `<tr><td style="text-align:center; padding:10px; border-bottom:1px solid #e2e8f0; color:#000;">${idx+1}</td><td style="font-weight:bold; text-align:right; padding:10px; border-bottom:1px solid #e2e8f0; color:#000;">${p.name}</td><td style="text-align:center; padding:10px; border-bottom:1px solid #e2e8f0; color:#000;">${s.perPerson.toFixed(2)}</td><td style="text-align:center; padding:10px; border-bottom:1px solid #e2e8f0; color:${p.paid?'#10b981':'#f59e0b'}; font-weight:bold;">${pPaid.toFixed(2)}</td><td style="text-align:center; padding:10px; border-bottom:1px solid #e2e8f0; color:#000;">${pRem.toFixed(2)}</td><td style="text-align:center; padding:10px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:${p.paid?'#10b981':'#ef4444'};">${p.paid?'مسدد':'غير مسدد'}</td></tr>`;
+                tbody += `<tr><td style="text-align:center; padding:10px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${idx+1}</td><td style="font-weight:bold; text-align:right; padding:10px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${p.name}</td><td style="text-align:center; padding:10px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${s.perPerson.toFixed(2)}</td><td style="text-align:center; padding:10px; border-bottom:1px solid #e2e8f0; color:${p.paid?'#10b981':'#f59e0b'}; font-weight:bold;">${pPaid.toFixed(2)}</td><td style="text-align:center; padding:10px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${pRem.toFixed(2)}</td><td style="text-align:center; padding:10px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:${p.paid?'#10b981':'#ef4444'};">${p.paid?'مسدد':'غير مسدد'}</td></tr>`;
             });
             document.getElementById('printSplitTableBody').innerHTML = tbody;
             document.getElementById('printSplitCollected').innerText = totalCollected.toFixed(2);
