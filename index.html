@@ -97,14 +97,14 @@
         #bulkPaymentModal, #paymentModal, #splitPaymentModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); z-index: 99999; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
 
         .contact-chip { display: inline-flex; align-items: center; background: #f8fafc; color: var(--text); padding: 10px 18px; border-radius: 24px; font-size: 14px; font-weight: 800; margin: 5px; cursor: pointer; border: 1px solid var(--border); transition: 0.2s; user-select: none; }
-        .contact-chip:hover { border-color: var(--text-muted); } .contact-chip.active { background: rgba(124, 58, 237, 0.1); color: var(--split); border-color: var(--split); }
+        .contact-chip:hover { border-color: var(--text-muted); } .contact-chip.active { background: rgba(139, 92, 246, 0.1); color: var(--split); border-color: var(--split); }
         .wa-btn { background: #25D366; color: white; border: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; transition: 0.2s; } .wa-btn:hover { background: #20b858; }
 
-        /* ============ المعاينة والطباعة النظيفة ============ */
+        /* ============ المعاينة والطباعة النظيفة 100% ============ */
         #previewOverlay, #splitPreviewOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.95); z-index: 100000; overflow-y: auto; flex-direction: column; align-items: center; padding: 30px 15px; }
         .print-active-overlay { display: flex !important; }
         
-        .preview-actions { display: flex; gap: 12px; background: var(--card); padding: 15px 25px; border-radius: 16px; position: sticky; top: 15px; z-index: 100001; box-shadow: 0 15px 35px rgba(0,0,0,0.15); margin-bottom: 25px; border: 1px solid var(--border); }
+        .preview-actions { display: flex; gap: 10px; background: var(--card); padding: 15px 25px; border-radius: 16px; position: sticky; top: 15px; z-index: 100001; box-shadow: 0 15px 35px rgba(0,0,0,0.15); margin-bottom: 25px; border: 1px solid var(--border); }
         .preview-actions button { padding: 12px 24px; font-size: 14px; font-weight: 900; border-radius: 12px; border: none; cursor: pointer; color: #fff; }
         
         .a4-paper, .split-a4-paper { background: #fff; width: 100%; max-width: 750px; padding: 45px; direction: rtl; color: #1e293b; border-radius: 16px; margin-bottom: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
@@ -204,7 +204,7 @@
                         <label>أو كتابة اسم خارجي:</label>
                         <div style="display:flex;gap:10px;"><input type="text" id="splitPersonInput" placeholder="اسم الشخص"><button class="btn" style="background:var(--split); width:auto; margin-top:0; padding:0 25px; font-size:14px; box-shadow:none;" onclick="addPersonToSplit()">إضافة</button></div>
                     </div>
-                    <div id="splitPeopleList" style="display:flex;flex-wrap:wrap;gap:8px; margin:15px 0;"></div>
+                    <div id="splitPeopleList" style="display:flex;flex-wrap:wrap;gap:8px; margin:20px 0;"></div>
                     <div style="background:rgba(139, 92, 246, 0.05);padding:25px;border-radius:16px;text-align:center;border:1px dashed var(--split); margin-top:25px;">
                         <span style="font-size:14px;color:var(--split);font-weight:900;">المطلوب من كل شخص:</span><br>
                         <strong style="font-size:32px;color:var(--split);"><span id="splitAmountPerPerson">0.00</span> <span style="font-size:15px;">ر.س</span></strong>
@@ -235,7 +235,9 @@
         <div id="trashList"></div>
     </div>
 
-    <!-- ================= قوالب الطباعة (A4) ================= -->
+    <!-- ================= قوالب الطباعة (الفاخرة والنظيفة 100%) ================= -->
+    
+    <!-- كشف الديون العادي -->
     <div id="previewOverlay">
         <div class="preview-actions"><button style="background:var(--credit);" onclick="printPDF()">🖨️ طباعة الكشف</button><button style="background:var(--debit);" onclick="closePreview()">❌ إغلاق</button></div>
         <div id="invoiceTemplate" class="a4-paper">
@@ -244,8 +246,8 @@
                 <div style="text-align:left;"><h2 style="font-size:24px; margin:0 0 8px; color:var(--primary); font-weight:900;">كشف حساب مالي</h2><div style="font-size:14px; color:#64748b; font-weight:800;">رقم الكشف: <strong style="color:#000;">#<span id="pdfInvNumber"></span></strong><br>التاريخ: <strong style="color:#000;"><span id="pdfInvDate"></span></strong></div></div>
             </div>
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:20px; margin-bottom:30px; display:flex; justify-content:space-between; align-items:center;">
-                <div><div style="font-size:12px; color:#64748b; font-weight:800; margin-bottom:8px;">الطرف الثاني / الحساب</div><div style="font-size:20px; font-weight:900; color:#000; margin-bottom:4px;"><span id="pdfClientName"></span> <span id="pdfEditedTag" style="color:#f59e0b;font-size:12px;font-weight:bold;margin-right:5px"></span></div><div style="font-size:13px; font-weight:800; color:#64748b;">تصنيف الحساب: <span id="pdfPersonType" style="color:var(--primary);"></span></div></div>
-                <div style="text-align:left; padding-right:25px; border-right:2px dashed #cbd5e1;"><div style="font-size:12px; color:#64748b; font-weight:800; margin-bottom:8px;">حالة السداد</div><div id="pdfPaymentStatus" style="font-size:16px; font-weight:900;"></div></div>
+                <div><div style="font-size:13px; color:#64748b; font-weight:800; margin-bottom:8px;">الطرف الثاني / الحساب</div><div style="font-size:20px; font-weight:900; color:#000; margin-bottom:4px;"><span id="pdfClientName"></span> <span id="pdfEditedTag" style="color:#f59e0b;font-size:13px;font-weight:bold;margin-right:5px"></span></div><div style="font-size:14px; font-weight:800; color:#64748b;">تصنيف الحساب: <span id="pdfPersonType" style="color:var(--primary);"></span></div></div>
+                <div style="text-align:left; padding-right:25px; border-right:2px dashed #cbd5e1;"><div style="font-size:13px; color:#64748b; font-weight:800; margin-bottom:8px;">حالة السداد</div><div id="pdfPaymentStatus" style="font-size:18px; font-weight:900;"></div></div>
             </div>
             <table class="a4-table">
                 <thead id="pdfTableHeader"></thead>
@@ -258,6 +260,7 @@
         </div>
     </div>
 
+    <!-- كشف القطات الفاخر -->
     <div id="splitPreviewOverlay">
         <div class="preview-actions"><button style="background:var(--split);" onclick="printPDF()">🖨️ طباعة كشف القطة</button><button style="background:var(--debit);" onclick="closeSplitPreview()">❌ إغلاق</button></div>
         <div id="splitInvoiceTemplate" class="split-a4-paper">
@@ -281,28 +284,43 @@
         </div>
     </div>
 
+    <!-- السكريبت الديناميكي لتشغيل الأوفلاين والسحابة بأمان -->
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) { for(let registration of registrations) { registration.unregister(); } });
-            caches.keys().then(function(names) { for (let name of names) { caches.delete(name); } });
-        }
-
         let currentMode='new', editingInvNum=null, targetInvForPayment=null, targetBulkInvoices=[];
         let splitPeopleArray=[], editingSplitId=null, currentSplitPayId=null, currentSplitPersonIdx=null, isEditingSplitPay=!1;
         let isFirebaseLoaded = false;
         window.db = null; window.fbDb = null;
 
+        if('serviceWorker' in navigator) { 
+            // تسجيل ملف الأوفلاين الأساسي في الخلفية بدون ما يعلق المتصفح
+            window.addEventListener('load', () => { 
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Setup Notice: Must be uploaded to GitHub to work offline.')); 
+            }); 
+        }
+
         function showToast(m){const t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 
+        // الاتصال الذكي بالسحابة (يعمل أوفلاين كلياً ولا يعلق)
         async function initCloudSync() {
             const btn = document.getElementById('autoSyncBtn');
-            if(!navigator.onLine) { btn.innerHTML = '📴 محلي (أوفلاين)'; btn.style.background = 'var(--text-muted)'; return; }
+            if(!navigator.onLine) { 
+                btn.innerHTML = '📴 محلي (أوفلاين)'; 
+                btn.style.background = 'var(--text-muted)'; 
+                return; 
+            }
             if(isFirebaseLoaded) return;
             try {
                 btn.innerHTML = '⏳ جاري الاتصال...';
                 const fbApp = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
                 const fbStore = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-                const app = fbApp.initializeApp({ apiKey: "AIzaSyDGsMNwQy8tbK9DBYNn60zPA7UtoOvykmo", authDomain: "nara-invoices-5d481.firebaseapp.com", projectId: "nara-invoices-5d481", storageBucket: "nara-invoices-5d481.firebasestorage.app", messagingSenderId: "1090499233942", appId: "1:1090499233942:web:dd63607c9eff6eb9055ab7" });
+                const app = fbApp.initializeApp({
+                    apiKey: "AIzaSyDGsMNwQy8tbK9DBYNn60zPA7UtoOvykmo",
+                    authDomain: "nara-invoices-5d481.firebaseapp.com",
+                    projectId: "nara-invoices-5d481",
+                    storageBucket: "nara-invoices-5d481.firebasestorage.app",
+                    messagingSenderId: "1090499233942",
+                    appId: "1:1090499233942:web:dd63607c9eff6eb9055ab7"
+                });
                 window.db = fbStore.getFirestore(app); window.fbDb = fbStore; isFirebaseLoaded = true;
                 btn.innerHTML = '🟢 متصل بالسحابة'; btn.style.background = 'var(--credit)';
 
@@ -337,6 +355,7 @@
             if(u)localStorage.setItem('nara_invoices',JSON.stringify(d));
         }
 
+        // حل مشكلة القوائم المنسدلة
         document.addEventListener('click',e=>{
             if(!e.target.classList.contains('dots-btn')){
                 document.querySelectorAll('.dropdown-menu').forEach(m=>m.style.display='none');
@@ -470,6 +489,7 @@
             document.body.style.overflow='hidden';c.forEach(x=>x.checked=!1);
         }
 
+        // ================= كشف الديون الفردي وإصلاحه الجذري =================
         function openPreview(i){
             let v=JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>String(x.invNum)===String(i));if(!v)return;
             document.getElementById('pdfClientName').innerText=v.name;
@@ -481,7 +501,7 @@
             
             document.getElementById('pdfTableHeader').innerHTML = `<tr style="background:#f1f5f9;"><th style="text-align:center; width:8%; border-radius:0 10px 10px 0;">م</th><th style="text-align:center; width:15%;">التاريخ</th><th style="text-align:right; width:35%;">البيان والتفاصيل</th><th style="text-align:center; width:12%;">العدد</th><th style="text-align:center; width:15%;">السعر</th><th style="text-align:center; width:15%; border-radius:10px 0 0 10px;">الإجمالي</th></tr>`;
             
-            document.getElementById('pdfItemsTableBody').innerHTML=(v.items||[]).map((x,j)=>`<tr><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${j+1}</td><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; color:#64748b; font-size:12px; font-weight:bold;">${x.itemDate||(v.rawDate||v.date)}</td><td style="font-weight:bold; text-align:right; padding:12px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${x.desc}</td><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${x.qty||1}</td><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${Number(x.price).toFixed(2)}</td><td style="text-align:center; padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${Number(x.itemTotal).toFixed(2)}</td></tr>`).join('');
+            document.getElementById('pdfItemsTableBody').innerHTML=(v.items||[]).map((x,j)=>`<tr><td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${j+1}</td><td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; color:#64748b; font-size:12px; font-weight:bold;">${x.itemDate||(v.rawDate||v.date)}</td><td style="font-weight:bold; text-align:right; padding:14px; border-bottom:1px solid #e2e8f0; color:#1e293b;">${x.desc}</td><td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${x.qty||1}</td><td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${Number(x.price).toFixed(2)}</td><td style="text-align:center; padding:14px; border-bottom:1px solid #e2e8f0; font-weight:bold; color:#1e293b;">${Number(x.itemTotal).toFixed(2)}</td></tr>`).join('');
             
             let r=v.total-(v.paidAmount||0);
             document.getElementById('pdfSummaryContainer').innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;font-weight:bold;color:#1e293b;"><span>الإجمالي:</span><span>${Number(v.total).toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;font-weight:bold;color:#10b981;"><span>المدفوع:</span><span>${Number(v.paidAmount||0).toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;margin-top:15px;padding-top:15px;border-top:2px dashed #cbd5e1;font-size:18px;font-weight:900;color:${r>0?'#ef4444':'#1e293b'};"><span>المتبقي:</span><span>${r.toFixed(2)}</span></div>`;
@@ -501,52 +521,20 @@
         }
         function printPDF(){window.print();}
 
+        // رسائل واتساب الذكية
         function shareInvoiceWA(invNum) {
             let inv = JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>x.invNum == invNum);
             if(!inv) return;
             let rem = (inv.total - (inv.paidAmount||0)).toFixed(2);
-            let items = (inv.items||[]).map(i => `- ${i.desc} (x${i.qty||1})`).join('%0A');
+            let items = (inv.items||[]).map(i => `- ${i.desc} (x${i.qty||1}) - بـ ${i.itemTotal} ر.س`).join('%0A');
             let text = '';
             
             if (inv.isPaid || rem <= 0) {
-                text = `مرحباً ${inv.name}،%0Aحبيت أبلغك إنه تم سداد حسابك بالكامل ✅%0A%0Aالبيان:%0A${items}%0Aالإجمالي: ${inv.total.toFixed(2)} ر.س%0Aتاريخ الفاتورة: ${inv.rawDate || inv.date}%0A%0Aشكراً لك! 🌹`;
+                text = `مرحباً ${inv.name}،%0Aحبيت أبلغك إنه تم سداد حسابك بالكامل ✅%0A%0Aالبيان:%0A${items}%0A%0Aالإجمالي: ${inv.total.toFixed(2)} ر.س%0Aتاريخ الفاتورة: ${inv.rawDate || inv.date}%0A%0Aشكراً لك! 🌹`;
             } else if (inv.paidAmount > 0) {
                 text = `مرحباً ${inv.name}،%0Aهذا تذكير بحساب مالي (سداد جزئي) ⏳:%0A%0Aالبيان:%0A${items}%0A%0Aالإجمالي: ${inv.total.toFixed(2)} ر.س%0Aالمدفوع: ${inv.paidAmount.toFixed(2)} ر.س%0Aالمتبقي للدفع: *${rem} ر.س*%0Aتاريخ الفاتورة: ${inv.rawDate || inv.date}%0A%0Aبانتظار سداد المتبقي، وشكراً لك! 🌹`;
             } else {
                 text = `مرحباً ${inv.name}،%0Aهذا تذكير بحساب مالي 🔴:%0A%0Aالبيان:%0A${items}%0A%0Aالمطلوب سداده: *${rem} ر.س*%0Aتاريخ الفاتورة: ${inv.rawDate || inv.date}%0A%0Aبانتظار سدادك، وشكراً لك! 🌹`;
-            }
-            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-        }
-
-        // ================= كود القطات الذكية =================
-        function shareSplitPersonWA(splitId, personIdx) {
-            let s = JSON.parse(localStorage.getItem('nara_splits')||'[]').find(x => x.id === splitId); if(!s) return;
-            let p = s.people[personIdx];
-            let pPaid = p.paidAmount || 0;
-            let pRem = s.perPerson - pPaid;
-            let text = '';
-            if(p.paid || pRem <= 0) {
-                text = `مرحباً ${p.name}،%0Aشكراً لك، تم استلام مبلغ القطة (${s.title}) بالكامل ✅🌹`;
-            } else if (pPaid > 0) {
-                text = `مرحباً ${p.name}،%0Aبخصوص قطة: *${s.title}*%0Aالإجمالي المطلوب منك: ${s.perPerson.toFixed(2)} ر.س%0Aما تم دفعه: ${pPaid.toFixed(2)} ر.س%0Aالمتبقي عليك: *${pRem.toFixed(2)} ر.س* ⏳%0A%0Aبانتظار المتبقي، وشكراً لك! 🌹`;
-            } else {
-                text = `مرحباً ${p.name}،%0Aتذكير بقطة: *${s.title}*%0Aالمطلوب سداده: *${s.perPerson.toFixed(2)} ر.س* 🔴%0A%0Aبانتظار سدادك، وشكراً! 🌹`;
-            }
-            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-        }
-
-        function shareSplitWA(splitId) {
-            let s = JSON.parse(localStorage.getItem('nara_splits')||'[]').find(x=>x.id == splitId); if(!s) return;
-            let totalPaid = s.people.reduce((sum, p) => sum + (p.paidAmount || 0), 0);
-            let rem = s.total - totalPaid;
-            let isCompleted = totalPaid >= s.total - 0.01;
-            let text = '';
-            if (isCompleted) {
-                text = `🎉 تم اكتمال سداد قطة: *${s.title}*%0Aالإجمالي: ${s.total.toFixed(2)} ر.س%0Aشكراً للجميع على التجاوب السريع! 🌹`;
-            } else if (totalPaid > 0) {
-                text = `⏳ تذكير بقطة: *${s.title}*%0Aالإجمالي: ${s.total.toFixed(2)} ر.س%0Aنصيب الفرد: ${s.perPerson.toFixed(2)} ر.س%0Aتم جمع: ${totalPaid.toFixed(2)} ر.س%0Aالمتبقي للتحصيل: *${rem.toFixed(2)} ر.س*%0A%0Aنرجو من البقية سرعة السداد، وشكراً! 🌹`;
-            } else {
-                text = `🍕 قطة جديدة: *${s.title}*%0Aالإجمالي: ${s.total.toFixed(2)} ر.س%0Aالمطلوب من كل شخص: *${s.perPerson.toFixed(2)} ر.س*%0A%0Aيرجى السداد في أقرب وقت، وشكراً! 🌹`;
             }
             window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
         }
@@ -574,14 +562,14 @@
             let paidPercent = (v.paidAmount / v.total) * 100; if(paidPercent > 100) paidPercent = 100;
             let progHtml = `<div class="progress-container"><div class="progress-bar" style="width:${paidPercent}%; background:${pc};"></div></div>`;
 
-            return `<div class="history-card" style="border-right:5px solid ${v.isPaid?'var(--credit)':v.paidAmount>0?'#f59e0b':'transparent'}"><div class="menu-container"><button class="dots-btn" onclick="toggleMenu('${v.invNum}', event)">⋮</button><div class="dropdown-menu" id="menu-${v.invNum}"><button onclick="openPreview('${v.invNum}')">📄 كشف حساب</button><button onclick="editInvoice('${v.invNum}')">✏️ تعديل</button><button class="danger" onclick="moveToTrash('${v.invNum}')">🗑️ حذف</button></div></div><div style="position:absolute;right:20px;top:20px;z-index:40;"><input type="checkbox" class="merge-cb" value="${v.invNum}" data-name="${v.name}" data-type="${v.type}" onchange="handleMergeSelection()" style="width:20px;height:20px;cursor:pointer;accent-color:var(--accent)"></div><div class="history-header"><div style="display:flex; flex-direction:column; gap:6px;"><b style="font-size:16px; color:var(--text); font-weight:900;">${v.name}</b><div><span class="badge ${v.type==='مديون'?'badge-debit':'badge-credit'}">${v.type}</span> ${v.isEdited?'<span class="badge badge-edited">معدلة</span>':''}</div></div><b style="color:${v.isPaid?'var(--credit)':(v.type==='مديون'?'var(--debit)':'var(--accent)')};font-size:20px;font-weight:900;text-decoration:${v.isPaid?'line-through':'none'}">${Number(v.total).toFixed(2)}</b></div><small style="color:var(--text-muted);display:block;margin-bottom:10px;font-size:13px;font-weight:bold;">البنود: ${s}</small>${progHtml}<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--border);padding-top:15px; margin-top:15px;"><div style="display:flex;gap:8px;flex-wrap:wrap;"><button onclick="openPaymentModal('${v.invNum}')" style="background:${pc};color:#fff;border:none;padding:6px 14px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer">${pt}</button>${(v.paidAmount>0||v.isPaid)?`<button onclick="resetPayment('${v.invNum}')" style="background:transparent;color:var(--debit);border:1px solid var(--debit);padding:6px 10px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer">إلغاء</button>`:''}<button onclick="shareInvoiceWA('${v.invNum}')" class="wa-btn" style="background:#25D366;color:white;border:none;padding:6px 14px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;">مشاركة 💬</button></div><small style="color:var(--text-muted);font-size:11px;font-weight:800">${v.rawDate||v.date}</small></div></div>`;
+            return `<div class="history-card" style="border-right:5px solid ${v.isPaid?'var(--credit)':v.paidAmount>0?'#f59e0b':'transparent'}"><div class="menu-container"><button class="dots-btn" onclick="toggleMenu('${v.invNum}', event)">⋮</button><div class="dropdown-menu" id="menu-${v.invNum}"><button onclick="openPreview('${v.invNum}')">📄 كشف حساب</button><button onclick="editInvoice('${v.invNum}')">✏️ تعديل</button><button class="danger" onclick="moveToTrash('${v.invNum}')">🗑️ حذف</button></div></div><div style="position:absolute;right:20px;top:20px;z-index:40;"><input type="checkbox" class="merge-cb" value="${v.invNum}" data-name="${v.name}" data-type="${v.type}" onchange="handleMergeSelection()" style="width:20px;height:20px;cursor:pointer;accent-color:var(--accent)"></div><div class="history-header"><div style="display:flex; flex-direction:column; gap:6px;"><b style="font-size:16px; color:var(--text); font-weight:900;">${v.name}</b><div><span class="badge ${v.type==='مديون'?'badge-debit':'badge-credit'}">${v.type}</span> ${v.isEdited?'<span class="badge badge-edited">معدلة</span>':''}</div></div><b style="color:${v.isPaid?'var(--credit)':(v.type==='مديون'?'var(--debit)':'var(--accent)')};font-size:20px;font-weight:900;text-decoration:${v.isPaid?'line-through':'none'}">${Number(v.total).toFixed(2)}</b></div><small style="color:var(--text-muted);display:block;margin-bottom:10px;font-size:13px;font-weight:bold;">البنود: ${s}</small>${progHtml}<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--border);padding-top:15px; margin-top:15px;"><div style="display:flex;gap:8px;flex-wrap:wrap;"><button onclick="openPaymentModal('${v.invNum}')" style="background:${pc};color:#fff;border:none;padding:6px 14px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer">${pt}</button>${(v.paidAmount>0||v.isPaid)?`<button onclick="resetPayment('${v.invNum}')" style="background:transparent;color:var(--debit);border:1px solid var(--debit);padding:6px 10px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer">إلغاء</button>`:''}<button onclick="shareInvoiceWA('${v.invNum}')" class="wa-btn" style="background:#25D366;color:white;border:none;padding:6px 14px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;">واتساب 💬</button></div><small style="color:var(--text-muted);font-size:11px;font-weight:800">${v.rawDate||v.date}</small></div></div>`;
         }
 
         // ================= كود القطات =================
         function renderSplitQuickContacts() {
             let p=JSON.parse(localStorage.getItem('nara_people')||'[]');
             let c = document.getElementById('splitQuickContacts');
-            if(!p.length) { c.innerHTML = '<span style="font-size:12px;color:var(--text-muted);font-weight:bold;">لا توجد أسماء محفوظة.</span>'; return; }
+            if(!p.length) { c.innerHTML = '<span style="font-size:11px;color:var(--text-muted);font-weight:bold;">لا توجد أسماء محفوظة.</span>'; return; }
             c.innerHTML = p.map(x => {
                 let isActive = splitPeopleArray.find(sp => sp.name === x.name);
                 return `<button class="contact-chip ${isActive ? 'active' : ''}" onclick="toggleSplitPerson('${x.name}')">${x.name}</button>`;
@@ -675,6 +663,39 @@
             localStorage.setItem('nara_splits', JSON.stringify(splits));
             saveCloudSplit(s); cancelSplitPayment(); loadSplitsHistory();
             showToast(isEditingSplitPay ? 'تم تعديل السداد ✏️✅' : 'تم السداد ✅');
+        }
+
+        // رسائل واتساب الذكية للقطات
+        function shareSplitPersonWA(splitId, personIdx) {
+            let s = JSON.parse(localStorage.getItem('nara_splits')||'[]').find(x => x.id === splitId); if(!s) return;
+            let p = s.people[personIdx];
+            let pPaid = p.paidAmount || 0;
+            let pRem = s.perPerson - pPaid;
+            let text = '';
+            if(p.paid || pRem <= 0) {
+                text = `مرحباً ${p.name}،%0Aشكراً لك، تم استلام مبلغ القطة (${s.title}) بالكامل ✅🌹`;
+            } else if (pPaid > 0) {
+                text = `مرحباً ${p.name}،%0Aبخصوص قطة: *${s.title}*%0Aالإجمالي المطلوب منك: ${s.perPerson.toFixed(2)} ر.س%0Aما تم دفعه: ${pPaid.toFixed(2)} ر.س%0Aالمتبقي عليك: *${pRem.toFixed(2)} ر.س* ⏳%0A%0Aبانتظار المتبقي، وشكراً لك! 🌹`;
+            } else {
+                text = `مرحباً ${p.name}،%0Aتذكير بقطة: *${s.title}*%0Aالمطلوب سداده: *${s.perPerson.toFixed(2)} ر.س* 🔴%0A%0Aبانتظار سدادك، وشكراً! 🌹`;
+            }
+            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+        }
+
+        function shareSplitWA(splitId) {
+            let s = JSON.parse(localStorage.getItem('nara_splits')||'[]').find(x=>x.id == splitId); if(!s) return;
+            let totalPaid = s.people.reduce((sum, p) => sum + (p.paidAmount || 0), 0);
+            let rem = s.total - totalPaid;
+            let isCompleted = totalPaid >= s.total - 0.01;
+            let text = '';
+            if (isCompleted) {
+                text = `🎉 تم اكتمال سداد قطة: *${s.title}*%0Aالإجمالي: ${s.total.toFixed(2)} ر.س%0Aشكراً للجميع على التجاوب السريع! 🌹`;
+            } else if (totalPaid > 0) {
+                text = `⏳ تذكير بقطة: *${s.title}*%0Aالإجمالي: ${s.total.toFixed(2)} ر.س%0Aنصيب الفرد: ${s.perPerson.toFixed(2)} ر.س%0Aتم جمع: ${totalPaid.toFixed(2)} ر.س%0Aالمتبقي للتحصيل: *${rem.toFixed(2)} ر.س*%0A%0Aنرجو من البقية سرعة السداد، وشكراً! 🌹`;
+            } else {
+                text = `🍕 قطة جديدة: *${s.title}*%0Aالإجمالي: ${s.total.toFixed(2)} ر.س%0Aالمطلوب من كل شخص: *${s.perPerson.toFixed(2)} ر.س*%0A%0Aيرجى السداد في أقرب وقت، وشكراً! 🌹`;
+            }
+            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
         }
 
         function loadSplitsHistory(){
