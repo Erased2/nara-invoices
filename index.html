@@ -100,7 +100,7 @@
         .contact-chip:hover { border-color: var(--text-muted); } .contact-chip.active { background: rgba(139, 92, 246, 0.1); color: var(--split); border-color: var(--split); }
         .wa-btn { background: #25D366; color: white; border: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; transition: 0.2s; } .wa-btn:hover { background: #20b858; }
 
-        /* ============ المعاينة والطباعة النظيفة 100% ============ */
+        /* ============ المعاينة والطباعة النظيفة ============ */
         #previewOverlay, #splitPreviewOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.95); z-index: 100000; overflow-y: auto; flex-direction: column; align-items: center; padding: 30px 15px; }
         .print-active-overlay { display: flex !important; }
         
@@ -235,9 +235,7 @@
         <div id="trashList"></div>
     </div>
 
-    <!-- ================= قوالب الطباعة (الفاخرة والنظيفة 100%) ================= -->
-    
-    <!-- كشف الديون العادي -->
+    <!-- ================= قوالب الطباعة (A4) ================= -->
     <div id="previewOverlay">
         <div class="preview-actions"><button style="background:var(--credit);" onclick="printPDF()">🖨️ طباعة الكشف</button><button style="background:var(--debit);" onclick="closePreview()">❌ إغلاق</button></div>
         <div id="invoiceTemplate" class="a4-paper">
@@ -260,7 +258,6 @@
         </div>
     </div>
 
-    <!-- كشف القطات الفاخر -->
     <div id="splitPreviewOverlay">
         <div class="preview-actions"><button style="background:var(--split);" onclick="printPDF()">🖨️ طباعة كشف القطة</button><button style="background:var(--debit);" onclick="closeSplitPreview()">❌ إغلاق</button></div>
         <div id="splitInvoiceTemplate" class="split-a4-paper">
@@ -284,7 +281,6 @@
         </div>
     </div>
 
-    <!-- السكريبت الديناميكي لتشغيل الأوفلاين والسحابة بأمان -->
     <script>
         let currentMode='new', editingInvNum=null, targetInvForPayment=null, targetBulkInvoices=[];
         let splitPeopleArray=[], editingSplitId=null, currentSplitPayId=null, currentSplitPersonIdx=null, isEditingSplitPay=!1;
@@ -292,15 +288,13 @@
         window.db = null; window.fbDb = null;
 
         if('serviceWorker' in navigator) { 
-            // تسجيل ملف الأوفلاين الأساسي في الخلفية بدون ما يعلق المتصفح
             window.addEventListener('load', () => { 
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Setup Notice: Must be uploaded to GitHub to work offline.')); 
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW setup skipped')); 
             }); 
         }
 
         function showToast(m){const t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 
-        // الاتصال الذكي بالسحابة (يعمل أوفلاين كلياً ولا يعلق)
         async function initCloudSync() {
             const btn = document.getElementById('autoSyncBtn');
             if(!navigator.onLine) { 
@@ -355,7 +349,6 @@
             if(u)localStorage.setItem('nara_invoices',JSON.stringify(d));
         }
 
-        // حل مشكلة القوائم المنسدلة
         document.addEventListener('click',e=>{
             if(!e.target.classList.contains('dots-btn')){
                 document.querySelectorAll('.dropdown-menu').forEach(m=>m.style.display='none');
@@ -433,7 +426,7 @@
         function moveToTrash(i){if(!confirm('⚠️ نقل للمهملات؟'))return;let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),v=h.find(x=>String(x.invNum)===String(i));if(!v)return;v.deletedAt=new Date().getTime();t.unshift(v);h=h.filter(x=>String(x.invNum)!==String(i));localStorage.setItem('nara_invoices',JSON.stringify(h));localStorage.setItem('nara_trash',JSON.stringify(t));saveCloudTrash(v);try{if(window.db && navigator.onLine)window.fbDb.deleteDoc(window.fbDb.doc(window.db,"invoices",String(i)));}catch(e){}loadHistory();loadTrash();showToast('تم الحذف 🗑️');}
         function restoreFromTrash(i){let h=JSON.parse(localStorage.getItem('nara_invoices')||'[]'),t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),v=t.find(x=>String(x.invNum)===String(i));if(!v)return;delete v.deletedAt;h.unshift(v);t=t.filter(x=>String(x.invNum)!==String(i));localStorage.setItem('nara_invoices',JSON.stringify(h));localStorage.setItem('nara_trash',JSON.stringify(t));saveCloudSingle(v);deleteCloudTrash(i);loadTrash();loadHistory();showToast('تم الاسترجاع 🔄');}
         function cleanOldTrash(){let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),n=new Date().getTime(),k=[];t.forEach(x=>{if(x.deletedAt&&(n-x.deletedAt)>=6048e5)deleteCloudTrash(x.invNum);else k.push(x);});localStorage.setItem('nara_trash',JSON.stringify(k));let c=document.getElementById('trashCount');if(c)c.innerText=k.length;}
-        function loadTrash(){cleanOldTrash();let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),c=document.getElementById('trashList');if(!t.length)return c.innerHTML='<p style="text-align:center;color:var(--text-muted);font-size:14px;padding:30px;font-weight:bold;">السلة فارغة</p>';let n=new Date().getTime();c.innerHTML=t.map(x=>{let d=Math.ceil((6048e5-(n-x.deletedAt))/864e5),s=(x.items||[]).map(i=>i.desc).join(', ');return `<div class="history-card" style="border-right:4px solid var(--debit); z-index:1;"><div class="history-header" style="padding:0;"><div><b style="font-size:15px; color:var(--text);">${x.name}</b></div><b style="color:var(--debit); font-size:18px; font-weight:900;">${Number(x.total).toFixed(2)} ر.س</b></div><small style="color:var(--text-muted);display:block;font-size:12px;margin-top:6px;font-weight:bold;">البنود: ${s}</small><small style="color:var(--debit);font-weight:900;font-size:12px;display:block;margin-top:10px">يُحذف خلال: ${d} يوم</small><button style="margin-top:15px;width:100%;padding:12px;background:var(--credit);color:#fff;border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:13px;box-shadow:0 2px 5px rgba(0,0,0,0.1);" onclick="restoreFromTrash('${x.invNum}')">استرجاع للسجل</button></div>`;}).join('');}
+        function loadTrash(){cleanOldTrash();let t=JSON.parse(localStorage.getItem('nara_trash')||'[]'),c=document.getElementById('trashList');if(!t.length)return c.innerHTML='<p style="text-align:center;color:var(--text-muted);font-size:14px;padding:30px;font-weight:bold;">السلة فارغة</p>';let n=new Date().getTime();c.innerHTML=t.map(x=>{let d=Math.ceil((6048e5-(n-x.deletedAt))/864e5),s=(x.items||[]).map(i=>i.desc).join(', ');return `<div class="history-card" style="border-right:4px solid var(--debit); z-index:1;"><div class="history-header" style="padding:0;"><div><b style="font-size:16px; color:var(--text);">${x.name}</b></div><b style="color:var(--debit); font-size:18px; font-weight:900;">${Number(x.total).toFixed(2)} ر.س</b></div><small style="color:var(--text-muted);display:block;font-size:13px;margin-top:8px;font-weight:bold;">البنود: ${s}</small><small style="color:var(--debit);font-weight:900;font-size:12px;display:block;margin-top:12px">يُحذف خلال: ${d} يوم</small><button style="margin-top:18px;width:100%;padding:14px;background:var(--credit);color:#fff;border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:14px;box-shadow:0 2px 5px rgba(0,0,0,0.1);" onclick="restoreFromTrash('${x.invNum}')">استرجاع للسجل</button></div>`;}).join('');}
         function resetForm(){editingInvNum=null;document.getElementById('formTitle').innerText='📄 تسجيل معاملة جديدة';document.getElementById('btnSave').innerText='💾 حفظ واعتماد';document.getElementById('btnCancelEdit').style.display='none';document.getElementById('directName').value='';document.getElementById('itemsContainer').innerHTML='';addItemRow();}
         
         function handleMergeSelection(){let c=document.querySelectorAll('.merge-cb:checked'),f=document.getElementById('mergeFloatBar');document.getElementById('mergeCountText').innerText=c.length;f.style.display=c.length>0?'flex':'none';}
@@ -521,7 +514,6 @@
         }
         function printPDF(){window.print();}
 
-        // رسائل واتساب الذكية
         function shareInvoiceWA(invNum) {
             let inv = JSON.parse(localStorage.getItem('nara_invoices')||'[]').find(x=>x.invNum == invNum);
             if(!inv) return;
@@ -665,7 +657,6 @@
             showToast(isEditingSplitPay ? 'تم تعديل السداد ✏️✅' : 'تم السداد ✅');
         }
 
-        // رسائل واتساب الذكية للقطات
         function shareSplitPersonWA(splitId, personIdx) {
             let s = JSON.parse(localStorage.getItem('nara_splits')||'[]').find(x => x.id === splitId); if(!s) return;
             let p = s.people[personIdx];
@@ -726,7 +717,7 @@
                 }).join('');
                 
                 return `<div class="card" style="border:1px solid ${isCompleted?'var(--credit)':'var(--border)'};position:relative;margin-bottom:20px; z-index:1; padding:25px;">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px; gap:10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
                         <h4 style="font-size:18px;color:${isCompleted?'var(--credit)':'var(--primary)'};font-weight:900; margin:0; line-height:1.4;">${x.title} ${isCompleted?'🎉':''}</h4>
                         <div style="display:flex;gap:6px; flex-wrap:wrap; justify-content:flex-end;">
                             <button onclick="shareSplitWA(${x.id})" class="wa-btn" style="background:#25D366;color:white;border:none;padding:6px 12px;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;display:inline-flex;align-items:center;">مشاركة 💬</button>
