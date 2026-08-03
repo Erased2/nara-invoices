@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nara-v1';
+const CACHE_NAME = 'nara-offline-v1';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -6,8 +6,9 @@ const ASSETS_TO_CACHE = [
     './icon-512.png'
 ];
 
-// حفظ الملفات عند تثبيت التطبيق
+// حفظ الموقع في جوالك أول ما تفتحه
 self.addEventListener('install', (event) => {
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll(ASSETS_TO_CACHE);
@@ -15,7 +16,11 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// استدعاء الملفات المحفوظة عند انقطاع النت
+self.addEventListener('activate', (event) => {
+    event.waitUntil(self.clients.claim());
+});
+
+// لما تطفي النت، هذا الكود يفتح الموقع من ذاكرة الجوال
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then((response) => {
